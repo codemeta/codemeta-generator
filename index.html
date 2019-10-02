@@ -14,21 +14,29 @@ See top-level LICENSE file for more information
 </head>
 <body>
     <h1>CodeMeta generator</h1>
+
+    <p>Most fields are optional. Mandatory fields will be highlighted when generating Codemeta.</p>
+
     <form id="inputForm">
-        <fieldset>
+        <fieldset id="fieldsetSoftwareItself">
             <legend>The software itself</legend>
-            <p>
+
+            <p title="The name of the software">
                 <label for="name">Name</label>
-                <input type="text" name="name" id="name" />
+                <input type="text" name="name" id="name"
+                    placeholder="My Software" />
             </p>
-            <p>
-                <label for="codeRepository">Code repository</label>
-                <input type="URL" name="codeRepository" id="codeRepository" />
-            </p>
-            <p>
+
+            <p title="The date on which the software was created.">
                 <label for="dateCreated">Creation date</label>
                 <input type="date" name="dateCreated" id="dateCreated" />
             </p>
+
+            <p title="Date of first publication.">
+                <label for="datePublished">First release date</label>
+                <input type="date" name="datePublished" id="datePublished" />
+            </p>
+
             <p>
                 <label for="license">License</label>
                 <select name="license" id="license">
@@ -46,22 +54,77 @@ See top-level LICENSE file for more information
             </p>
         </fieldset>
 
-        <fieldset class="persons" id="authors">
+        <fieldset id="fieldsetDevelopmentCommunity">
+            <legend>Development community / tools</legend>
+
+            <p title="Link to the repository where the un-compiled, human readable code and related code is located (SVN, Git, GitHub, CodePlex, institutional GitLab instance, etc.).">
+                <label for="codeRepository">Code repository</label>
+                <input type="URL" name="codeRepository" id="codeRepository"
+                    placeholder="git+https://github.com/You/RepoName.git" />
+            </p>
+
+            <p title="Link to continuous integration service (Travis-CI, Gitlab CI, etc.).">
+                <label for="contIntegration">Continuous integration</label>
+                <input type="URL" name="contIntegration" id="contIntegration"
+                    placeholder="https://travis-ci.org/You/RepoName" />
+            </p>
+
+            <p title="Link to a place for users/developpers to report and manage bugs (JIRA, GitHub issues, etc.).">
+                <label for="issueTracker">Issue tracker</label>
+                <input type="URL" name="issueTracker" id="issueTracker"
+                    placeholder="https://github.com/You/RepoName/issues" />
+            </p>
+        </fieldset>
+
+        <fieldset id="fieldsetCurrentVersion">
+            <legend>Current version of the software</legend>
+
+            <p title="Version number of the software">
+                <label for="version">Version number</label>
+                <input type="text" name="version" id="version"
+                    placeholder="1.0.0" />
+            </p>
+
+            <p title="The date on which the software was most recently modified.">
+                <label for="dateModified">Release date</label>
+                <input type="date" name="dateModified" id="dateModified" />
+            </p>
+        </fieldset>
+
+        <fieldset class="persons" id="author_container">
             <legend>Authors</legend>
+
             <p>Order of authors does not matter.</p>
-            <input type="hidden" id="nbAuthors" value="0" />
+
+            <input type="hidden" id="author_nb" value="0" />
             <div id="addRemoveAuthor">
-                <input type="button" id="addAuthor" value="Add one" />
-                <input type="button" id="removeAuthor" value="Remove last" />
+                <input type="button" id="author_add" value="Add one"
+                    onclick="addPerson('Author', 'author');" />
+                <input type="button" id="author_remove" value="Remove last"
+                    onclick="removePerson('author');" />
+            </div>
+        </fieldset>
+
+        <fieldset class="persons" id="contributor_container">
+            <legend>Contributors</legend>
+
+            <p>Order of contributors does not matter.</p>
+
+            <input type="hidden" id="contributor_nb" value="0" />
+            <div id="addRemoveContributor">
+                <input type="button" id="contributor_add" value="Add one"
+                    onclick="addPerson('Contributor', 'contributor');" />
+                <input type="button" id="contributor_remove" value="Remove last"
+                    onclick="removePerson('contributor');" />
             </div>
         </fieldset>
     </form>
     <form>
         <input type="button" id="generateCodemeta" value="Generate Codemeta" />
     </form>
-    <form>
-        <pre contentEditable="true" id="codemetaText"></pre>
-    </form>
+
+    <pre contentEditable="true" id="codemetaText"></pre>
+
     <script>
         initCallbacks();
     </script>

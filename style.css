@@ -5,8 +5,17 @@
  * See top-level LICENSE file for more information
  */
 
-#authors .author {
+.person {
     display: inline-block;
+}
+
+#fieldsetSoftwareItself, #fieldsetDevelopmentCommunity, #fieldsetCurrentVersion {
+    display: inline-block;
+}
+
+input[type=URL] {
+    /* URLs are longer than the other fields */
+    min-width: 20em;
 }
 
 #codemetaText {
