@@ -1,0 +1,69 @@
+<!doctype html>
+<!--
+Copyright (C) 2019  The Software Heritage developers
+See the AUTHORS file at the top-level directory of this distribution
+License: GNU Affero General Public License version 3, or any later version
+See top-level LICENSE file for more information
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CodeMeta generator</title>
+    <script src="./script.js"></script>
+    <link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+    <h1>CodeMeta generator</h1>
+    <form id="inputForm">
+        <fieldset>
+            <legend>The software itself</legend>
+            <p>
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" />
+            </p>
+            <p>
+                <label for="codeRepository">Code repository</label>
+                <input type="URL" name="codeRepository" id="codeRepository" />
+            </p>
+            <p>
+                <label for="dateCreated">Creation date</label>
+                <input type="date" name="dateCreated" id="dateCreated" />
+            </p>
+            <p>
+                <label for="license">License</label>
+                <select name="license" id="license">
+                    <optgroup label="GNU licenses (LGPL/GPL/AGPL)">
+                        <option value="GPL-2.0-only">GPL v2.0</option>
+                        <option value="GPL-2.0-or-later">GPL v2.0 or later</option>
+                        <option value="GPL-3.0-only">GPL v3.0</option>
+                        <option value="GPL-3.0-or-later">GPL v3.0 or later</option>
+                    </optgroup>
+                    <optgroup label="Non-copyleft licenses">
+                        <option value="MIT">MIT</option>
+                        <option value="Apache-2.0">Apache 2.0</option>
+                    </optgroup>
+                </select>
+            </p>
+        </fieldset>
+
+        <fieldset class="persons" id="authors">
+            <legend>Authors</legend>
+            <p>Order of authors does not matter.</p>
+            <input type="hidden" id="nbAuthors" value="0" />
+            <div id="addRemoveAuthor">
+                <input type="button" id="addAuthor" value="Add one" />
+                <input type="button" id="removeAuthor" value="Remove last" />
+            </div>
+        </fieldset>
+    </form>
+    <form>
+        <input type="button" id="generateCodemeta" value="Generate Codemeta" />
+    </form>
+    <form>
+        <pre contentEditable="true" id="codemetaText"></pre>
+    </form>
+    <script>
+        initCallbacks();
+    </script>
+</body>
+</html>
