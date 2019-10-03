@@ -52,8 +52,7 @@ function addPerson(legend, prefix) {
 
     addPersonWithId(container, legend, prefix, personId);
 
-    var nbPersonsField = container.querySelector(`#${prefix}_nb`);
-    nbPersonsField.value = personId;
+    setNbPersons(prefix, personId);
 }
 
 function removePerson(prefix) {
@@ -61,24 +60,47 @@ function removePerson(prefix) {
 
     document.querySelector(`#${prefix}_${personId}`).remove();
 
-    var nbPersonsField = document.querySelector(`#${prefix}_nb`);
-    nbPersonsField.value = personId-1;
+    setNbPersons(prefix, personId-1);
 }
 
 // Initialize a group of persons (authors, contributors) on page load.
 // Useful if the page is reloaded.
 function initPersons(prefix, legend) {
-    var nbAuthors = getNbPersons(prefix);
+    var nbPersons = getNbPersons(prefix);
     var personContainer = document.querySelector(`#${prefix}_container`)
 
-    for (let personId = 1; personId <= nbAuthors; personId++) {
+    for (let personId = 1; personId <= nbPersons; personId++) {
         addPersonWithId(personContainer, legend, prefix, personId);
     }
+}
+
+function removePersons(prefix) {
+    var nbPersons = getNbPersons(prefix);
+    var personContainer = document.querySelector(`#${prefix}_container`)
+
+    for (let personId = 1; personId <= nbPersons; personId++) {
+        removePerson(prefix)
+    }
+}
+
+function resetForm() {
+    removePersons('author');
+    removePersons('contributor');
+
+    // Reset the form after deleting elements, so nbPersons doesn't get
+    // reset before it's read.
+    document.querySelector('#inputForm').reset();
 }
 
 function initCallbacks() {
     document.querySelector('#generateCodemeta')
         .addEventListener('click', generateCodemeta);
+
+    document.querySelector('#resetForm')
+        .addEventListener('click', resetForm);
+
+    document.querySelector('#importCodemeta')
+        .addEventListener('click', importCodemeta);
 
     document.querySelector('#inputForm')
         .addEventListener('change', generateCodemeta);

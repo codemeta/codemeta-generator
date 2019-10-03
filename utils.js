@@ -11,3 +11,8 @@ function getNbPersons(prefix) {
     var nbField = document.querySelector(`#${prefix}_nb`);
     return parseInt(nbField.value, 10);
 }
+
+function setNbPersons(prefix, nb) {
+    var nbField = document.querySelector(`#${prefix}_nb`);
+    nbField.value = nb;
+}
