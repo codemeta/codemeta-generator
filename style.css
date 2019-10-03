@@ -20,4 +20,10 @@ input[type=URL] {
 
 #codemetaText {
     width: 100%;
+    min-height: 10em;
+    border: 1px solid black;
+}
+
+#errorMessage {
+    color: red;
 }

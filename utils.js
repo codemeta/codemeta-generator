@@ -16,3 +16,7 @@ function setNbPersons(prefix, nb) {
     var nbField = document.querySelector(`#${prefix}_nb`);
     nbField.value = nb;
 }
+
+function setError(msg) {
+    document.querySelector("#errorMessage").innerHTML = msg;
+}

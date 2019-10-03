@@ -53,6 +53,8 @@ function addPerson(prefix, legend) {
     addPersonWithId(container, prefix, legend, personId);
 
     setNbPersons(prefix, personId);
+
+    return personId;
 }
 
 function removePerson(prefix) {
