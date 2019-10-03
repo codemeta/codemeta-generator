@@ -40,17 +40,17 @@ function createPersonFieldset(personPrefix, legend) {
     return fieldset;
 }
 
-function addPersonWithId(container, legend, prefix, id) {
+function addPersonWithId(container, prefix, legend, id) {
     var fieldset = createPersonFieldset(`${prefix}_${id}`, `${legend} #${id}`);
 
     container.appendChild(fieldset);
 }
 
-function addPerson(legend, prefix) {
+function addPerson(prefix, legend) {
     var container = document.querySelector(`#${prefix}_container`);
     var personId = getNbPersons(prefix) + 1;
 
-    addPersonWithId(container, legend, prefix, personId);
+    addPersonWithId(container, prefix, legend, personId);
 
     setNbPersons(prefix, personId);
 }
@@ -70,7 +70,7 @@ function initPersons(prefix, legend) {
     var personContainer = document.querySelector(`#${prefix}_container`)
 
     for (let personId = 1; personId <= nbPersons; personId++) {
-        addPersonWithId(personContainer, legend, prefix, personId);
+        addPersonWithId(personContainer, prefix, legend, personId);
     }
 }
 
