@@ -100,6 +100,11 @@ function generateCodemeta() {
 
     document.querySelector('#codemetaText').innerText = codemetaText;
     setError(errorHTML);
+
+    if (codemetaText) {
+        // For restoring the form state on page reload
+        sessionStorage.setItem('codemetaText', codemetaText);
+    }
 }
 
 function importPersons(prefix, legend, docs) {
@@ -139,4 +144,12 @@ function importCodemeta() {
     importPersons('contributor', 'Contributor', doc['contributor'])
 
     setError("");
+}
+
+function loadStateFromStorage() {
+    codemetaText = sessionStorage.getItem('codemetaText')
+    if (codemetaText) {
+        document.querySelector('#codemetaText').innerText = codemetaText;
+        importCodemeta();
+    }
 }
