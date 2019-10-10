@@ -13,6 +13,11 @@
     display: inline-block;
 }
 
+#license {
+    /* License names are long */
+    min-width: 20em;
+}
+
 input[type=URL] {
     /* URLs are longer than the other fields */
     min-width: 20em;

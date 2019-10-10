@@ -95,6 +95,9 @@ function resetForm() {
 }
 
 function initCallbacks() {
+    document.querySelector('#license')
+        .addEventListener('change', validateLicense);
+
     document.querySelector('#generateCodemeta')
         .addEventListener('click', generateCodemeta);
 
