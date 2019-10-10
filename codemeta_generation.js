@@ -7,6 +7,8 @@
 
 "use strict";
 
+const SPDX_PREFIX = 'https://spdx.org/licenses/';
+
 function emptyToUndefined(v) {
     if (v == null || v == "")
         return undefined;
@@ -75,7 +77,7 @@ function generateCodemeta() {
         var doc = {
             "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
             "@type": "SoftwareSourceCode",
-            "license": "https://spdx.org/licenses/" + getIfSet('#license'),
+            "license": SPDX_PREFIX + getIfSet('#license'),
         };
 
         // Generate most fields
@@ -135,6 +137,11 @@ function importCodemeta() {
         return;
     }
     resetForm();
+
+    if (doc['license'] !== undefined && doc['license'].indexOf(SPDX_PREFIX) == 0) {
+        var license = doc['license'].substring(SPDX_PREFIX.length);
+        document.querySelector('#license').value = license;
+    }
 
     directCodemetaFields.forEach(function (item, index) {
         setIfDefined('#' + item, doc[item]);
