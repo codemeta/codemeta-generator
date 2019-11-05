@@ -30,6 +30,28 @@ See top-level LICENSE file for more information
                     placeholder="My Software" required="true" />
             </p>
 
+
+            <p title="A unique identifier">
+                <label for="identifier">Unique identifier</label>
+                <input type="text" name="identifier" id="identifier"
+                    placeholder="?????"  />
+            </p> <!-- TODO:define better-->
+
+            <p title="Type of the software application">
+                <label for="applicationCategory">Application category</label>
+                <input type="text" name="applicationCategory" id="applicationCategory"
+                    placeholder="Astronomy"  />
+            </p>
+
+            <p title="a brief description of the software">
+                <label for="description">Description</label>
+                <br>
+                <textarea rows="4" cols="50" 
+                    name="description" id="description"
+                    placeholder="My Software computes ephemerides and orbit propagation. It has been developed from early ´80." ></textarea>
+            </p> 
+            
+
             <p title="The date on which the software was created.">
                 <label for="dateCreated">Creation date</label>
                 <input type="text" name="dateCreated" id="dateCreated"
@@ -47,6 +69,39 @@ See top-level LICENSE file for more information
                 <input list="licenses" name="license" id="license">
                 <datalist id="licenses">
                 </datalist>
+            </p>
+        </fieldset>
+
+        <fieldset id="fieldsetDevelopmentCommunity">
+            <legend>Additional Info</legend>
+            <p title="Funding">
+                <label for="funding">Funding</label>
+                <input type="text" name="funding" id="funding"
+                    placeholder="software funded by...(e.g. specific grant)"  />
+            </p>
+
+            <p title="Runtime Platform">
+                <label for="runtimePlatform">Runtime Platform</label>
+                <input type="text" name="runtimePlatform" id="runtimePlatform"
+                    placeholder="Operating system"  />
+            </p>
+
+            <p title="Development Status">
+                <label for="developmentStatus">Development Status</label>
+                <input type="text" name="developmentStatus" id="developmentStatus"
+                    placeholder="Concept/WIP/Suspended/Abandoned/Active/Inactive/Unsupported/Moved - (www.repostatus.org)"  />
+            </p>
+
+            <p title="Programming Language">
+                <label for="programmingLanguage">Programming Language</label>
+                <input type="text" name="programmingLanguage" id="programmingLanguage"
+                    placeholder="C#"  />
+            </p>
+
+            <p title="Part of">
+                <label for="isPartOf">Funding</label>
+                <input type="text" name="isPartOf" id="isPartOf"
+                    placeholder="part of ... project"  />
             </p>
         </fieldset>
 
@@ -86,6 +141,24 @@ See top-level LICENSE file for more information
                 <input type="text" name="dateModified" id="dateModified"
                     placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" />
             </p>
+
+            <p title="a brief description of the software">
+                <label for="releaseNotes">Release notes</label>
+                <br>
+                <textarea rows="4" cols="50" 
+                    name="releaseNotes" id="releaseNotes"
+                    placeholder=
+"Change log: this and that; 
+Bugfixes: that and this." ></textarea>
+            </p> 
+<!--TODO: keywords as a string array -->
+
+<!--TODO: software requirements as string array -->
+
+<!--TODO: related links as URL array -->
+
+<!--TODO: referencePublication as ScholarlyArticle array -->
+
         </fieldset>
 
         <fieldset class="persons" id="author_container">
