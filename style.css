@@ -5,11 +5,12 @@
  * See top-level LICENSE file for more information
  */
 
+
 .person {
     display: inline-block;
 }
 
-#fieldsetSoftwareItself, #fieldsetDevelopmentCommunity, #fieldsetCurrentVersion {
+#fieldsetSoftwareItself, #fieldsetDevelopmentCommunity, #fieldsetCurrentVersion, #fieldsetAdditionalInfo {
     display: inline-block;
 }
 
@@ -18,9 +19,18 @@
     min-width: 20em;
 }
 
+#funding {
+    /* Funding names are long */
+    min-width: 20em;
+}
+
 input[type=URL] {
     /* URLs are longer than the other fields */
     min-width: 20em;
+}
+.field-description {
+    color : rgb(100, 104, 103);
+    font-size: small;
 }
 
 #codemetaText {
@@ -32,3 +42,8 @@ input[type=URL] {
 #errorMessage {
     color: red;
 }
+
+input:invalid {
+    color: red;
+}
+  

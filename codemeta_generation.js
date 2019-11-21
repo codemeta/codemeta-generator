@@ -36,6 +36,24 @@ const directCodemetaFields = [
     'issueTracker',
     'name',
     'version',
+    'identifier',
+    'description',
+    'applicationCategory',
+    //keywords TODO:keywords array 
+    'releaseNotes',
+    'funding',
+    'runtimePlatform',
+    //softwareRequiremnts,
+    'operatingSystem',
+    'developmentStatus',
+    //relatedLink
+    'programmingLanguage',
+    'isPartOf',
+    //'referencePublication'
+    //      "@type": "ScholarlyArticle",
+    //      "idendifier": "https://doi.org/xx.xxxx/xxxx.xxxx.xxxx",
+    //      "name": "title of publication"
+    
 ];
 
 // Names of codemeta properties with a matching HTML field name,
@@ -44,6 +62,7 @@ const directPersonCodemetaFields = [
     'givenName',
     'familyName',
     'email',
+    'affiliation'   
 ];
 
 function generatePerson(idPrefix) {
