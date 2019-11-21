@@ -10,6 +10,7 @@
 var SPDX_LICENSES = null;
 var SPDX_LICENSE_IDS = null;
 
+
 function initSpdx() {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', './data/spdx/licenses.json', true);

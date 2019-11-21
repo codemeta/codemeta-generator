@@ -43,7 +43,8 @@ const directCodemetaFields = [
     'releaseNotes',
     'funding',
     'runtimePlatform',
-    //softwareRequiremnts
+    //softwareRequiremnts,
+    'operatingSystem',
     'developmentStatus',
     //relatedLink
     'programmingLanguage',

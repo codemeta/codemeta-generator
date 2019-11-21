@@ -19,9 +19,19 @@
     min-width: 20em;
 }
 
+#funding {
+    /* Funding names are long */
+    min-width: 20em;
+}
+
 input[type=URL] {
     /* URLs are longer than the other fields */
     min-width: 20em;
+}
+description {
+    color : rgb(100, 104, 103);
+    font-size: small;
+    display: block;
 }
 
 #codemetaText {
@@ -33,3 +43,11 @@ input[type=URL] {
 #errorMessage {
     color: red;
 }
+
+input:valid {
+    color: black;
+  }
+input:invalid {
+    color: red;
+  }
+  

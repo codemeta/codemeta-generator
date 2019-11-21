@@ -39,7 +39,7 @@ function createPersonFieldset(personPrefix, legend) {
         <label for="${personPrefix}_affiliation">Affiliation</label>
         <input type="url" id="${personPrefix}_affiliation" name="${personPrefix}_affiliation"
             placeholder="Department of Computer Science, University of Pisa" />
-    </p>
+        </p>
     `;
 
     return fieldset;
