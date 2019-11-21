@@ -26,9 +26,9 @@ See top-level LICENSE file for more information
 
             <p title="The name of the software">
                 <label for="name">Name</label>
-                <input type="text" name="name" id="name"
+                <input type="text" name="name" id="name" aria-describedby="name_descr"
                     placeholder="My Software" required="true" />
-                <description>the software title</description>
+                <div class="field-description" id="name_descr">the software title</div>
             </p>
 
 
@@ -36,7 +36,7 @@ See top-level LICENSE file for more information
                 <label for="identifier">Unique identifier</label>
                 <input type="text" name="identifier" id="identifier"
                     placeholder="10.151.xxxxx"  />
-                    <description>such as ISBNs, GTIN codes, UUIDs etc..  <a href="http://schema.org/identifier">http://schema.org/identifier</a> </description>
+                    <div class="field-description">such as ISBNs, GTIN codes, UUIDs etc..  <a href="http://schema.org/identifier">http://schema.org/identifier</a> </div>
             </p> 
             <!-- TODO:define better
             
@@ -82,10 +82,10 @@ See top-level LICENSE file for more information
 
             <p>
                 <label for="license">License</label>
-                <input list="licenses" name="license" id="license">
+                <input list="licenses" name="license" id="license" aria-describedby="licenses_descr">
                 <datalist id="licenses">
                 </datalist> <!-- TODO: insert placeholder -->
-                <description>from <a href="https://spdx.org/license-list">SPDX licence list</a></description>
+                <div class="field-description" id="licenses_descr">from <a href="https://spdx.org/license-list">SPDX licence list</a></div>
             </p>
         </fieldset>
 
@@ -145,6 +145,57 @@ Bugfixes: that and this." ></textarea>
 
         </fieldset>
 
+        <fieldset id="fieldsetAdditionalInfo">
+                <legend>Additional Info</legend>
+                <p title="Funding">
+                    <label for="funding">Funding</label>
+                    <input type="text" name="funding" id="funding" aria-describedby="funding_descr"
+                        placeholder="Università di Pisa (PRA_2018_73)"/>
+                    <div class="field-description" id="funding_descr">software funded by (e.g. specific grant)</div>
+                </p>
+    
+                <p title="Runtime Platform">
+                    <label for="runtimePlatform">Runtime Platform</label>
+                    <input type="text" name="runtimePlatform" id="runtimePlatform"
+                        placeholder="Python2.3"  />
+                </p>
+    
+                <p title="Operating System">
+                    <label for="operatingSystem">Operating System</label>
+                    <input type="text" name="operatingSystem" id="operatingSystem"
+                        placeholder="Android 1.6"  />
+                </p>
+    
+                <p title="Development Status">
+                <label for="developmentStatus">Development Status</label>
+                    <datalist id="developmentStatuses">
+                            <option value="Concept">
+                            <option value="WIP">
+                            <option value="Suspended">
+                            <option value="Abandoned">
+                            <option value="Active">
+                            <option value="Inactive">
+                            <option value="Unsupported">
+                            <option value="Moved">
+                    </datalist>
+                    <input list="developmentStatuses" id="developmentStatus" aria-describedby="developmentStatuses_descr" 
+                    pattern="Concept|WIP|Suspended|Abandoned|Active|Inactive|Unsupported|Moved">
+                    <div class="field-description" id="developmentStatuses_descr">see <a href="http://www.repostatus.org">www.repostatus.org</a> for details</div>
+                </p>
+    
+                <p title="Programming Language">
+                    <label for="programmingLanguage">Programming Language</label>
+                    <input type="text" name="programmingLanguage" id="programmingLanguage"
+                        placeholder="C#"  />
+                </p> <!-- TODO: We should add support for multiple languages, eg. by splitting on commas when exporting. -->
+    
+                <p title="Part of">
+                    <label for="isPartOf">I part of </label>
+                    <input type="URL" name="isPartOf" id="isPartOf"
+                        placeholder="http://The.Bigger.Framework.org"  />
+                </p>
+            </fieldset>
+
         <fieldset class="persons" id="author_container">
             <legend>Authors</legend>
 
@@ -173,56 +224,6 @@ Bugfixes: that and this." ></textarea>
             </div>
         </fieldset>
 
-        <fieldset id="fieldsetAdditionalInfo">
-            <legend>Additional Info</legend>
-            <p title="Funding">
-                <label for="funding">Funding</label>
-                <input type="text" name="funding" id="funding"
-                    placeholder="Università di Pisa (PRA_2018_73)"/>
-                <description>software funded by (e.g. specific grant)</description>
-            </p>
-
-            <p title="Runtime Platform">
-                <label for="runtimePlatform">Runtime Platform</label>
-                <input type="text" name="runtimePlatform" id="runtimePlatform"
-                    placeholder="Python2.3"  />
-            </p>
-
-            <p title="Operating System">
-                <label for="operatingSystem">Operating System</label>
-                <input type="text" name="operatingSystem" id="operatingSystem"
-                    placeholder="Android 1.6"  />
-            </p>
-
-            <p title="Development Status">
-            <label for="developmentStatus">Development Status</label>
-                <datalist id="developmentStatuses">
-                        <option value="Concept">
-                        <option value="WIP">
-                        <option value="Suspended">
-                        <option value="Abandoned">
-                        <option value="Active">
-                        <option value="Inactive">
-                        <option value="Unsupported">
-                        <option value="Moved">
-                </datalist>
-                <input list="developmentStatuses" id="developmentStatus" 
-                pattern="Concept|WIP|Suspended|Abandoned|Active|Inactive|Unsupported|Moved">
-                <description>see <a href="http://www.repostatus.org">www.repostatus.org</a> for details</description>
-            </p>
-
-            <p title="Programming Language">
-                <label for="programmingLanguage">Programming Language</label>
-                <input type="text" name="programmingLanguage" id="programmingLanguage"
-                    placeholder="C#"  />
-            </p> <!-- TODO: We should add support for multiple languages, eg. by splitting on commas when exporting. -->
-
-            <p title="Part of">
-                <label for="isPartOf">I part of </label>
-                <input type="URL" name="isPartOf" id="isPartOf"
-                    placeholder="http://The.Bigger.Framework.org"  />
-            </p>
-        </fieldset>
     </form>
     <form>
         <input type="button" id="generateCodemeta" value="Generate Codemeta" />

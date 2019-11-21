@@ -10,7 +10,7 @@
     display: inline-block;
 }
 
-#fieldsetSoftwareItself, #fieldsetDevelopmentCommunity, #fieldsetCurrentVersion {
+#fieldsetSoftwareItself, #fieldsetDevelopmentCommunity, #fieldsetCurrentVersion, #fieldsetAdditionalInfo {
     display: inline-block;
 }
 
@@ -28,10 +28,9 @@ input[type=URL] {
     /* URLs are longer than the other fields */
     min-width: 20em;
 }
-description {
+.field-description {
     color : rgb(100, 104, 103);
     font-size: small;
-    display: block;
 }
 
 #codemetaText {
@@ -44,10 +43,7 @@ description {
     color: red;
 }
 
-input:valid {
-    color: black;
-  }
 input:invalid {
     color: red;
-  }
+}
   
