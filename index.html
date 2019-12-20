@@ -28,7 +28,9 @@ See top-level LICENSE file for more information
                 <label for="name">Name</label>
                 <input type="text" name="name" id="name" aria-describedby="name_descr"
                     placeholder="My Software" required="true" />
-                <div class="field-description" id="name_descr">the software title</div>
+
+                <br />
+                <span class="field-description" id="name_descr">the software title</span>
             </p>
 
             <p title="a brief description of the software">
@@ -54,10 +56,15 @@ See top-level LICENSE file for more information
 
             <p>
                 <label for="license">License</label>
-                <input list="licenses" name="license" id="license" aria-describedby="licenses_descr">
+                <input list="licenses" name="license" id="license"
+                    aria-describedby="licenses_descr"> <!-- TODO: insert placeholder -->
+
                 <datalist id="licenses">
-                </datalist> <!-- TODO: insert placeholder -->
-                <div class="field-description" id="licenses_descr">from <a href="https://spdx.org/license-list">SPDX licence list</a></div>
+                </datalist>
+                <!-- This datalist is be filled automatically -->
+
+                <br />
+                <span class="field-description" id="licenses_descr">from <a href="https://spdx.org/license-list">SPDX licence list</a></span>
             </p>
         </fieldset>
 
@@ -67,8 +74,12 @@ See top-level LICENSE file for more information
             <p title="Unique identifier">
                 <label for="identifier">Unique identifier</label>
                 <input type="text" name="identifier" id="identifier"
-                    placeholder="10.151.xxxxx"  />
-                    <div class="field-description">such as ISBNs, GTIN codes, UUIDs etc..  <a href="http://schema.org/identifier">http://schema.org/identifier</a> </div>
+                    placeholder="10.151.xxxxx" aria-describedby="identifier_desc" />
+
+                <br />
+                <span class="field-description" id="identifier_descr">
+                    such as ISBNs, GTIN codes, UUIDs etc..  <a href="http://schema.org/identifier">http://schema.org/identifier</a>
+                </span>
             </p>
             <!-- TODO:define better
 
@@ -101,7 +112,9 @@ See top-level LICENSE file for more information
                 <label for="funding">Funding</label>
                 <input type="text" name="funding" id="funding" aria-describedby="funding_descr"
                     placeholder="Università di Pisa (PRA_2018_73)"/>
-                <div class="field-description" id="funding_descr">software funded by (e.g. specific grant)</div>
+
+                <br />
+                <span class="field-description" id="funding_descr">software funded by (e.g. specific grant)</span>
             </p>
 
             Authors and contributors can be added below
@@ -218,7 +231,11 @@ Bugfixes: that and this." ></textarea>
                 </datalist>
                 <input list="developmentStatuses" id="developmentStatus" aria-describedby="developmentStatuses_descr"
                 pattern="Concept|WIP|Suspended|Abandoned|Active|Inactive|Unsupported|Moved">
-                <div class="field-description" id="developmentStatuses_descr">see <a href="http://www.repostatus.org">www.repostatus.org</a> for details</div>
+
+                <br />
+                <span class="field-description" id="developmentStatuses_descr">
+                    see <a href="http://www.repostatus.org">www.repostatus.org</a> for details
+                </span>
             </p>
 
             <p title="Part of">
