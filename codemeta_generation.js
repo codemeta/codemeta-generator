@@ -46,10 +46,7 @@ const directCodemetaFields = [
     'developmentStatus',
     'programmingLanguage',
     'isPartOf',
-    //'referencePublication'
-    //      "@type": "ScholarlyArticle",
-    //      "idendifier": "https://doi.org/xx.xxxx/xxxx.xxxx.xxxx",
-    //      "name": "title of publication"
+    'referencePublication'
     
 ];
 
