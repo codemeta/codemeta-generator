@@ -37,20 +37,20 @@ See top-level LICENSE file for more information
                 <input type="text" name="identifier" id="identifier"
                     placeholder="10.151.xxxxx"  />
                     <div class="field-description">such as ISBNs, GTIN codes, UUIDs etc..  <a href="http://schema.org/identifier">http://schema.org/identifier</a> </div>
-            </p> 
+            </p>
             <!-- TODO:define better
-            
+
             I looked at the schema.org definition of identifier (https://schema.org/identifier),
             it can be text, url or PropertyValue.
             Used as follows in data representation with microdata:
 
             <div property="identifier" typeof="PropertyValue">
-            <span property="propertyID">DOI</span>: 
+            <span property="propertyID">DOI</span>:
             <span property="value">10.151.xxxxx</span>
             </div>
-            we can use that with identifier-type and identifier-value to have a clearer idea 
+            we can use that with identifier-type and identifier-value to have a clearer idea
             of what needs to be in the input.
-            
+
             -->
 
             <p title="Type of the software application">
@@ -61,12 +61,12 @@ See top-level LICENSE file for more information
 
             <p title="a brief description of the software">
                 <label for="description">Description</label>
-                <br>
-                <textarea rows="4" cols="50" 
+                <br />
+                <textarea rows="4" cols="50"
                     name="description" id="description"
                     placeholder="My Software computes ephemerides and orbit propagation. It has been developed from early ´80." ></textarea>
-            </p> 
-            
+            </p>
+
 
             <p title="The date on which the software was created.">
                 <label for="dateCreated">Creation date</label>
@@ -128,13 +128,13 @@ See top-level LICENSE file for more information
 
             <p title="a brief description of the software">
                 <label for="releaseNotes">Release notes</label>
-                <br>
-                <textarea rows="4" cols="50" 
+                <br />
+                <textarea rows="4" cols="50"
                     name="releaseNotes" id="releaseNotes"
                     placeholder=
-"Change log: this and that; 
+"Change log: this and that;
 Bugfixes: that and this." ></textarea>
-            </p> 
+            </p>
 <!--TODO: keywords as a string array -->
 
 <!--TODO: software requirements as string array -->
@@ -153,19 +153,19 @@ Bugfixes: that and this." ></textarea>
                         placeholder="Università di Pisa (PRA_2018_73)"/>
                     <div class="field-description" id="funding_descr">software funded by (e.g. specific grant)</div>
                 </p>
-    
+
                 <p title="Runtime Platform">
                     <label for="runtimePlatform">Runtime Platform</label>
                     <input type="text" name="runtimePlatform" id="runtimePlatform"
                         placeholder="Python2.3"  />
                 </p>
-    
+
                 <p title="Operating System">
                     <label for="operatingSystem">Operating System</label>
                     <input type="text" name="operatingSystem" id="operatingSystem"
                         placeholder="Android 1.6"  />
                 </p>
-    
+
                 <p title="Development Status">
                 <label for="developmentStatus">Development Status</label>
                     <datalist id="developmentStatuses">
@@ -178,17 +178,17 @@ Bugfixes: that and this." ></textarea>
                             <option value="Unsupported">
                             <option value="Moved">
                     </datalist>
-                    <input list="developmentStatuses" id="developmentStatus" aria-describedby="developmentStatuses_descr" 
+                    <input list="developmentStatuses" id="developmentStatus" aria-describedby="developmentStatuses_descr"
                     pattern="Concept|WIP|Suspended|Abandoned|Active|Inactive|Unsupported|Moved">
                     <div class="field-description" id="developmentStatuses_descr">see <a href="http://www.repostatus.org">www.repostatus.org</a> for details</div>
                 </p>
-    
+
                 <p title="Programming Language">
                     <label for="programmingLanguage">Programming Language</label>
                     <input type="text" name="programmingLanguage" id="programmingLanguage"
                         placeholder="C#"  />
                 </p> <!-- TODO: We should add support for multiple languages, eg. by splitting on commas when exporting. -->
-    
+
                 <p title="Part of">
                     <label for="isPartOf">I part of </label>
                     <input type="URL" name="isPartOf" id="isPartOf"
