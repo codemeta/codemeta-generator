@@ -138,22 +138,22 @@ See top-level LICENSE file for more information
         <fieldset id="fieldsetRuntime">
             <legend>Run-time environment</legend>
 
-            <p title="Programming Language">
+            <p title="Programming Languages, separated by commas">
                 <label for="programmingLanguage">Programming Language</label>
                 <input type="text" name="programmingLanguage" id="programmingLanguage"
-                    placeholder="C#"  />
-            </p> <!-- TODO: We should add support for multiple languages, eg. by splitting on commas when exporting. -->
-
-            <p title="Runtime Platform">
-                <label for="runtimePlatform">Runtime Platform</label>
-                <input type="text" name="runtimePlatform" id="runtimePlatform"
-                    placeholder=".NET"  />
+                    placeholder="C#, Java, Python 3"  />
             </p>
 
-            <p title="Operating System">
+            <p title="Runtime Platforms, separated by commas">
+                <label for="runtimePlatform">Runtime Platform</label>
+                <input type="text" name="runtimePlatform" id="runtimePlatform"
+                    placeholder=".NET, JVM" />
+            </p>
+
+            <p title="Operating Systems, separated by commas">
                 <label for="operatingSystem">Operating System</label>
                 <input type="text" name="operatingSystem" id="operatingSystem"
-                    placeholder="Android 1.6"  />
+                    placeholder="Android 1.6, Linux, Windows, macOS" />
             </p>
 
             <p title="Required software to run/use this one.">

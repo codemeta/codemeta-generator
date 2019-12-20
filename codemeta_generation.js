@@ -41,10 +41,7 @@ const directCodemetaFields = [
     'applicationCategory',
     'releaseNotes',
     'funding',
-    'runtimePlatform',
-    'operatingSystem',
     'developmentStatus',
-    'programmingLanguage',
     'isPartOf',
     'referencePublication'
     
@@ -52,6 +49,9 @@ const directCodemetaFields = [
 
 const splittedCodemetaFields = [
     ['keywords', ','],
+    ['programmingLanguage', ','],
+    ['runtimePlatform', ','],
+    ['operatingSystem', ','],
     ['softwareRequirements', '\n'],
     ['relatedLink', '\n'],
 ]
@@ -110,7 +110,7 @@ function generateCodemeta() {
             const separator = item[1];
             const value = getIfSet('#' + id);
             if (value !== undefined) {
-                doc[id] = value.split(separator);
+                doc[id] = value.split(separator).map(trimSpaces);
             }
         });
 

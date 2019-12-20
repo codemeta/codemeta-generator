@@ -20,3 +20,7 @@ function setNbPersons(prefix, nb) {
 function setError(msg) {
     document.querySelector("#errorMessage").innerHTML = msg;
 }
+
+function trimSpaces(s) {
+    return s.replace(/^\s+|\s+$/g, '');
+}
