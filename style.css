@@ -10,8 +10,19 @@
     display: inline-block;
 }
 
-#fieldsetSoftwareItself, #fieldsetDevelopmentCommunity, #fieldsetCurrentVersion, #fieldsetAdditionalInfo {
-    display: inline-block;
+#inputForm {
+    max-width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#fieldsetSoftwareItself, #fieldsetDiscoverabilityAndCitation, #fieldsetDevelopmentCommunity, #fieldsetRuntime, #fieldsetCurrentVersion, #fieldsetAdditionalInfo {
+    flex: auto;
+}
+
+.dynamicFields {
+    width: 100%;
 }
 
 #license {

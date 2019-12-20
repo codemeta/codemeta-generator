@@ -214,33 +214,36 @@ https://github.com/psf/requests"></textarea>
                 </p>
             </fieldset>
 
-        <fieldset class="persons" id="author_container">
-            <legend>Authors</legend>
 
-            <p>Order of authors does not matter.</p>
+        <div class="dynamicFields">
+            <fieldset class="persons" id="author_container">
+                <legend>Authors</legend>
 
-            <input type="hidden" id="author_nb" value="0" />
-            <div id="addRemoveAuthor">
-                <input type="button" id="author_add" value="Add one"
-                    onclick="addPerson('author', 'Author');" />
-                <input type="button" id="author_remove" value="Remove last"
-                    onclick="removePerson('author');" />
-            </div>
-        </fieldset>
+                <p>Order of authors does not matter.</p>
 
-        <fieldset class="persons" id="contributor_container">
-            <legend>Contributors</legend>
+                <input type="hidden" id="author_nb" value="0" />
+                <div id="addRemoveAuthor">
+                    <input type="button" id="author_add" value="Add one"
+                        onclick="addPerson('author', 'Author');" />
+                    <input type="button" id="author_remove" value="Remove last"
+                        onclick="removePerson('author');" />
+                </div>
+            </fieldset>
 
-            <p>Order of contributors does not matter.</p>
+            <fieldset class="persons" id="contributor_container">
+                <legend>Contributors</legend>
 
-            <input type="hidden" id="contributor_nb" value="0" />
-            <div id="addRemoveContributor">
-                <input type="button" id="contributor_add" value="Add one"
-                    onclick="addPerson('contributor', 'Contributor');" />
-                <input type="button" id="contributor_remove" value="Remove last"
-                    onclick="removePerson('contributor');" />
-            </div>
-        </fieldset>
+                <p>Order of contributors does not matter.</p>
+
+                <input type="hidden" id="contributor_nb" value="0" />
+                <div id="addRemoveContributor">
+                    <input type="button" id="contributor_add" value="Add one"
+                        onclick="addPerson('contributor', 'Contributor');" />
+                    <input type="button" id="contributor_remove" value="Remove last"
+                        onclick="removePerson('contributor');" />
+                </div>
+            </fieldset>
+        </div>
 
     </form>
     <form>
