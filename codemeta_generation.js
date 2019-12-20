@@ -39,14 +39,11 @@ const directCodemetaFields = [
     'identifier',
     'description',
     'applicationCategory',
-    //keywords TODO:keywords array 
     'releaseNotes',
     'funding',
     'runtimePlatform',
-    //softwareRequiremnts,
     'operatingSystem',
     'developmentStatus',
-    //relatedLink
     'programmingLanguage',
     'isPartOf',
     //'referencePublication'
@@ -55,6 +52,12 @@ const directCodemetaFields = [
     //      "name": "title of publication"
     
 ];
+
+const splittedCodemetaFields = [
+    ['keywords', ','],
+    ['softwareRequirements', '\n'],
+    ['relatedLink', '\n'],
+]
 
 // Names of codemeta properties with a matching HTML field name,
 // in a Person object
@@ -102,6 +105,16 @@ function generateCodemeta() {
         // Generate most fields
         directCodemetaFields.forEach(function (item, index) {
             doc[item] = getIfSet('#' + item)
+        });
+
+        // Generate simple fields parsed simply by splitting
+        splittedCodemetaFields.forEach(function (item, index) {
+            const id = item[0];
+            const separator = item[1];
+            const value = getIfSet('#' + id);
+            if (value !== undefined) {
+                doc[id] = value.split(separator);
+            }
         });
 
         // Generate dynamic fields
@@ -164,6 +177,19 @@ function importCodemeta() {
 
     directCodemetaFields.forEach(function (item, index) {
         setIfDefined('#' + item, doc[item]);
+    });
+
+    // Import simple fields by joining on their separator
+    splittedCodemetaFields.forEach(function (item, index) {
+        const id = item[0];
+        const separator = item[1];
+        let value = doc[id];
+        if (value !== undefined) {
+            if (Array.isArray(value)) {
+                value = value.join(separator);
+            }
+            setIfDefined('#' + id, value);
+        }
     });
 
     importPersons('author', 'Author', doc['author'])
