@@ -146,7 +146,7 @@ function importPersons(prefix, legend, docs) {
     docs.forEach(function (doc, index) {
         var personId = addPerson(prefix, legend);
 
-        setIfDefined(`#${personId}_id`, doc['@id']);
+        setIfDefined(`#${prefix}_${personId}_id`, doc['@id']);
         directPersonCodemetaFields.forEach(function (item, index) {
             setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
         });
