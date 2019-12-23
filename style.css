@@ -17,7 +17,8 @@
     flex-wrap: wrap;
 }
 
-#fieldsetSoftwareItself, #fieldsetDiscoverabilityAndCitation, #fieldsetDevelopmentCommunity, #fieldsetRuntime, #fieldsetCurrentVersion, #fieldsetAdditionalInfo {
+/* A fieldset that contains only label/input pairs */
+.leafFieldset {
     flex: auto;
 }
 

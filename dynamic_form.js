@@ -11,6 +11,7 @@ function createPersonFieldset(personPrefix, legend) {
     // Creates a fieldset containing inputs for informations about a person
     var fieldset = document.createElement("fieldset")
     fieldset.classList.add("person");
+    fieldset.classList.add("leafFieldset");
     fieldset.id = personPrefix;
     
     fieldset.innerHTML = `
