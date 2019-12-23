@@ -33,6 +33,7 @@ const directCodemetaFields = [
     'dateCreated',
     'datePublished',
     'dateModified',
+    'downloadUrl',
     'issueTracker',
     'name',
     'version',
@@ -44,7 +45,6 @@ const directCodemetaFields = [
     'developmentStatus',
     'isPartOf',
     'referencePublication'
-    
 ];
 
 const splittedCodemetaFields = [
