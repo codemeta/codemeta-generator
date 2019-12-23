@@ -99,6 +99,10 @@ function resetForm() {
     document.querySelector('#inputForm').reset();
 }
 
+function fieldToLower(event) {
+    event.target.value = event.target.value.toLowerCase();
+}
+
 function initCallbacks() {
     document.querySelector('#license')
         .addEventListener('change', validateLicense);
@@ -114,6 +118,9 @@ function initCallbacks() {
 
     document.querySelector('#inputForm')
         .addEventListener('change', generateCodemeta);
+
+    document.querySelector('#developmentStatus')
+        .addEventListener('change', fieldToLower);
 
     initPersons('author', 'Author');
     initPersons('contributor', 'Contributor');
