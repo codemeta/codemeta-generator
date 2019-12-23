@@ -22,6 +22,11 @@
     flex: auto;
 }
 
+p input, p textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .dynamicFields {
     width: 100%;
 }
