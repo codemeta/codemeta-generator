@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - 10
+addons:
+  apt:
+    packages:
+      - libgconf-2-4
+cache:
+  npm: true
+  directories:
+    - ~/.cache
+install:
+  - npm install cypress
+  - $(npm bin)/cypress install
+script:
+  - $(npm bin)/cypress run
