@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2019  The Software Heritage developers
+ * Copyright (C) 2019-2020  The Software Heritage developers
  * See the AUTHORS file at the top-level directory of this distribution
  * License: GNU Affero General Public License version 3, or any later version
  * See top-level LICENSE file for more information
@@ -196,7 +196,7 @@ function importCodemeta() {
 }
 
 function loadStateFromStorage() {
-    codemetaText = sessionStorage.getItem('codemetaText')
+    var codemetaText = sessionStorage.getItem('codemetaText')
     if (codemetaText) {
         document.querySelector('#codemetaText').innerText = codemetaText;
         importCodemeta();
