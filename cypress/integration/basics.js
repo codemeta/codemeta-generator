@@ -30,7 +30,6 @@ describe('JSON Generation', function() {
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "@type": "SoftwareSourceCode",
-                "license": "https://spdx.org/licenses/undefined",
                 "name": "My Test Software",
                 "author": [],
                 "contributor": []

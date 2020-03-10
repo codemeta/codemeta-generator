@@ -96,8 +96,12 @@ function generateCodemeta() {
         var doc = {
             "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
             "@type": "SoftwareSourceCode",
-            "license": SPDX_PREFIX + getIfSet('#license'),
         };
+
+        var license = getIfSet('#license')
+        if (license !== undefined) {
+            doc["license"] = SPDX_PREFIX + getIfSet('#license');
+        }
 
         // Generate most fields
         directCodemetaFields.forEach(function (item, index) {
