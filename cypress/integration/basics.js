@@ -41,7 +41,7 @@ describe('JSON Generation', function() {
         cy.get('#description').type('This is a\ngreat piece of software');
         cy.get('#dateCreated').type('2019-10-02');
         cy.get('#datePublished').type('2020-01-01');
-        cy.get('#license').clear().type('AGPL-3.0');
+        cy.get('#license').type('AGPL-3.0');
         cy.get('#generateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '');
@@ -57,5 +57,54 @@ describe('JSON Generation', function() {
                 "author": [],
                 "contributor": []
         });
+    });
+});
+
+describe('JSON Import', function() {
+    beforeEach(function() {
+        /* Clear the session storage, as it is used to restore field data;
+         * and we don't want a test to load data from the previous test. */
+        cy.window().then((win) => {
+            win.sessionStorage.clear()
+        })
+        cy.visit('./index.html');
+    });
+
+    it('works just from the software name', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [],
+                "contributor": []
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#name').should('have.value', 'My Test Software');
+    });
+
+    it('works just from all main fields', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "license": "https://spdx.org/licenses/AGPL-3.0",
+                "dateCreated": "2019-10-02",
+                "datePublished": "2020-01-01",
+                "name": "My Test Software",
+                "description": "This is a\ngreat piece of software",
+                "author": [],
+                "contributor": []
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#name').should('have.value', 'My Test Software');
+        cy.get('#description').should('have.value', 'This is a\ngreat piece of software');
+        cy.get('#dateCreated').should('have.value', '2019-10-02');
+        cy.get('#datePublished').should('have.value', '2020-01-01');
+        cy.get('#license').should('have.value', 'AGPL-3.0');
     });
 });
