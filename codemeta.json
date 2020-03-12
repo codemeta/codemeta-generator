@@ -2,10 +2,12 @@
     "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
     "@type": "SoftwareSourceCode",
     "license": "https://spdx.org/licenses/AGPL-3.0-only",
-    "codeRepository": "https://forge.softwareheritage.org/source/codemeta-generator/",
+    "codeRepository": "https://github.com/codemeta/codemeta-generator",
     "dateCreated": "2019-10-02",
-    "issueTracker": "https://forge.softwareheritage.org/maniphest/",
+    "issueTracker": "https://github.com/codemeta/codemeta-generator/issues",
+    "continuousIntegration": "https://travis-ci.org/codemeta/codemeta-generator/",
     "name": "Codemeta Generator",
+    "keywords": ["codemeta", "metadata", "json"],
     "author": [
         {
             "@type": "Organization",
