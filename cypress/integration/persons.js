@@ -110,7 +110,10 @@ describe('Persons', function() {
                         "givenName": "Jane",
                         "familyName": "Doe",
                         "email": "jdoe@example.org",
-                        "affiliation": "http://example.org/",
+                        "affiliation": {
+                            "@type": "Organization",
+                            "@id": "http://example.org/",
+                        }
                     }
                 ],
         });
@@ -129,7 +132,10 @@ describe('Persons', function() {
                         "givenName": "Jane",
                         "familyName": "Doe",
                         "email": "jdoe@example.org",
-                        "affiliation": "http://example.org/",
+                        "affiliation": {
+                            "@type": "Organization",
+                            "@id": "http://example.org/",
+                        }
                     }
                 ],
             }))

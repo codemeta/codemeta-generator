@@ -73,6 +73,13 @@ function generatePerson(idPrefix) {
     directPersonCodemetaFields.forEach(function (item, index) {
         doc[item] = getIfSet(`#${idPrefix}_${item}`);
     });
+    var affiliation = getIfSet(`#${idPrefix}_affiliation`);
+    if (affiliation !== undefined) {
+        doc["affiliation"] = {
+            "@type": "Organization",
+            "@id": affiliation,
+        }
+    }
 
     return doc;
 }
@@ -158,6 +165,7 @@ function importPersons(prefix, legend, docs) {
         directPersonCodemetaFields.forEach(function (item, index) {
             setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
         });
+        setIfDefined(`#${prefix}_${personId}_affiliation`, doc['affiliation']['@id']);
     })
 }
 
