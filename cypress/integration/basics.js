@@ -31,8 +31,6 @@ describe('JSON Generation', function() {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
-                "author": [],
-                "contributor": []
         });
     });
 
@@ -54,8 +52,6 @@ describe('JSON Generation', function() {
                 "datePublished": "2020-01-01",
                 "name": "My Test Software",
                 "description": "This is a\ngreat piece of software",
-                "author": [],
-                "contributor": []
         });
     });
 });

@@ -119,10 +119,14 @@ function generateCodemeta() {
         });
 
         // Generate dynamic fields
-        doc = Object.assign(doc, {
-            "author": generatePersons('author'),
-            "contributor": generatePersons('contributor'),
-        });
+        var authors = generatePersons('author');
+        if (authors.length > 0) {
+            doc["author"] = authors;
+        }
+        var contributors = generatePersons('contributor');
+        if (contributors.length > 0) {
+            doc["contributors"] = contributors;
+        }
 
         codemetaText = JSON.stringify(doc, null, 4);
         errorHTML = "";
