@@ -27,20 +27,6 @@ Software Heritage (SWH) archive, which will improve findability in searches.
 - RDA & FORCE11's joint Software Source Code Identification WG
    [repository](https://github.com/force11/force11-rda-scidwg)
 
-## Running it
-
-Start an HTTP server serving the files (nginx, etc.).
-
-The simplest way is probably to use Python's HTTP server:
-
-```
-git clone https://forge.softwareheritage.org/source/codemeta-generator.git
-cd codemeta-generator
-python3 -m http.server
-```
-
-then open [http://localhost:8000/](http://localhost:8000/) in your web browser.
-
 ## Specifications
 
 ### Use case
@@ -61,6 +47,25 @@ a codemeta.json file
 
 This tool was initially prepared for the [FORCE19 Hackathon](https://github.com/force11/force11-rda-scidwg/tree/master/hackathon/FORCE2019).
 
-Contributed by
+## Running local changes
+
+This section only applies to developers who want to contribute to the Codemeta Generator.
+If you only want to use it, you can use
+[the hosted version](https://codemeta.github.io/codemeta-generator/) instead.
+
+To run Codemeta Generator, you just need an HTTP server serving the
+files (nginx, apache2, etc.).
+
+The simplest way is probably to use Python's HTTP server:
+
+```
+git clone https://forge.softwareheritage.org/source/codemeta-generator.git
+cd codemeta-generator
+python3 -m http.server
+```
+
+then open [http://localhost:8000/](http://localhost:8000/) in your web browser.
+
+## Contributed by
 
 ![Image description](https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg)
