@@ -47,11 +47,24 @@ a codemeta.json file
 
 This tool was initially prepared for the [FORCE19 Hackathon](https://github.com/force11/force11-rda-scidwg/tree/master/hackathon/FORCE2019).
 
-## Running local changes
+
+## Code contributions.
 
 This section only applies to developers who want to contribute to the Codemeta Generator.
 If you only want to use it, you can use
 [the hosted version](https://codemeta.github.io/codemeta-generator/) instead.
+
+### Code guidelines
+
+This application is designed to work on popular modern browsers (Firefox,
+Chromium/Google Chrome, Edge, Safari). Check [Caniuse](https://caniuse.com/)
+for availability of features for these browsers.
+
+To keep the architecture simple, we serve javascript files directly to
+browsers, without a compiler or transpiler; and do not use third-party
+dependencies for now.
+
+### Running local changes
 
 To run Codemeta Generator, you just need an HTTP server serving the
 files (nginx, apache2, etc.).
@@ -65,6 +78,26 @@ python3 -m http.server
 ```
 
 then open [http://localhost:8000/](http://localhost:8000/) in your web browser.
+
+### Automatic testing
+
+In addition to manual testing, we have automated tests to check for bugs
+quickly, using [Cypress](https://www.cypress.io/).
+
+To run them, first install Cypress:
+
+```
+sudo apt install npm  # or the equivalent on your system
+npm install cypress
+$(npm bin)/cypress install
+```
+
+Then, run the tests:
+
+```
+$(npm bin)/cypress run
+```
+
 
 ## Contributed by
 
