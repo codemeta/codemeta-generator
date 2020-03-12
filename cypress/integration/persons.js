@@ -152,4 +152,120 @@ describe('Persons', function() {
         cy.get('#author_1_id').should('have.value', 'http://example.org/~jdoe');
         cy.get('#author_1_affiliation').should('have.value', 'http://example.org/');
     });
+
+    it('exports affiliation id', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_1_affiliation').type('http://example.org/');
+
+        cy.get('#generateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "@type": "Person",
+                        "givenName": "Jane",
+                        "affiliation": {
+                            "@type": "Organization",
+                            "@id": "http://example.org/",
+                        }
+                    }
+                ],
+        });
+    });
+
+    it('imports affiliation id', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "@type": "Person",
+                        "@id": "http://example.org/~jdoe",
+                        "givenName": "Jane",
+                        "familyName": "Doe",
+                        "email": "jdoe@example.org",
+                        "affiliation": {
+                            "@type": "Organization",
+                            "@id": "http://example.org/",
+                        }
+                    }
+                ],
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#author_nb').should('have.value', '1');
+        cy.get('#author_0').should('not.exist');
+        cy.get('#author_1').should('exist');
+        cy.get('#author_2').should('not.exist');
+        cy.get('#author_1_affiliation').should('have.value', 'http://example.org/');
+    });
+
+    it('exports affiliation name', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_1_affiliation').type('Example Org');
+
+        cy.get('#generateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "@type": "Person",
+                        "givenName": "Jane",
+                        "affiliation": {
+                            "@type": "Organization",
+                            "name": "Example Org",
+                        }
+                    }
+                ],
+        });
+    });
+
+    it('imports affiliation name', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "@type": "Person",
+                        "@id": "http://example.org/~jdoe",
+                        "givenName": "Jane",
+                        "familyName": "Doe",
+                        "email": "jdoe@example.org",
+                        "affiliation": {
+                            "@type": "Organization",
+                            "name": "Example Org",
+                        }
+                    }
+                ],
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#author_nb').should('have.value', '1');
+        cy.get('#author_0').should('not.exist');
+        cy.get('#author_1').should('exist');
+        cy.get('#author_2').should('not.exist');
+        cy.get('#author_1_affiliation').should('have.value', 'Example Org');
+    });
 });

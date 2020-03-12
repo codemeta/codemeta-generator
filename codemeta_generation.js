@@ -77,7 +77,12 @@ function generatePerson(idPrefix) {
     if (affiliation !== undefined) {
         doc["affiliation"] = {
             "@type": "Organization",
-            "@id": affiliation,
+        }
+        if (isUrl(affiliation)) {
+            doc["affiliation"]["@id"] = affiliation;
+        }
+        else {
+            doc["affiliation"]["name"] = affiliation;
         }
     }
 
@@ -165,6 +170,9 @@ function importPersons(prefix, legend, docs) {
         directPersonCodemetaFields.forEach(function (item, index) {
             setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
         });
+
+        // Use @id if set, else use name
+        setIfDefined(`#${prefix}_${personId}_affiliation`, doc['affiliation']['name']);
         setIfDefined(`#${prefix}_${personId}_affiliation`, doc['affiliation']['@id']);
     })
 }

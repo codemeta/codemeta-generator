@@ -24,3 +24,13 @@ function setError(msg) {
 function trimSpaces(s) {
     return s.replace(/^\s+|\s+$/g, '');
 }
+
+// From https://stackoverflow.com/a/43467144
+function isUrl(s) {
+    try {
+        new URL(s);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
