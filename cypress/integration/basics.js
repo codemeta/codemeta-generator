@@ -76,8 +76,6 @@ describe('JSON Import', function() {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "@type": "SoftwareSourceCode",
                 "name": "My Test Software",
-                "author": [],
-                "contributor": []
             }))
         );
         cy.get('#importCodemeta').click();
@@ -95,8 +93,6 @@ describe('JSON Import', function() {
                 "datePublished": "2020-01-01",
                 "name": "My Test Software",
                 "description": "This is a\ngreat piece of software",
-                "author": [],
-                "contributor": []
             }))
         );
         cy.get('#importCodemeta').click();

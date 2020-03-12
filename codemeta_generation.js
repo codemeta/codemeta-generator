@@ -143,7 +143,7 @@ function generateCodemeta() {
 }
 
 function importPersons(prefix, legend, docs) {
-    if (docs === 'undefined') {
+    if (docs === undefined) {
         return;
     }
 
