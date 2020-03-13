@@ -198,16 +198,7 @@ function importPersons(prefix, legend, docs) {
 
 function importCodemeta() {
     var inputForm = document.querySelector('#inputForm');
-    var codemetaText = document.querySelector('#codemetaText').innerText;
-    var doc;
-
-    try {
-        doc = JSON.parse(codemetaText);
-    }
-    catch (e) {
-        setError(`Could not read codemeta document because it is not valid JSON (${e}). Check for missing or extra quote, colon, or bracket characters.`);
-        return;
-    }
+    var doc = parseAndValidateCodemeta(false);
     resetForm();
 
     if (doc['license'] !== undefined && doc['license'].indexOf(SPDX_PREFIX) == 0) {
@@ -235,8 +226,6 @@ function importCodemeta() {
 
     importPersons('author', 'Author', doc['author'])
     importPersons('contributor', 'Contributor', doc['contributor'])
-
-    setError("");
 }
 
 function loadStateFromStorage() {

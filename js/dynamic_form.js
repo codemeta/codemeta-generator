@@ -114,6 +114,9 @@ function initCallbacks() {
     document.querySelector('#resetForm')
         .addEventListener('click', resetForm);
 
+    document.querySelector('#validateCodemeta')
+        .addEventListener('click', () => parseAndValidateCodemeta(true));
+
     document.querySelector('#importCodemeta')
         .addEventListener('click', importCodemeta);
 

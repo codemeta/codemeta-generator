@@ -13,6 +13,7 @@ See top-level LICENSE file for more information
     <script src="./js/fields_data.js"></script>
     <script src="./js/dynamic_form.js"></script>
     <script src="./js/codemeta_generation.js"></script>
+    <script src="./js/validation.js"></script>
     <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 <body>
@@ -304,6 +305,8 @@ Bugfixes: that and this." ></textarea>
             title="Creates a Codemeta file below, from the information provided above." />
         <input type="button" id="resetForm" value="Reset form"
             title="Erases all fields." />
+        <input type="button" id="validateCodemeta" value="Validate Codemeta"
+            title="Checks the Codemta file below is valid, and displays errors." />
         <input type="button" id="importCodemeta" value="Import Codemeta"
             title="Fills the fields above based on the Codemeta file below." />
     </form>
