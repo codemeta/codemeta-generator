@@ -205,7 +205,7 @@ function importCodemeta() {
         doc = JSON.parse(codemetaText);
     }
     catch (e) {
-        setError(`Could not read codemeta document because it is not valid JSON (${e})`);
+        setError(`Could not read codemeta document because it is not valid JSON (${e}). Check for missing or extra quote, colon, or bracket characters.`);
         return;
     }
     resetForm();
