@@ -6,6 +6,11 @@
  */
 
 
+
+#noscriptError {
+    color: red;
+}
+
 .person {
     display: inline-block;
 }
