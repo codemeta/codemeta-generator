@@ -65,6 +65,27 @@ const directPersonCodemetaFields = [
     'affiliation'   
 ];
 
+function generateShortOrg(fieldName) {
+    var affiliation = getIfSet(fieldName);
+    if (affiliation !== undefined) {
+        if (isUrl(affiliation)) {
+            return {
+                "@type": "Organization",
+                "@id": affiliation,
+            };
+        }
+        else {
+            return {
+                "@type": "Organization",
+                "name": affiliation,
+            };
+        }
+    }
+    else {
+        return undefined;
+    }
+}
+
 function generatePerson(idPrefix) {
     var doc = {
         "@type": "Person",
@@ -73,18 +94,7 @@ function generatePerson(idPrefix) {
     directPersonCodemetaFields.forEach(function (item, index) {
         doc[item] = getIfSet(`#${idPrefix}_${item}`);
     });
-    var affiliation = getIfSet(`#${idPrefix}_affiliation`);
-    if (affiliation !== undefined) {
-        doc["affiliation"] = {
-            "@type": "Organization",
-        }
-        if (isUrl(affiliation)) {
-            doc["affiliation"]["@id"] = affiliation;
-        }
-        else {
-            doc["affiliation"]["name"] = affiliation;
-        }
-    }
+    doc["affiliation"] = generateShortOrg(`#${idPrefix}_affiliation`)
 
     return doc;
 }
@@ -119,6 +129,8 @@ function generateCodemeta() {
         directCodemetaFields.forEach(function (item, index) {
             doc[item] = getIfSet('#' + item)
         });
+
+        doc["funder"] = generateShortOrg('#funder', doc["affiliation"]);
 
         // Generate simple fields parsed simply by splitting
         splittedCodemetaFields.forEach(function (item, index) {
@@ -158,6 +170,15 @@ function generateCodemeta() {
     }
 }
 
+// Imports a single field (name or @id) from an Organization.
+function importShortOrg(fieldName, doc) {
+    if (doc !== undefined) {
+        // Use @id if set, else use name
+        setIfDefined(fieldName, doc["name"]);
+        setIfDefined(fieldName, doc["@id"]);
+    }
+}
+
 function importPersons(prefix, legend, docs) {
     if (docs === undefined) {
         return;
@@ -171,9 +192,7 @@ function importPersons(prefix, legend, docs) {
             setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
         });
 
-        // Use @id if set, else use name
-        setIfDefined(`#${prefix}_${personId}_affiliation`, doc['affiliation']['name']);
-        setIfDefined(`#${prefix}_${personId}_affiliation`, doc['affiliation']['@id']);
+        importShortOrg(`#${prefix}_${personId}_affiliation`, doc['affiliation'])
     })
 }
 
@@ -199,6 +218,7 @@ function importCodemeta() {
     directCodemetaFields.forEach(function (item, index) {
         setIfDefined('#' + item, doc[item]);
     });
+    importShortOrg('#funder', doc["funder"]);
 
     // Import simple fields by joining on their separator
     splittedCodemetaFields.forEach(function (item, index) {
