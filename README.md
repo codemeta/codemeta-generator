@@ -72,7 +72,7 @@ files (nginx, apache2, etc.).
 The simplest way is probably to use Python's HTTP server:
 
 ```
-git clone https://forge.softwareheritage.org/source/codemeta-generator.git
+git clone https://github.com/codemeta/codemeta-generator
 cd codemeta-generator
 python3 -m http.server
 ```
