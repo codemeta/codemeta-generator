@@ -11,19 +11,8 @@
 
 "use strict";
 
-describe('Persons', function() {
-    beforeEach(function() {
-        /* Clear the session storage, as it is used to restore field data;
-         * and we don't want a test to load data from the previous test. */
-        cy.window().then((win) => {
-            win.sessionStorage.clear()
-        })
-        cy.visit('./index.html');
-    });
-
-    // No author:
-
-    it('exports when there are no author', function() {
+describe('Zero author', function() {
+    it('can be exported', function() {
         cy.get('#name').type('My Test Software');
         cy.get('#generateCodemeta').click();
 
@@ -36,7 +25,7 @@ describe('Persons', function() {
         });
     });
 
-    it('imports missing author', function() {
+    it('can be imported from no list', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -51,7 +40,7 @@ describe('Persons', function() {
         cy.get('#author_1').should('not.exist');
     });
 
-    it('imports empty author list', function() {
+    it('can be imported from empty list', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -66,10 +55,10 @@ describe('Persons', function() {
         cy.get('#author_0').should('not.exist');
         cy.get('#author_1').should('not.exist');
     });
+});
 
-    // Single author:
-
-    it('exports single full author', function() {
+describe('One full author', function() {
+    it('can be exported', function() {
         cy.get('#name').type('My Test Software');
 
         cy.get('#author_nb').should('have.value', '0');
@@ -119,7 +108,7 @@ describe('Persons', function() {
         });
     });
 
-    it('imports single full author', function() {
+    it('can be imported', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -152,8 +141,10 @@ describe('Persons', function() {
         cy.get('#author_1_id').should('have.value', 'http://example.org/~jdoe');
         cy.get('#author_1_affiliation').should('have.value', 'http://example.org/');
     });
+});
 
-    it('exports affiliation id', function() {
+describe('Affiliation id', function() {
+    it('can be exported', function() {
         cy.get('#name').type('My Test Software');
 
         cy.get('#author_add').click();
@@ -181,7 +172,7 @@ describe('Persons', function() {
         });
     });
 
-    it('imports affiliation id', function() {
+    it('can be imported', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -210,8 +201,10 @@ describe('Persons', function() {
         cy.get('#author_2').should('not.exist');
         cy.get('#author_1_affiliation').should('have.value', 'http://example.org/');
     });
+});
 
-    it('exports affiliation name', function() {
+describe('Affiliation name', function() {
+    it('can be exported', function() {
         cy.get('#name').type('My Test Software');
 
         cy.get('#author_add').click();
@@ -239,7 +232,7 @@ describe('Persons', function() {
         });
     });
 
-    it('imports affiliation name', function() {
+    it('can be imported', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
