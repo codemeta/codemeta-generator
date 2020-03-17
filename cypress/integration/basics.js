@@ -90,4 +90,21 @@ describe('JSON Import', function() {
         cy.get('#datePublished').should('have.value', '2020-01-01');
         cy.get('#license').should('have.value', 'AGPL-3.0');
     });
+
+    it('errors on invalid type', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "foo",
+                "name": "My Test Software",
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        // Should still be imported as much as possible
+        cy.get('#name').should('have.value', 'My Test Software');
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', 'Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not "foo"');
+    });
 });

@@ -354,7 +354,7 @@ function validateDocument(doc) {
             }
             else if (fieldName == "type" || fieldName == "@type") {
                 if (subdoc != "SoftwareSourceCode" && subdoc != "SoftwareApplication") {
-                    setError(`Wrong type (must be SoftwareSourceCode or SoftwareApplication), not ${JSON.stringify(subdoc)}`)
+                    setError(`Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not ${JSON.stringify(subdoc)}`)
                     return false
                 }
                 else {
