@@ -21,7 +21,7 @@ function validateUrls(fieldName, doc) {
     if (Array.isArray(doc)) {
         return doc.every((url) => {
             if (typeof url != 'string') {
-                setError(`"${fieldName}" must be a list of URLs (or an URL), but it contains: ${JSON.stringify(url)}`);
+                setError(`"${fieldName}" must be a list of URLs (or a single URL), but it contains: ${JSON.stringify(url)}`);
                 return false;
             }
             else {
@@ -33,7 +33,7 @@ function validateUrls(fieldName, doc) {
         return validateUrl(fieldName, doc);
     }
     else {
-        setError(`"${fieldName}" must be an URL (or a list of URLs), not: ${JSON.stringify(url)}`);
+        setError(`"${fieldName}" must be an URL (or a list of URLs), not: ${JSON.stringify(doc)}`);
         return false;
     }
 }

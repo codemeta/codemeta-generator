@@ -25,7 +25,7 @@ describe('Validation', function() {
         cy.get('#errorMessage').should('have.text', '');
     });
 
-    it('works just from all main fields', function() {
+    it('accepts all main fields', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -58,6 +58,120 @@ describe('Validation', function() {
 
         // But must display an error
         cy.get('#errorMessage').should('have.text', 'Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not "foo"');
+    });
+});
+
+describe('URL validation', function() {
+    it('accepts empty list of URLs', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": ["http://example.org/", "http://example.com/"],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts valid URL', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": "http://example.org/",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('errors on invalid URL', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": "foo",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', 'Invalid URL in field "codeRepository": "foo"');
+    });
+
+    it('errors on non-string instead of URL', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": {},
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', '"codeRepository" must be an URL (or a list of URLs), not: {}');
+    });
+
+    it('accepts list of URLs', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": ["http://example.org/", "http://example.com/"],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('errors on list with an invalid URL at the end', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": ["http://example.org/", "foo"],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', 'Invalid URL in field "codeRepository": "foo"');
+    });
+
+    it('errors on list with an invalid URL at the beginning', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": ["http://example.org/", "foo"],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', 'Invalid URL in field "codeRepository": "foo"');
+    });
+
+    it('errors on non-string in URL list', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": ["http://example.org/", {}],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        // But must display an error
+        cy.get('#errorMessage').should('have.text', '"codeRepository" must be a list of URLs (or a single URL), but it contains: {}');
     });
 });
 
