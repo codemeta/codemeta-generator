@@ -16,26 +16,33 @@
 function noValidation(fieldName, doc) {
 }
 
-// Validates an URL or an array of URLs
-function validateUrls(fieldName, doc) {
+
+// Helper function to validate a field is either X or a list of X.
+function validateListOrSingle(fieldName, doc, validator) {
     if (Array.isArray(doc)) {
-        return doc.every((url) => {
-            if (typeof url != 'string') {
-                setError(`"${fieldName}" must be a list of URLs (or a single URL), but it contains: ${JSON.stringify(url)}`);
-                return false;
-            }
-            else {
-                return validateUrl(fieldName, url);
-            }
-        })
-    }
-    else if (typeof doc == 'string') {
-        return validateUrl(fieldName, doc);
+        return doc.every((subdoc) => validator(subdoc, true));
     }
     else {
-        setError(`"${fieldName}" must be an URL (or a list of URLs), not: ${JSON.stringify(doc)}`);
-        return false;
+        return validator(doc, false);
     }
+}
+
+// Validates an URL or an array of URLs
+function validateUrls(fieldName, doc) {
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
+        if (typeof subdoc != 'string') {
+            if (inList) {
+                setError(`"${fieldName}" must be a list of URLs (or a single URL), but it contains: ${JSON.stringify(subdoc)}`);
+            }
+            else {
+                setError(`"${fieldName}" must be an URL (or a list of URLs), not: ${JSON.stringify(subdoc)}`);
+            }
+            return false;
+        }
+        else {
+            return validateUrl(fieldName, subdoc);
+        }
+    });
 }
 
 // Validates a single URL
@@ -51,46 +58,38 @@ function validateUrl(fieldName, doc) {
 
 // Validates a Text/URL or an array of Texts/URLs
 function validateTextsOrUrls(fieldName, doc) {
-    if (Array.isArray(doc)) {
-        return doc.every((item) => {
-            if (typeof item != 'string') {
-                setError(`"${fieldName}" must be a list of texts/URLs (or a single text/URL), but it contains: ${JSON.stringify(item)}`);
-                return false;
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
+        if (typeof subdoc != 'string') {
+            if (inList) {
+                setError(`"${fieldName}" must be a list of texts/URLs (or a single text/URL), but it contains: ${JSON.stringify(subdoc)}`);
             }
             else {
-                return true;
+                setError(`"${fieldName}" must be a text/URL (or a list of texts/URLs), not: ${JSON.stringify(subdoc)}`);
             }
-        })
-    }
-    else if (typeof doc == 'string') {
-        return true;
-    }
-    else {
-        setError(`"${fieldName}" must be a text/URL (or a list of texts/URLs), not: ${JSON.stringify(doc)}`);
-        return false;
-    }
+            return false;
+        }
+        else {
+            return true;
+        }
+    });
 }
 
 // Validates a Text or an array of Texts
 function validateTexts(fieldName, doc) {
-    if (Array.isArray(doc)) {
-        return doc.every((item) => {
-            if (typeof item != 'string') {
-                setError(`"${fieldName}" must be a list of texts (or a single text), but it contains: ${JSON.stringify(url)}`);
-                return false;
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
+        if (typeof subdoc != 'string') {
+            if (inList) {
+                setError(`"${fieldName}" must be a list of texts (or a single text), but it contains: ${JSON.stringify(subdoc)}`);
             }
             else {
-                return true;
+                setError(`"${fieldName}" must be a text (or a list of texts), not: ${JSON.stringify(subdoc)}`);
             }
-        })
-    }
-    else if (typeof doc == 'string') {
-        return true;
-    }
-    else {
-        setError(`"${fieldName}" must be a text (or a list of texts), not: ${JSON.stringify(doc)}`);
-        return false;
-    }
+            return false;
+        }
+        else {
+            return true;
+        }
+    });
 }
 
 // Validates a single Text
@@ -106,24 +105,20 @@ function validateText(fieldName, doc) {
 
 // Validates a Number or list of Number
 function validateNumbers(fieldName, doc) {
-    if (Array.isArray(doc)) {
-        return doc.every((subdoc) => {
-            if (typeof subdoc != 'number') {
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
+        if (typeof subdoc != 'number') {
+            if (inList) {
                 setError(`"${fieldName}" must be an array of numbers (or a single number), but contains: ${JSON.stringify(subdoc)}`);
-                return false;
             }
             else {
-                return true;
+                setError(`"${fieldName}" must be a number or an array of numbers, not: ${JSON.stringify(subdoc)}`);
             }
-        })
-    }
-    else if (typeof doc != 'number') {
-        setError(`"${fieldName}" must be a number or an array of numbers, not: ${JSON.stringify(subdoc)}`);
-        return false;
-    }
-    else {
-        return true;
-    }
+            return false;
+        }
+        else {
+            return true;
+        }
+    });
 }
 
 // Validates a single Text or Number
@@ -169,12 +164,9 @@ function validateDate(fieldName, doc) {
 
 // Validates a CreativeWork or an array of CreativeWork
 function validateCreativeWorks(fieldName, doc) {
-    if (Array.isArray(doc)) {
-        return doc.every((subdoc) => validateCreativeWork(fieldName, subdoc));
-    }
-    else {
-        return validateCreativeWork(fieldName, doc);
-    }
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
+        return validateCreativeWork(fieldName, subdoc);
+    });
 }
 
 // Validates a single CreativeWork
@@ -225,32 +217,23 @@ function validateCreativeWork(fieldName, doc) {
 
 // Validates a Person, Organization or an array of these
 function validateActors(fieldName, doc) {
-    if (Array.isArray(doc)) {
-        return doc.every((subdoc) => validateActor(fieldName, subdoc));
-    }
-    else {
-        return validateActor(fieldName, doc);
-    }
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
+        return validateActor(fieldName, subdoc);
+    });
 }
 
 // Validates a Person or an array of Person
 function validatePersons(fieldName, doc) {
-    if (Array.isArray(doc)) {
-        return doc.every((subdoc) => validatePerson(fieldName, subdoc));
-    }
-    else {
-        return validatePerson(fieldName, doc);
-    }
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
+        return validatePerson(fieldName, subdoc);
+    });
 }
 
 // Validates an Organization or an array of Organization
 function validateOrganizations(fieldName, doc) {
-    if (Array.isArray(doc)) {
-        return doc.forEach((subdoc) => validateOrganization(fieldName, subdoc));
-    }
-    else {
+    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
         return validateOrganization(fieldName, doc);
-    }
+    });
 }
 
 // Validates a single Person or Organization

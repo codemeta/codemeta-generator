@@ -6,4 +6,3 @@ beforeEach(function() {
     })
     cy.visit('./index.html');
 });
-
