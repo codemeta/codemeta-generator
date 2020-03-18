@@ -49,6 +49,50 @@ function validateUrl(fieldName, doc) {
     }
 }
 
+// Validates a Text/URL or an array of Texts/URLs
+function validateTextsOrUrls(fieldName, doc) {
+    if (Array.isArray(doc)) {
+        return doc.every((item) => {
+            if (typeof item != 'string') {
+                setError(`"${fieldName}" must be a list of texts/URLs (or a single text/URL), but it contains: ${JSON.stringify(url)}`);
+                return false;
+            }
+            else {
+                return true;
+            }
+        })
+    }
+    else if (typeof doc == 'string') {
+        return true;
+    }
+    else {
+        setError(`"${fieldName}" must be a text/URL (or a list of texts/URLs), not: ${JSON.stringify(doc)}`);
+        return false;
+    }
+}
+
+// Validates a Text or an array of Texts
+function validateTexts(fieldName, doc) {
+    if (Array.isArray(doc)) {
+        return doc.every((item) => {
+            if (typeof item != 'string') {
+                setError(`"${fieldName}" must be a list of texts (or a single text), but it contains: ${JSON.stringify(url)}`);
+                return false;
+            }
+            else {
+                return true;
+            }
+        })
+    }
+    else if (typeof doc == 'string') {
+        return true;
+    }
+    else {
+        setError(`"${fieldName}" must be a text (or a list of texts), not: ${JSON.stringify(doc)}`);
+        return false;
+    }
+}
+
 // Validates a single Text
 function validateText(fieldName, doc) {
     if (typeof doc != 'string') {
@@ -79,6 +123,20 @@ function validateNumbers(fieldName, doc) {
     }
     else {
         return true;
+    }
+}
+
+// Validates a single Text or Number
+function validateNumberOrText(fieldName, doc) {
+    if (typeof doc == 'string') {
+        return true;
+    }
+    else if (typeof doc == 'number') {
+        return true;
+    }
+    else {
+        setError(`"${fieldName}" must be text or a number, not ${JSON.stringify(doc)}`);
+        return false;
     }
 }
 
@@ -259,22 +317,22 @@ function validateOrganization(fieldName, doc) {
 var softwareFieldValidators = {
     "codeRepository": validateUrls,
     "programmingLanguage": noValidation,
-    "runtimePlatform": noValidation,
+    "runtimePlatform": validateTexts,
     "targetProduct": noValidation, // TODO: validate SoftwareApplication
-    "applicationCategory": noValidation,
-    "applicationSubCategory": noValidation,
+    "applicationCategory": validateTextsOrUrls,
+    "applicationSubCategory": validateTextsOrUrls,
     "downloadUrl": validateUrls,
-    "fileSize": noValidation, // TODO
+    "fileSize": validateText,  // TODO
     "installUrl": validateUrls,
-    "memoryRequirements": noValidation,
-    "operatingSystem": noValidation,
-    "permissions": noValidation,
-    "processorRequirements": noValidation,
-    "releaseNotes": noValidation,
+    "memoryRequirements": validateTextsOrUrls,
+    "operatingSystem": validateTexts,
+    "permissions": validateTexts,
+    "processorRequirements": validateTexts,
+    "releaseNotes": validateTextsOrUrls,
     "softwareHelp": validateCreativeWorks,
     "softwareRequirements": noValidation, // TODO: validate SoftwareSourceCode
-    "softwareVersion": noValidation, // TODO?
-    "storageRequirements": noValidation,
+    "softwareVersion": validateText, // TODO?
+    "storageRequirements": validateTextsOrUrls,
     "supportingData": noValidation, // TODO
     "author": validateActors,
     "citation": validateCreativeWorks, // TODO
@@ -287,15 +345,15 @@ var softwareFieldValidators = {
     "datePublished": validateDate,
     "editor": validatePersons,
     "encoding": noValidation,
-    "fileFormat": noValidation,
+    "fileFormat": validateTextsOrUrls,
     "funder": validateActors,
-    "keywords": noValidation,
+    "keywords": validateTexts,
     "license": validateCreativeWorks, // TODO
     "producer": validateActors,
     "provider": validateActors,
     "publisher": validateActors,
     "sponsor": validateActors,
-    "version": noValidation,
+    "version": validateNumberOrText,
     "isAccessibleForFree": validateBoolean,
     "isPartOf": validateCreativeWorks,
     "hasPart": validateCreativeWorks,
