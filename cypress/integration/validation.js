@@ -56,7 +56,6 @@ describe('Validation', function() {
 
         cy.get('#name').should('have.value', '');
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', 'Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not "foo"');
     });
 });
@@ -72,7 +71,6 @@ describe('URL validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', '');
     });
 
@@ -86,7 +84,6 @@ describe('URL validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', '');
     });
 
@@ -100,7 +97,6 @@ describe('URL validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', 'Invalid URL in field "codeRepository": "foo"');
     });
 
@@ -114,7 +110,6 @@ describe('URL validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', '"codeRepository" must be an URL (or a list of URLs), not: {}');
     });
 
@@ -128,7 +123,6 @@ describe('URL validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', '');
     });
 
@@ -142,7 +136,6 @@ describe('URL validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', 'Invalid URL in field "codeRepository": "foo"');
     });
 
@@ -156,7 +149,6 @@ describe('URL validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', 'Invalid URL in field "codeRepository": "foo"');
     });
 
@@ -170,7 +162,6 @@ describe('URL validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        // But must display an error
         cy.get('#errorMessage').should('have.text', '"codeRepository" must be a list of URLs (or a single URL), but it contains: {}');
     });
 });
