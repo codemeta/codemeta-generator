@@ -54,7 +54,7 @@ function validateTextsOrUrls(fieldName, doc) {
     if (Array.isArray(doc)) {
         return doc.every((item) => {
             if (typeof item != 'string') {
-                setError(`"${fieldName}" must be a list of texts/URLs (or a single text/URL), but it contains: ${JSON.stringify(url)}`);
+                setError(`"${fieldName}" must be a list of texts/URLs (or a single text/URL), but it contains: ${JSON.stringify(item)}`);
                 return false;
             }
             else {
@@ -392,6 +392,9 @@ function validateDocument(doc) {
         setError("Document must be an object (starting and ending with { and }), not ${typeof doc}.")
         return false;
     }
+    // TODO: validate id/@id
+
+    // TODO: check there is either type or @type but not both
     var type = doc["type"] || doc["@type"];
     if (type === undefined) {
         setError("Missing type (must be SoftwareSourceCode or SoftwareApplication).")

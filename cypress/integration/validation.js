@@ -60,13 +60,13 @@ describe('Validation', function() {
     });
 });
 
-describe('URL validation', function() {
-    it('accepts empty list of URLs', function() {
+describe('URLs validation', function() {
+    it('accepts valid URL', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "@type": "SoftwareSourceCode",
-                "codeRepository": ["http://example.org/", "http://example.com/"],
+                "codeRepository": "http://example.org/",
             }))
         );
         cy.get('#validateCodemeta').click();
@@ -74,12 +74,25 @@ describe('URL validation', function() {
         cy.get('#errorMessage').should('have.text', '');
     });
 
-    it('accepts valid URL', function() {
+    it('accepts empty list of URLs', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "@type": "SoftwareSourceCode",
-                "codeRepository": "http://example.org/",
+                "codeRepository": [],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts list of valid URLs', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": ["http://example.org/", "http://example.com/"],
             }))
         );
         cy.get('#validateCodemeta').click();
@@ -111,19 +124,6 @@ describe('URL validation', function() {
         cy.get('#validateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '"codeRepository" must be an URL (or a list of URLs), not: {}');
-    });
-
-    it('accepts list of URLs', function() {
-        cy.get('#codemetaText').then((elem) =>
-            elem.text(JSON.stringify({
-                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
-                "codeRepository": ["http://example.org/", "http://example.com/"],
-            }))
-        );
-        cy.get('#validateCodemeta').click();
-
-        cy.get('#errorMessage').should('have.text', '');
     });
 
     it('errors on list with an invalid URL at the end', function() {
@@ -163,6 +163,153 @@ describe('URL validation', function() {
         cy.get('#validateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '"codeRepository" must be a list of URLs (or a single URL), but it contains: {}');
+    });
+});
+
+describe('Texts or URLs validation', function() {
+    it('accepts valid Text', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "applicationCategory": "foo",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts valid URL', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "applicationCategory": "http://example.org/",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts empty list of Texts', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "applicationCategory": [],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts list of Texts', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "applicationCategory": ["foo", "bar"],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('errors on non-string instead of Text', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "applicationCategory": {},
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"applicationCategory" must be a text/URL (or a list of texts/URLs), not: {}');
+    });
+
+    it('errors on list with an invalid Text at the beginning', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "applicationCategory": [{}, "foo"],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"applicationCategory" must be a list of texts/URLs (or a single text/URL), but it contains: {}');
+    });
+
+    it('errors on list with an invalid Text at the end', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "applicationCategory": ["foo", {}],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"applicationCategory" must be a list of texts/URLs (or a single text/URL), but it contains: {}');
+    });
+});
+
+describe('Text validation', function() {
+    it('accepts valid Text', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "description": "foo",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('errors on empty list of Texts', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "description": [],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"description" must be text, not []');
+    });
+
+    it('errors on list of Texts', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "description": ["foo", "bar"],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"description" must be text, not ["foo","bar"]');
+    });
+
+    it('errors on non-string instead of Text', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "description": {},
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"description" must be text, not {}');
     });
 });
 
