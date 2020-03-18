@@ -143,7 +143,7 @@ function validateNumberOrText(fieldName, doc) {
 // Validates a single Boolean
 function validateBoolean(fieldName, doc) {
     if (typeof doc != 'boolean') {
-        setError(`"${fieldName}" must be a boolean (ie. "true" or "false"), not: ${JSON.stringify(subdoc)}`);
+        setError(`"${fieldName}" must be a boolean (ie. "true" or "false"), not ${JSON.stringify(subdoc)}`);
         return false;
     }
     else {
@@ -155,11 +155,11 @@ function validateBoolean(fieldName, doc) {
 function validateDate(fieldName, doc) {
     let re = /^\d{4}-\d{2}-\d{2}$/;
     if (typeof doc != 'string') {
-        setError(`"${fieldName}" must be a string representing a date, not: ${JSON.stringify(subdoc)}`);
+        setError(`"${fieldName}" must be a date, not ${JSON.stringify(doc)}`);
         return false;
     }
     else if (!doc.match(re)) {
-        setError(`"${fieldName}" must be date in the format YYYY-MM-DD, not: ${JSON.stringify(subdoc)}`);
+        setError(`"${fieldName}" must be a date in the format YYYY-MM-DD, not ${JSON.stringify(doc)}`);
         return false;
     }
     else {
