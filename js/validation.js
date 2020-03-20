@@ -193,7 +193,7 @@ function validateCreativeWork(fieldName, doc) {
             return false;
         }
 
-        var type = doc["type"] || doc["@type"];
+        var type = getDocumentType(doc);
         if (type === undefined) {
             if (id === undefined) {
                 setError(`"${fieldName}" must be a (list of) CreativeWork object, but it is missing a type/@type.`);
@@ -204,8 +204,7 @@ function validateCreativeWork(fieldName, doc) {
                 return true;
             }
         }
-        else if (type != "CreativeWork" || type != "schema:CreativeWork" || type != "http://schema.org/CreativeWork") {
-            // FIXME: is the first variant allowed?
+        else if (isCompactTypeEqual(type, "CreativeWork")) {
             setError(`"${fieldName}" must be a (list of) CreativeWork object, not ${JSON.stringify(doc)}`);
             return false;
         }
