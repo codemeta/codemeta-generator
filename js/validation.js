@@ -367,7 +367,7 @@ var softwareFieldValidators = {
     "contributor": validateActors,
     "copyrightHolder": validateActors,
     "copyrightYear": validateNumbers,
-    "creator": validateActors,
+    "creator": validateActors, // TODO: still in codemeta 2.0, but removed from master
     "dateCreated": validateDate,
     "dateModified": validateDate,
     "datePublished": validateDate,
