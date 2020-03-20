@@ -90,6 +90,21 @@ describe('Document validation', function() {
 
         cy.get('#errorMessage').should('have.text', 'Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not "foo"');
     });
+
+    it('errors on invalid field name', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "foobar": "baz",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#name').should('have.value', '');
+
+        cy.get('#errorMessage').should('have.text', 'Unknown field "foobar".');
+    });
 });
 
 describe('URLs validation', function() {

@@ -422,7 +422,9 @@ function validateDocument(doc) {
             else {
                 var validator = softwareFieldValidators[fieldName];
                 if (validator === undefined) {
-                    setError(`Invalid field "${fieldName}".`)
+                    // TODO: find if it's a field that belongs to another type,
+                    // and suggest that to the user
+                    setError(`Unknown field "${fieldName}".`)
                     return false;
                 }
                 else {
