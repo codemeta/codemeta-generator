@@ -88,7 +88,7 @@ describe('Document validation', function() {
 
         cy.get('#name').should('have.value', '');
 
-        cy.get('#errorMessage').should('have.text', 'Wrong document type: must be "SoftwareSourceCode" or "SoftwareApplication", not "foo"');
+        cy.get('#errorMessage').should('have.text', 'Wrong document type: must be "SoftwareSourceCode"/"SoftwareApplication", not "foo"');
     });
 
     it('errors on invalid field name', function() {
@@ -464,7 +464,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 
     it('errors on Person with wrong type', function() {
@@ -479,7 +479,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Person or Organization object(s), not "SoftwareSourceCode"');
+        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Person/Organization object(s), not "SoftwareSourceCode"');
     });
 
     it('errors on Person with unknown field', function() {
@@ -562,7 +562,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 
     it('errors on list with invalid Person at the end', function() {
@@ -586,7 +586,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 });
 
@@ -622,7 +622,7 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 
     it('errors on Organization with wrong type', function() {
@@ -637,7 +637,7 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Person or Organization object(s), not "SoftwareSourceCode"');
+        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Person/Organization object(s), not "SoftwareSourceCode"');
     });
 
     it('errors on Organization with unknown field', function() {
@@ -714,7 +714,7 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 
     it('errors on list with invalid Organization at the end', function() {
@@ -735,6 +735,88 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
+    });
+});
+
+describe('CreativeWork validation', function() {
+    it('accepts valid CreativeWork', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "Small Software",
+                "isPartOf": {
+                    "type": "CreativeWork",
+                    "name": "Big Creative Work",
+                    "author": "http://example.org/~jdoe",
+                    "keywords": ["foo", "bar"],
+                }
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('errors on CreativeWork with missing type', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": {
+                }
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"isPartOf" must be a (list of) CreativeWork/SoftwareSourceCode/SoftwareApplication object(s) or an URI, but is missing a type/@type.');
+    });
+
+    it('errors on CreativeWork with wrong type', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": {
+                    "type": "Person",
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"isPartOf" type must be a (list of) CreativeWork/SoftwareSourceCode/SoftwareApplication object(s), not "Person"');
+    });
+
+    it('errors on CreativeWork with unknown field', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": {
+                    "type": "CreativeWork",
+                    "foo": "bar",
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', 'Unknown field "foo" in "isPartOf".');
+    });
+
+    it('errors on CreativeWork with invalid field', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": {
+                    "type": "CreativeWork",
+                    "url": 32,
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"url" must be an URL (or a list of URLs), not: 32');
     });
 });

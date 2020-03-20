@@ -29,7 +29,7 @@ function validateDocument(doc) {
     else if (!isCompactTypeEqual(type, "SoftwareSourceCode") && !isCompactTypeEqual(type, "SoftwareApplication")) {
         // Check this before other fields, as a wrong type error is more
         // understandable than "invalid field".
-        setError(`Wrong document type: must be "SoftwareSourceCode" or "SoftwareApplication", not ${JSON.stringify(type)}`)
+        setError(`Wrong document type: must be "SoftwareSourceCode"/"SoftwareApplication", not ${JSON.stringify(type)}`)
         return false;
     }
     else {

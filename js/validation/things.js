@@ -33,6 +33,7 @@ function noValidation(fieldName, doc) {
 //
 // typeFieldValidators is a map: {type => {fieldName => fieldValidator}}
 function validateThing(parentFieldName, typeFieldValidators, doc) {
+    // TODO: allow an URI instead
     // TODO: validate id/@id
     // TODO: check there is either type or @type but not both
     var documentType = getDocumentType(doc);
@@ -45,7 +46,7 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
 
     if (documentType === undefined) {
         if (id === undefined) {
-            setError(`"${parentFieldName}" must be a (list of) ${Object.keys(typeFieldValidators).join(' or ')} object(s) or an URI, but is missing a type/@type.`);
+            setError(`"${parentFieldName}" must be a (list of) ${Object.keys(typeFieldValidators).join('/')} object(s) or an URI, but is missing a type/@type.`);
             return false;
         }
         else {
@@ -80,7 +81,7 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
         }
     }
 
-    setError(`"${parentFieldName}" type must be a (list of) ${Object.keys(typeFieldValidators).join(' or ')} object(s), not ${JSON.stringify(documentType)}`);
+    setError(`"${parentFieldName}" type must be a (list of) ${Object.keys(typeFieldValidators).join('/')} object(s), not ${JSON.stringify(documentType)}`);
     return false;
 }
 
@@ -110,27 +111,12 @@ function validateCreativeWork(fieldName, doc) {
             setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
             return false;
         }
+        return validateThing(fieldName, {
+            "CreativeWork": creativeWorkFieldValidators,
+            "SoftwareSourceCode": softwareFieldValidators,
+            "SoftwareApplication": softwareFieldValidators,
+        }, doc);
 
-        var type = getDocumentType(doc);
-        if (type === undefined) {
-            if (id === undefined) {
-                setError(`"${fieldName}" must be a (list of) CreativeWork object, but it is missing a type/@type.`);
-                return false;
-            }
-            else {
-                // FIXME: we have an @id but no @type, what should we do?
-                return true;
-            }
-        }
-        else if (isCompactTypeEqual(type, "CreativeWork")) {
-            setError(`"${fieldName}" must be a (list of) CreativeWork object, not ${JSON.stringify(doc)}`);
-            return false;
-        }
-        else {
-            return true;
-        }
-
-        // TODO: check other fields
     }
     else if (typeof doc == 'string') {
         if (!isUrl(doc)) {
@@ -245,7 +231,7 @@ var softwareFieldValidators = {
     "fileFormat": validateTextsOrUrls,
     "funder": validateActors, // TODO: may be other types
     "keywords": validateTexts,
-    "license": validateCreativeWorks, // TODO
+    "license": validateCreativeWorks,
     "producer": validateActors,
     "provider": validateActors,
     "publisher": validateActors,
@@ -272,6 +258,40 @@ var softwareFieldValidators = {
     "issueTracker": validateUrls,
     "referencePublication": noValidation, // TODO?
     "readme": validateUrls,
+};
+
+var creativeWorkFieldValidators = {
+    "@id": validateUrl,
+    "id": validateUrl,
+
+    "author": validateActors,
+    "citation": validateCreativeWorks, // TODO
+    "contributor": validateActors,
+    "copyrightHolder": validateActors,
+    "copyrightYear": validateNumbers,
+    "creator": validateActors, // TODO: still in codemeta 2.0, but removed from master
+    "dateCreated": validateDate,
+    "dateModified": validateDate,
+    "datePublished": validateDate,
+    "editor": validatePersons,
+    "encoding": noValidation,
+    "funder": validateActors, // TODO: may be other types
+    "keywords": validateTexts,
+    "license": validateCreativeWorks,
+    "producer": validateActors,
+    "provider": validateActors,
+    "publisher": validateActors,
+    "sponsor": validateActors,
+    "version": validateNumberOrText,
+    "isAccessibleForFree": validateBoolean,
+    "isPartOf": validateCreativeWorks,
+    "hasPart": validateCreativeWorks,
+    "position": noValidation,
+    "identifier": noValidation, // TODO
+    "description": validateText,
+    "name": validateText,
+    "sameAs": validateUrls,
+    "url": validateUrls,
 };
 
 var personFieldValidators = {
