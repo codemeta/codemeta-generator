@@ -29,6 +29,62 @@ function noValidation(fieldName, doc) {
 }
 
 
+// Validates subtypes of Thing.
+//
+// typeFieldValidators is a map: {type => {fieldName => fieldValidator}}
+function validateThing(parentFieldName, typeFieldValidators, doc) {
+    // TODO: validate id/@id
+    // TODO: check there is either type or @type but not both
+    var documentType = getDocumentType(doc);
+
+    var id = doc["id"] || doc["@id"];
+    if (id !== undefined && !isUrl(id)) {
+        setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
+        return false;
+    }
+
+    if (documentType === undefined) {
+        if (id === undefined) {
+            setError(`"${parentFieldName}" must be a (list of) ${Object.keys(typeFieldValidators).join(' or ')} object(s) or an URI, but is missing a type/@type.`);
+            return false;
+        }
+        else {
+            // FIXME: we have an @id but no @type, what should we do?
+            return true;
+        }
+    }
+
+    for (expectedType in typeFieldValidators) {
+        if (isCompactTypeEqual(documentType, expectedType)) {
+            fieldValidators = typeFieldValidators[expectedType];
+            return Object.entries(doc).every((entry) => {
+                var fieldName = entry[0];
+                var subdoc = entry[1];
+                if (fieldName == "type" || fieldName == "@type") {
+                    // Was checked before
+                    return true;
+                }
+                else {
+                    var validator = fieldValidators[fieldName];
+                    if (validator === undefined) {
+                        // TODO: find if it's a field that belongs to another type,
+                        // and suggest that to the user
+                        setError(`Unknown field "${fieldName}" in "${parentFieldName}".`)
+                        return false;
+                    }
+                    else {
+                        return validator(fieldName, subdoc);
+                    }
+                }
+            });
+        }
+    }
+
+    setError(`"${parentFieldName}" type must be a (list of) ${Object.keys(typeFieldValidators).join(' or ')} object(s), not ${JSON.stringify(documentType)}`);
+    return false;
+}
+
+
 // Helper function to validate a field is either X or a list of X.
 function validateListOrSingle(fieldName, doc, validator) {
     if (Array.isArray(doc)) {
@@ -121,27 +177,10 @@ function validateActor(fieldName, doc) {
             return false;
         }
 
-        var type = getDocumentType(doc);
-        if (type === undefined) {
-            if (id === undefined) {
-                setError(`"${fieldName}" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.`);
-                return false;
-            }
-            else {
-                // FIXME: we have an @id but no @type, what should we do?
-                return true;
-            }
-        }
-        else if (isCompactTypeEqual(type, "Person")) {
-            return validatePerson(fieldName, doc);
-        }
-        else if (isCompactTypeEqual(type, "Organization")) {
-            return validateOrganization(fieldName, doc);
-        }
-        else {
-            setError(`"${fieldName}" type must be "Person" or "Organization", not ${JSON.stringify(type)}`);
-            return false;
-        }
+        return validateThing(fieldName, {
+            "Person": personFieldValidators,
+            "Organization": organizationFieldValidators,
+        }, doc);
     }
     else if (typeof doc == 'string') {
         if (!isUrl(doc)) {
@@ -159,44 +198,13 @@ function validateActor(fieldName, doc) {
 }
 
 // Validates a single Person object
-function validatePerson(parentFieldName, doc) {
-    // TODO: validate id/@id
-    if (!isCompactTypeEqual(getDocumentType(doc), "Person")) {
-        setError(`"${fieldName}" type must be a (list of) Person object(s), not ${JSON.stringify(type)}`);
-        return false;
-    }
-    else {
-        return Object.entries(doc).every((entry) => {
-            var fieldName = entry[0];
-            var subdoc = entry[1];
-            if (fieldName == "type" || fieldName == "@type") {
-                // Was checked before
-                return true;
-            }
-            else {
-                var validator = personFieldValidators[fieldName];
-                if (validator === undefined) {
-                    // TODO: find if it's a field that belongs to another type,
-                    // and suggest that to the user
-                    setError(`Unknown field "${fieldName}" in "${parentFieldName}".`)
-                    return false;
-                }
-                else {
-                    return validator(fieldName, subdoc);
-                }
-            }
-        });
-    }
+function validatePerson(fieldName, doc) {
+    return validateThing(fieldName, {"Person": personFieldValidators}, doc);
 }
 
 // Validates a single Organization object
 function validateOrganization(fieldName, doc) {
-    // TODO: validate id/@id
-    if (!isCompactTypeEqual(getDocumentType(doc), "Organization")) {
-        setError(`"${fieldName}" type must be a (list of) Organization object(s), not ${type}`);
-        return false;
-    }
-    return true;
+    return validateThing(fieldName, {"Organization": organizationFieldValidators}, doc);
 }
 
 
@@ -235,7 +243,7 @@ var softwareFieldValidators = {
     "editor": validatePersons,
     "encoding": noValidation,
     "fileFormat": validateTextsOrUrls,
-    "funder": validateActors,
+    "funder": validateActors, // TODO: may be other types
     "keywords": validateTexts,
     "license": validateCreativeWorks, // TODO
     "producer": validateActors,
@@ -276,5 +284,22 @@ var personFieldValidators = {
     "affiliation": validateOrganizations,
     "identifier": validateUrls,
     "name": validateText,  // TODO: this is technically valid, but should be allowed here?
+    "url": validateUrls,
 };
 
+
+var organizationFieldValidators = {
+    "@id": validateUrl,
+    "id": validateUrl,
+
+    "email": validateText,
+    "identifier": validateUrls,
+    "name": validateText,
+    "address": validateText,
+    "sponsor": validateActors,
+    "funder": validateActors, // TODO: may be other types
+    "isPartOf": validateOrganizations,
+    "url": validateUrls,
+
+    // TODO: add more?
+};

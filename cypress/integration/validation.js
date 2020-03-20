@@ -436,6 +436,7 @@ describe('Person validation', function() {
                 "author": {
                     "@type": "Person",
                     "@id": "http://example.org/~jdoe",
+                    "url": "http://example.org/~jdoe",
                     "name": "Jane Doe",
                     "givenName": "Jane",
                     "familyName": "Doe",
@@ -478,7 +479,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" type must be "Person" or "Organization", not "SoftwareSourceCode"');
+        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Person or Organization object(s), not "SoftwareSourceCode"');
     });
 
     it('errors on Person with unknown field', function() {
@@ -579,6 +580,155 @@ describe('Person validation', function() {
                     {
                         "givenName": "John",
                         "familyName": "Doe",
+                    },
+                ]
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+    });
+});
+
+describe('Organization validation', function() {
+    it('accepts valid complete Organization', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": {
+                    "@type": "Organization",
+                    "@id": "http://example.org/",
+                    "url": "https://example.org/",
+                    "name": "Example Org",
+                    "identifier": "http://example.org/",
+                    "address": "Nowhere",
+                }
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('errors on Organization with missing type', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": {
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+    });
+
+    it('errors on Organization with wrong type', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": {
+                    "type": "SoftwareSourceCode",
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Person or Organization object(s), not "SoftwareSourceCode"');
+    });
+
+    it('errors on Organization with unknown field', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": {
+                    "type": "Organization",
+                    "foo": "bar",
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', 'Unknown field "foo" in "author".');
+    });
+
+    it('errors on Organization with invalid field', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": {
+                    "type": "Organization",
+                    "email": 32,
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"email" must be text, not 32');
+    });
+
+    it('accepts list of valid Organization', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": [
+                    {
+                        "@type": "Organization",
+                        "@id": "http://example.org/",
+                        "name": "Example Org",
+                    },
+                    {
+                        "@type": "Organization",
+                        "@id": "http://example.org/~jodoe",
+                        "name": "Example Org",
+                    },
+                ]
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('errors on list with invalid Organization at the beginning', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": [
+                    {
+                        "name": "Example Org",
+                    },
+                    {
+                        "@type": "Organization",
+                        "name": "Example Org",
+                    },
+                ]
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.');
+    });
+
+    it('errors on list with invalid Organization at the end', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": [
+                    {
+                        "@type": "Organization",
+                        "name": "Example Org",
+                    },
+                    {
+                        "name": "Example Org",
                     },
                 ]
             }))
