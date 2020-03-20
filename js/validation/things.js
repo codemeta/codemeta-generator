@@ -6,10 +6,7 @@
  */
 
 /*
- * Reads a Codemeta file and shows human-friendly errors on it.
- *
- * This validator intentionaly does not use a schema, in order to show errors
- * that are easy to understand for users with no understanding of JSON-LD.
+ * Validators for codemeta objects derived from http://schema.org/Thing.
  */
 
 function getDocumentType(doc) {
@@ -39,141 +36,6 @@ function validateListOrSingle(fieldName, doc, validator) {
     }
     else {
         return validator(doc, false);
-    }
-}
-
-// Validates an URL or an array of URLs
-function validateUrls(fieldName, doc) {
-    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
-        if (typeof subdoc != 'string') {
-            if (inList) {
-                setError(`"${fieldName}" must be a list of URLs (or a single URL), but it contains: ${JSON.stringify(subdoc)}`);
-            }
-            else {
-                setError(`"${fieldName}" must be an URL (or a list of URLs), not: ${JSON.stringify(subdoc)}`);
-            }
-            return false;
-        }
-        else {
-            return validateUrl(fieldName, subdoc);
-        }
-    });
-}
-
-// Validates a single URL
-function validateUrl(fieldName, doc) {
-    if (!isUrl(doc)) {
-        setError(`Invalid URL in field "${fieldName}": ${JSON.stringify(doc)}`)
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
-// Validates a Text/URL or an array of Texts/URLs
-function validateTextsOrUrls(fieldName, doc) {
-    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
-        if (typeof subdoc != 'string') {
-            if (inList) {
-                setError(`"${fieldName}" must be a list of texts/URLs (or a single text/URL), but it contains: ${JSON.stringify(subdoc)}`);
-            }
-            else {
-                setError(`"${fieldName}" must be a text/URL (or a list of texts/URLs), not: ${JSON.stringify(subdoc)}`);
-            }
-            return false;
-        }
-        else {
-            return true;
-        }
-    });
-}
-
-// Validates a Text or an array of Texts
-function validateTexts(fieldName, doc) {
-    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
-        if (typeof subdoc != 'string') {
-            if (inList) {
-                setError(`"${fieldName}" must be a list of texts (or a single text), but it contains: ${JSON.stringify(subdoc)}`);
-            }
-            else {
-                setError(`"${fieldName}" must be a text (or a list of texts), not: ${JSON.stringify(subdoc)}`);
-            }
-            return false;
-        }
-        else {
-            return true;
-        }
-    });
-}
-
-// Validates a single Text
-function validateText(fieldName, doc) {
-    if (typeof doc != 'string') {
-        setError(`"${fieldName}" must be text, not ${JSON.stringify(doc)}`);
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
-// Validates a Number or list of Number
-function validateNumbers(fieldName, doc) {
-    return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
-        if (typeof subdoc != 'number') {
-            if (inList) {
-                setError(`"${fieldName}" must be an array of numbers (or a single number), but contains: ${JSON.stringify(subdoc)}`);
-            }
-            else {
-                setError(`"${fieldName}" must be a number or an array of numbers, not: ${JSON.stringify(subdoc)}`);
-            }
-            return false;
-        }
-        else {
-            return true;
-        }
-    });
-}
-
-// Validates a single Text or Number
-function validateNumberOrText(fieldName, doc) {
-    if (typeof doc == 'string') {
-        return true;
-    }
-    else if (typeof doc == 'number') {
-        return true;
-    }
-    else {
-        setError(`"${fieldName}" must be text or a number, not ${JSON.stringify(doc)}`);
-        return false;
-    }
-}
-
-// Validates a single Boolean
-function validateBoolean(fieldName, doc) {
-    if (typeof doc != 'boolean') {
-        setError(`"${fieldName}" must be a boolean (ie. "true" or "false"), not ${JSON.stringify(subdoc)}`);
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
-// Validates a single Date
-function validateDate(fieldName, doc) {
-    let re = /^\d{4}-\d{2}-\d{2}$/;
-    if (typeof doc != 'string') {
-        setError(`"${fieldName}" must be a date, not ${JSON.stringify(doc)}`);
-        return false;
-    }
-    else if (!doc.match(re)) {
-        setError(`"${fieldName}" must be a date in the format YYYY-MM-DD, not ${JSON.stringify(doc)}`);
-        return false;
-    }
-    else {
-        return true;
     }
 }
 
@@ -296,7 +158,7 @@ function validateActor(fieldName, doc) {
     }
 }
 
-// Validates a single Person object (assumes type/@type was already validated)
+// Validates a single Person object
 function validatePerson(parentFieldName, doc) {
     // TODO: validate id/@id
     if (!isCompactTypeEqual(getDocumentType(doc), "Person")) {
@@ -327,7 +189,7 @@ function validatePerson(parentFieldName, doc) {
     }
 }
 
-// Validates a single Organization object (assumes type/@type was already validated)
+// Validates a single Organization object
 function validateOrganization(fieldName, doc) {
     // TODO: validate id/@id
     if (!isCompactTypeEqual(getDocumentType(doc), "Organization")) {
@@ -416,83 +278,3 @@ var personFieldValidators = {
     "name": validateText,  // TODO: this is technically valid, but should be allowed here?
 };
 
-
-function validateDocument(doc) {
-    if (!Array.isArray(doc) && typeof doc != 'object') {
-        setError("Document must be an object (starting and ending with { and }), not ${typeof doc}.")
-        return false;
-    }
-    // TODO: validate id/@id
-
-    // TODO: check there is either type or @type but not both
-    var type = getDocumentType(doc);
-    if (type === undefined) {
-        setError("Missing type (must be SoftwareSourceCode or SoftwareApplication).")
-        return false;
-    }
-    else if (!isCompactTypeEqual(type, "SoftwareSourceCode") && !isCompactTypeEqual(type, "SoftwareApplication")) {
-        // Check this before other fields, as a wrong type error is more
-        // understandable than "invalid field".
-        setError(`Wrong document type: must be "SoftwareSourceCode" or "SoftwareApplication", not ${JSON.stringify(type)}`)
-        return false;
-    }
-    else {
-        return Object.entries(doc).every((entry) => {
-            var fieldName = entry[0];
-            var subdoc = entry[1];
-            if (fieldName == "@context") {
-                if (subdoc == "https://doi.org/10.5063/schema/codemeta-2.0") {
-                    return true;
-                }
-                else {
-                    setError(`@context must be "https://doi.org/10.5063/schema/codemeta-2.0", not ${JSON.stringify(subdoc)}`);
-                    return false;
-                }
-            }
-            else if (fieldName == "type" || fieldName == "@type") {
-                // Was checked before
-                return true;
-            }
-            else {
-                var validator = softwareFieldValidators[fieldName];
-                if (validator === undefined) {
-                    // TODO: find if it's a field that belongs to another type,
-                    // and suggest that to the user
-                    setError(`Unknown field "${fieldName}".`)
-                    return false;
-                }
-                else {
-                    return validator(fieldName, subdoc);
-                }
-            }
-        });
-    }
-}
-
-
-function parseAndValidateCodemeta(showPopup) {
-    var codemetaText = document.querySelector('#codemetaText').innerText;
-    var doc;
-
-    try {
-        doc = JSON.parse(codemetaText);
-    }
-    catch (e) {
-        setError(`Could not read codemeta document because it is not valid JSON (${e}). Check for missing or extra quote, colon, or bracket characters.`);
-        return;
-    }
-
-    setError("");
-
-    var isValid = validateDocument(doc);
-    if (showPopup) {
-        if (isValid) {
-            alert('Document is valid!')
-        }
-        else {
-            alert('Document is invalid.');
-        }
-    }
-
-    return doc;
-}
