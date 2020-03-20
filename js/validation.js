@@ -263,7 +263,7 @@ function validateActor(fieldName, doc) {
         var type = getDocumentType(doc);
         if (type === undefined) {
             if (id === undefined) {
-                setError(`"${fieldName}" must be a (list of) Person or Organization object(s), but it is missing a type/@type.`);
+                setError(`"${fieldName}" must be a (list of) Person or Organization object(s) or an URI, but is missing a type/@type.`);
                 return false;
             }
             else {
@@ -278,7 +278,7 @@ function validateActor(fieldName, doc) {
             return validateOrganization(fieldName, doc);
         }
         else {
-            setError(`"${fieldName}" type must be a (list of) Person or Organization object(s), not ${type}`);
+            setError(`"${fieldName}" type must be "Person" or "Organization", not ${JSON.stringify(type)}`);
             return false;
         }
     }
@@ -292,25 +292,57 @@ function validateActor(fieldName, doc) {
         }
     }
     else {
-        setError(`"${fieldName}" must be a Person or Organization object or an URI, not ${JSON.stringify(doc)}`);
+        setError(`"${fieldName}" must be a Person or Organization object or an URI, not ${JSON.stringify(doc)}.`);
         return false;
     }
 }
 
 // Validates a single Person object (assumes type/@type was already validated)
-function validatePerson(fieldName, doc) {
-    // TODO
-    return true;
+function validatePerson(parentFieldName, doc) {
+    // TODO: validate id/@id
+    if (!isCompactTypeEqual(getDocumentType(doc), "Person")) {
+        setError(`"${fieldName}" type must be a (list of) Person object(s), not ${JSON.stringify(type)}`);
+        return false;
+    }
+    else {
+        return Object.entries(doc).every((entry) => {
+            var fieldName = entry[0];
+            var subdoc = entry[1];
+            if (fieldName == "type" || fieldName == "@type") {
+                // Was checked before
+                return true;
+            }
+            else {
+                var validator = personFieldValidators[fieldName];
+                if (validator === undefined) {
+                    // TODO: find if it's a field that belongs to another type,
+                    // and suggest that to the user
+                    setError(`Unknown field "${fieldName}" in "${parentFieldName}".`)
+                    return false;
+                }
+                else {
+                    return validator(fieldName, subdoc);
+                }
+            }
+        });
+    }
 }
 
 // Validates a single Organization object (assumes type/@type was already validated)
 function validateOrganization(fieldName, doc) {
-    // TODO
+    // TODO: validate id/@id
+    if (!isCompactTypeEqual(getDocumentType(doc), "Organization")) {
+        setError(`"${fieldName}" type must be a (list of) Organization object(s), not ${type}`);
+        return false;
+    }
     return true;
 }
 
 
 var softwareFieldValidators = {
+    "@id": validateUrl,
+    "id": validateUrl,
+
     "codeRepository": validateUrls,
     "programmingLanguage": noValidation,
     "runtimePlatform": validateTexts,
@@ -374,12 +406,15 @@ var softwareFieldValidators = {
 };
 
 var personFieldValidators = {
+    "@id": validateUrl,
+    "id": validateUrl,
+
     "givenName": validateText,
     "familyName": validateText,
     "email": validateText,
     "affiliation": validateOrganizations,
     "identifier": validateUrls,
-    "name": validateText,
+    "name": validateText,  // TODO: this is technically valid, but should be allowed here?
 };
 
 
@@ -399,7 +434,7 @@ function validateDocument(doc) {
     else if (!isCompactTypeEqual(type, "SoftwareSourceCode") && !isCompactTypeEqual(type, "SoftwareApplication")) {
         // Check this before other fields, as a wrong type error is more
         // understandable than "invalid field".
-        setError(`Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not ${JSON.stringify(type)}`)
+        setError(`Wrong document type: must be "SoftwareSourceCode" or "SoftwareApplication", not ${JSON.stringify(type)}`)
         return false;
     }
     else {

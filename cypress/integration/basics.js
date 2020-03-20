@@ -105,6 +105,6 @@ describe('JSON Import', function() {
         cy.get('#name').should('have.value', 'My Test Software');
 
         // But must display an error
-        cy.get('#errorMessage').should('have.text', 'Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not "foo"');
+        cy.get('#errorMessage').should('have.text', 'Wrong document type: must be "SoftwareSourceCode" or "SoftwareApplication", not "foo"');
     });
 });
