@@ -164,6 +164,15 @@ function generateCodemeta() {
     document.querySelector('#codemetaText').innerText = codemetaText;
     setError(errorHTML);
 
+
+    // Run validator on the exported value, for extra validation.
+    // If this finds a validation, it means there is a bug in our code (either
+    // generation or validation), and the generation MUST NOT generate an
+    // invalid codemeta file, regardless of user input.
+    if (codemetaText && !validateDocument(JSON.parse(codemetaText))) {
+        alert('Bug detected! The data you wrote is correct; but for some reason, it seems we generated an invalid codemeta.json. Please report this bug at https://github.com/codemeta/codemeta-generator/issues/new and copy-paste the generated codemeta.json file. Thanks!');
+    }
+
     if (codemetaText) {
         // For restoring the form state on page reload
         sessionStorage.setItem('codemetaText', codemetaText);
