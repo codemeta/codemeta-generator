@@ -5,7 +5,9 @@
  * See top-level LICENSE file for more information
  */
 
-
+/* This file contains the main CSS to make the form/application usable,
+ * without being especially pretty.
+ */
 
 #noscriptError {
     color: red;
@@ -68,4 +70,3 @@ input[type=URL] {
 input:invalid {
     color: red;
 }
-  

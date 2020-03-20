@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-Copyright (C) 2019  The Software Heritage developers
+Copyright (C) 2019-2020  The Software Heritage developers
 See the AUTHORS file at the top-level directory of this distribution
 License: GNU Affero General Public License version 3, or any later version
 See top-level LICENSE file for more information
@@ -16,10 +16,15 @@ See top-level LICENSE file for more information
     <script src="./js/validation/primitives.js"></script>
     <script src="./js/validation/things.js"></script>
     <script src="./js/validation/index.js"></script>
-    <link rel="stylesheet" type="text/css" href="./style.css">
+    <link rel="stylesheet" type="text/css" href="./main.css">
+    <link rel="stylesheet" type="text/css" href="./codemeta.css">
 </head>
 <body>
+  <header>
     <h1>CodeMeta generator</h1>
+  </header>
+
+  <main>
 
     <p>Most fields are optional. Mandatory fields will be highlighted when generating Codemeta.</p>
 
@@ -317,35 +322,36 @@ Bugfixes: that and this." ></textarea>
     </p>
     <p>codemeta.json:</p>
     <pre contentEditable="true" id="codemetaText"></pre>
+  </main>
 
-    <footer>
-        <p style="text-align:center;">
-            Do you want to improve this tool ?
-            Check out the
-            <a href="https://github.com/codemeta/codemeta-generator">
-                CodeMeta-generator repository</a>
-            <br />
-            Join the
-            <a href="https://github.com/codemeta/codemeta">CodeMeta community</a>
-            discussion
-            <br />
-            The CodeMeta vocabulary -
-            <a href="https://doi.org/10.5063/schema/codemeta-2.0">v2.0</a>
-        </p>
+  <footer>
+    <p style="text-align:center;">
+        Do you want to improve this tool ?
+        Check out the
+        <a href="https://github.com/codemeta/codemeta-generator">
+            CodeMeta-generator repository</a>
+        <br />
+        Join the
+        <a href="https://github.com/codemeta/codemeta">CodeMeta community</a>
+        discussion
+        <br />
+        The CodeMeta vocabulary -
+        <a href="https://doi.org/10.5063/schema/codemeta-2.0">v2.0</a>
+    </p>
 
-        <h2 style="text-align:right;">Contributed by</h2>
-        <p style="text-align:right;">
-            <a href="https://www.softwareheritage.org/save-and-reference-research-software/">
-                <img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg"
-                    width="300">
-            </a>
-        </p>
-    </footer>
+    <h2 style="text-align:right;">Contributed by</h2>
+    <p style="text-align:right;">
+        <a href="https://www.softwareheritage.org/save-and-reference-research-software/">
+            <img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg"
+                width="300">
+        </a>
+    </p>
+  </footer>
 
-    <script>
-        initFieldsData();
-        initCallbacks();
-        loadStateFromStorage();
-    </script>
+  <script>
+    initFieldsData();
+    initCallbacks();
+    loadStateFromStorage();
+  </script>
 </body>
 </html>
