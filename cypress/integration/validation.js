@@ -428,6 +428,19 @@ describe('Date validation', function() {
 });
 
 describe('Person validation', function() {
+    it('accepts URI', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": "http://example.org/~jdoe",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
     it('accepts valid complete Person', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
@@ -512,6 +525,27 @@ describe('Person validation', function() {
         cy.get('#validateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '"email" must be text, not 32');
+    });
+
+    it('accepts URI in list', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": [
+                    "http://example.org/~jadoe",
+                    {
+                        "@type": "Person",
+                        "@id": "http://example.org/~jodoe",
+                        "givenName": "John",
+                        "familyName": "Doe",
+                    },
+                ]
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
     });
 
     it('accepts list of valid Person', function() {

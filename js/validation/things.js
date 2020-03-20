@@ -29,13 +29,39 @@ function noValidation(fieldName, doc) {
 }
 
 
-// Validates subtypes of Thing.
+// Validates subtypes of Thing, or URIs
+//
+// typeFieldValidators is a map: {type => {fieldName => fieldValidator}}
+function validateThingOrId(parentFieldName, typeFieldValidators, doc) {
+    var acceptedTypesString = Object.keys(typeFieldValidators).join('/');
+
+    if (typeof doc == 'string') {
+        if (!isUrl(doc)) {
+            setError(`"${fieldName}" must be an URL or a ${acceptedTypesString} object, not: ${JSON.stringify(doc)}"`);
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    else if (!Array.isArray(doc) && typeof doc == 'object') {
+        return validateThing(parentFieldName, typeFieldValidators, doc);
+    }
+    else {
+        setError(`"${fieldName}" must be a ${acceptedTypesString} object or URI, not ${JSON.stringify(doc)}`);
+        return false;
+    }
+}
+
+// Validates subtypes of Thing
 //
 // typeFieldValidators is a map: {type => {fieldName => fieldValidator}}
 function validateThing(parentFieldName, typeFieldValidators, doc) {
-    // TODO: allow an URI instead
-    // TODO: validate id/@id
+    // TODO: check there is either id or @id but not both
     // TODO: check there is either type or @type but not both
+
+    var acceptedTypesString = Object.keys(typeFieldValidators).join('/');
+
     var documentType = getDocumentType(doc);
 
     var id = doc["id"] || doc["@id"];
@@ -46,7 +72,7 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
 
     if (documentType === undefined) {
         if (id === undefined) {
-            setError(`"${parentFieldName}" must be a (list of) ${Object.keys(typeFieldValidators).join('/')} object(s) or an URI, but is missing a type/@type.`);
+            setError(`"${parentFieldName}" must be a (list of) ${acceptedTypesString} object(s) or an URI, but is missing a type/@type.`);
             return false;
         }
         else {
@@ -81,7 +107,7 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
         }
     }
 
-    setError(`"${parentFieldName}" type must be a (list of) ${Object.keys(typeFieldValidators).join('/')} object(s), not ${JSON.stringify(documentType)}`);
+    setError(`"${parentFieldName}" type must be a (list of) ${acceptedTypesString} object(s), not ${JSON.stringify(documentType)}`);
     return false;
 }
 
@@ -105,32 +131,11 @@ function validateCreativeWorks(fieldName, doc) {
 
 // Validates a single CreativeWork
 function validateCreativeWork(fieldName, doc) {
-    if (!Array.isArray(doc) && typeof doc == 'object') {
-        var id = doc["id"] || doc["@id"];
-        if (id !== undefined && !isUrl(id)) {
-            setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
-            return false;
-        }
-        return validateThing(fieldName, {
-            "CreativeWork": creativeWorkFieldValidators,
-            "SoftwareSourceCode": softwareFieldValidators,
-            "SoftwareApplication": softwareFieldValidators,
-        }, doc);
-
-    }
-    else if (typeof doc == 'string') {
-        if (!isUrl(doc)) {
-            setError(`"${fieldName}" must be an URI or CreativeWork object, not: ${JSON.stringify(id)}"`);
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-    else {
-        setError(`"${fieldName}" must be a CreativeWork object or URI, not ${JSON.stringify(doc)}`);
-        return false;
-    }
+    return validateThingOrId(fieldName, {
+        "CreativeWork": creativeWorkFieldValidators,
+        "SoftwareSourceCode": softwareFieldValidators,
+        "SoftwareApplication": softwareFieldValidators,
+    }, doc);
 }
 
 // Validates a Person, Organization or an array of these
@@ -156,41 +161,20 @@ function validateOrganizations(fieldName, doc) {
 
 // Validates a single Person or Organization
 function validateActor(fieldName, doc) {
-    if (!Array.isArray(doc) && typeof doc == 'object') {
-        var id = doc["id"] || doc["@id"];
-        if (id !== undefined && !isUrl(id)) {
-            setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
-            return false;
-        }
-
-        return validateThing(fieldName, {
-            "Person": personFieldValidators,
-            "Organization": organizationFieldValidators,
-        }, doc);
-    }
-    else if (typeof doc == 'string') {
-        if (!isUrl(doc)) {
-            setError(`"${fieldName}" must be an URI or a Person or Organization object, not: ${JSON.stringify(id)}"`);
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-    else {
-        setError(`"${fieldName}" must be a Person or Organization object or an URI, not ${JSON.stringify(doc)}.`);
-        return false;
-    }
+    return validateThingOrId(fieldName, {
+        "Person": personFieldValidators,
+        "Organization": organizationFieldValidators,
+    }, doc);
 }
 
 // Validates a single Person object
 function validatePerson(fieldName, doc) {
-    return validateThing(fieldName, {"Person": personFieldValidators}, doc);
+    return validateThingOrId(fieldName, {"Person": personFieldValidators}, doc);
 }
 
 // Validates a single Organization object
 function validateOrganization(fieldName, doc) {
-    return validateThing(fieldName, {"Organization": organizationFieldValidators}, doc);
+    return validateThingOrId(fieldName, {"Organization": organizationFieldValidators}, doc);
 }
 
 
