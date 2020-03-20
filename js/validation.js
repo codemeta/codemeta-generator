@@ -14,6 +14,7 @@
 
 
 function noValidation(fieldName, doc) {
+    return true;
 }
 
 

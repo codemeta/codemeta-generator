@@ -11,7 +11,7 @@
 
 "use strict";
 
-describe('Validation', function() {
+describe('Document validation', function() {
     it('accepts empty document', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
@@ -41,6 +41,38 @@ describe('Validation', function() {
 
 
         cy.get('#name').should('have.value', '');
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts anything in non-validated fields', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "programmingLanguage": "foo",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+        cy.get('#errorMessage').should('have.text', '');
+
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "programmingLanguage": 21,
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+        cy.get('#errorMessage').should('have.text', '');
+
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "programmingLanguage": {},
+            }))
+        );
+        cy.get('#validateCodemeta').click();
         cy.get('#errorMessage').should('have.text', '');
     });
 
