@@ -12,6 +12,20 @@
  * that are easy to understand for users with no understanding of JSON-LD.
  */
 
+function getDocumentType(doc) {
+    // TODO: check there is at most one.
+    // FIXME: is the last variant allowed?
+    return doc["type"] || doc["@type"] || doc["codemeta:type"]
+}
+
+function isCompactTypeEqual(type, compactedType) {
+    // FIXME: are all variants allowed?
+    return (type == `${compactedType}`
+        || type == `schema:${compactedType}`
+        || type == `codemeta:${compactedType}`
+        || type == `http://schema.org/${compactedType}`
+    );
+}
 
 function noValidation(fieldName, doc) {
     return true;
@@ -183,7 +197,7 @@ function validateCreativeWork(fieldName, doc) {
         if (type === undefined) {
             if (id === undefined) {
                 setError(`"${fieldName}" must be a (list of) CreativeWork object, but it is missing a type/@type.`);
-                return false
+                return false;
             }
             else {
                 // FIXME: we have an @id but no @type, what should we do?
@@ -243,37 +257,35 @@ function validateActor(fieldName, doc) {
         var id = doc["id"] || doc["@id"];
         if (id !== undefined && !isUrl(id)) {
             setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
-            return false
+            return false;
         }
 
-        var type = doc["type"] || doc["@type"];
+        var type = getDocumentType(doc);
         if (type === undefined) {
             if (id === undefined) {
                 setError(`"${fieldName}" must be a (list of) Person or Organization object(s), but it is missing a type/@type.`);
-                return false
+                return false;
             }
             else {
                 // FIXME: we have an @id but no @type, what should we do?
                 return true;
             }
         }
-        else if (type == "Person" || type == "schema:Person" || type == "codemeta:Person" || type == "http://schema.org/Person") {
-            // FIXME: is the first variant allowed?
+        else if (isCompactTypeEqual(type, "Person")) {
             return validatePerson(fieldName, doc);
         }
-        else if (type == "Organization" || type == "schema:Organization" || type == "codemeta:Organization" || type == "http://schema.org/Organization") {
-            // FIXME: is the first variant allowed?
+        else if (isCompactTypeEqual(type, "Organization")) {
             return validateOrganization(fieldName, doc);
         }
         else {
             setError(`"${fieldName}" type must be a (list of) Person or Organization object(s), not ${type}`);
-            return false
+            return false;
         }
     }
     else if (typeof doc == 'string') {
         if (!isUrl(doc)) {
             setError(`"${fieldName}" must be an URI or a Person or Organization object, not: ${JSON.stringify(id)}"`);
-            return false
+            return false;
         }
         else {
             return true;
@@ -379,10 +391,16 @@ function validateDocument(doc) {
     // TODO: validate id/@id
 
     // TODO: check there is either type or @type but not both
-    var type = doc["type"] || doc["@type"];
+    var type = getDocumentType(doc);
     if (type === undefined) {
         setError("Missing type (must be SoftwareSourceCode or SoftwareApplication).")
-        return false
+        return false;
+    }
+    else if (!isCompactTypeEqual(type, "SoftwareSourceCode") && !isCompactTypeEqual(type, "SoftwareApplication")) {
+        // Check this before other fields, as a wrong type error is more
+        // understandable than "invalid field".
+        setError(`Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not ${JSON.stringify(type)}`)
+        return false;
     }
     else {
         return Object.entries(doc).every((entry) => {
@@ -398,13 +416,8 @@ function validateDocument(doc) {
                 }
             }
             else if (fieldName == "type" || fieldName == "@type") {
-                if (subdoc != "SoftwareSourceCode" && subdoc != "SoftwareApplication") {
-                    setError(`Wrong document type: must be SoftwareSourceCode or SoftwareApplication, not ${JSON.stringify(subdoc)}`)
-                    return false
-                }
-                else {
-                    return true;
-                }
+                // Was checked before
+                return true;
             }
             else {
                 var validator = softwareFieldValidators[fieldName];
