@@ -62,7 +62,7 @@ const directPersonCodemetaFields = [
     'givenName',
     'familyName',
     'email',
-    'affiliation'   
+    'affiliation',
 ];
 
 function generateShortOrg(fieldName) {
@@ -149,7 +149,7 @@ function generateCodemeta() {
         }
         var contributors = generatePersons('contributor');
         if (contributors.length > 0) {
-            doc["contributors"] = contributors;
+            doc["contributor"] = contributors;
         }
 
         codemetaText = JSON.stringify(doc, null, 4);
