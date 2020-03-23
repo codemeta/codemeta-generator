@@ -38,6 +38,12 @@ p input, p textarea {
     width: 100%;
 }
 
+.dynamicFields .moveButtons {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
 #license {
     /* License names are long */
     min-width: 20em;

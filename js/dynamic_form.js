@@ -7,15 +7,31 @@
 
 "use strict";
 
+// List of all HTML fields in a Person fieldset.
+const personFields = [
+    'givenName',
+    'familyName',
+    'email',
+    'id',
+    'affiliation',
+];
+
 function createPersonFieldset(personPrefix, legend) {
     // Creates a fieldset containing inputs for informations about a person
     var fieldset = document.createElement("fieldset")
+    var moveButtons;
     fieldset.classList.add("person");
     fieldset.classList.add("leafFieldset");
     fieldset.id = personPrefix;
     
     fieldset.innerHTML = `
         <legend>${legend}</legend>
+        <div class="moveButtons">
+            <input type="button" id="${personPrefix}_moveToLeft" value="<" class="moveToLeft"
+                title="Moves this person to the left." />
+            <input type="button" id="${personPrefix}_moveToRight" value=">" class="moveToRight"
+                title="Moves this person to the right." />
+        </div>
         <p>
             <label for="${personPrefix}_givenName">Given name</label>
             <input type="text" id="${personPrefix}_givenName" name="${personPrefix}_givenName"
@@ -47,9 +63,48 @@ function createPersonFieldset(personPrefix, legend) {
 }
 
 function addPersonWithId(container, prefix, legend, id) {
-    var fieldset = createPersonFieldset(`${prefix}_${id}`, `${legend} #${id}`);
+    var personPrefix = `${prefix}_${id}`;
+    var fieldset = createPersonFieldset(personPrefix, `${legend} #${id}`);
 
     container.appendChild(fieldset);
+
+    document.querySelector(`#${personPrefix}_moveToLeft`)
+        .addEventListener('click', () => movePerson(prefix, id, "left"));
+    document.querySelector(`#${personPrefix}_moveToRight`)
+        .addEventListener('click', () => movePerson(prefix, id, "right"));
+}
+
+function movePerson(prefix, id1, direction) {
+    var nbPersons = getNbPersons(prefix);
+    var id2;
+
+    // Computer id2, the id of the person to flip id1 with (wraps around the
+    // end of the list of persons)
+    if (direction == "left") {
+        id2 = id1 - 1;
+        if (id2 <= 0) {
+            id2 = nbPersons;
+        }
+    }
+    else {
+        id2 = id1 + 1;
+        if (id2 > nbPersons) {
+            id2 = 1;
+        }
+    }
+
+    // Flip the field values, one by one
+    personFields.forEach((fieldName) => {
+        var field1 = document.querySelector(`#${prefix}_${id1}_${fieldName}`);
+        var field2 = document.querySelector(`#${prefix}_${id2}_${fieldName}`);
+        var value1 = field1.value;
+        var value2 = field2.value;
+        field2.value = value1;
+        field1.value = value2;
+    });
+
+    // Form was changed; regenerate
+    generateCodemeta();
 }
 
 function addPerson(prefix, legend) {

@@ -262,3 +262,163 @@ describe('Affiliation name', function() {
         cy.get('#author_1_affiliation').should('have.value', 'Example Org');
     });
 });
+
+describe('Author order change', function() {
+    it('is a noop with a single author', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_1_affiliation').type('Example Org');
+
+        cy.get('#author_1_moveToRight').click()
+
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_affiliation').should('have.value', 'Example Org');
+
+        cy.get('#author_1_moveToLeft').click()
+
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_affiliation').should('have.value', 'Example Org');
+    });
+
+    it('flips two authors', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_1_affiliation').type('Example Org');
+        cy.get('#author_2_givenName').type('John');
+        cy.get('#author_2_familyName').type('Doe');
+        cy.get('#author_3_givenName').type('Alex');
+
+        cy.get('#author_1_moveToRight').click()
+
+        cy.get('#author_1_givenName').should('have.value', 'John');
+        cy.get('#author_1_familyName').should('have.value', 'Doe');
+        cy.get('#author_1_affiliation').should('have.value', '');
+
+        cy.get('#author_2_givenName').should('have.value', 'Jane');
+        cy.get('#author_2_familyName').should('have.value', '');
+        cy.get('#author_2_affiliation').should('have.value', 'Example Org');
+
+        cy.get('#author_3_givenName').should('have.value', 'Alex');
+        cy.get('#author_3_familyName').should('have.value', '');
+        cy.get('#author_3_affiliation').should('have.value', '');
+    });
+
+    it('updates generated Codemeta', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_1_affiliation').type('Example Org');
+        cy.get('#author_2_givenName').type('John');
+        cy.get('#author_2_familyName').type('Doe');
+
+        cy.get('#generateCodemeta').click();
+
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "@type": "Person",
+                        "givenName": "Jane",
+                        "affiliation": {
+                            "@type": "Organization",
+                            "name": "Example Org",
+                        }
+                    },
+                    {
+                        "@type": "Person",
+                        "givenName": "John",
+                        "familyName": "Doe",
+                    },
+                ],
+        });
+
+        cy.get('#author_1_moveToRight').click();
+
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "@type": "Person",
+                        "givenName": "John",
+                        "familyName": "Doe",
+                    },
+                    {
+                        "@type": "Person",
+                        "givenName": "Jane",
+                        "affiliation": {
+                            "@type": "Organization",
+                            "name": "Example Org",
+                        }
+                    },
+                ],
+        });
+    });
+
+    it('wraps around to the right', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_1_affiliation').type('Example Org');
+        cy.get('#author_2_givenName').type('John');
+        cy.get('#author_2_familyName').type('Doe');
+        cy.get('#author_3_givenName').type('Alex');
+
+        cy.get('#author_1_moveToLeft').click()
+
+        cy.get('#author_1_givenName').should('have.value', 'Alex');
+        cy.get('#author_1_familyName').should('have.value', '');
+        cy.get('#author_1_affiliation').should('have.value', '');
+
+        cy.get('#author_2_givenName').should('have.value', 'John');
+        cy.get('#author_2_familyName').should('have.value', 'Doe');
+        cy.get('#author_2_affiliation').should('have.value', '');
+
+        cy.get('#author_3_givenName').should('have.value', 'Jane');
+        cy.get('#author_3_familyName').should('have.value', '');
+        cy.get('#author_3_affiliation').should('have.value', 'Example Org');
+    });
+
+    it('wraps around to the left', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_1_affiliation').type('Example Org');
+        cy.get('#author_2_givenName').type('John');
+        cy.get('#author_2_familyName').type('Doe');
+        cy.get('#author_3_givenName').type('Alex');
+
+        cy.get('#author_3_moveToRight').click()
+
+        cy.get('#author_1_givenName').should('have.value', 'Alex');
+        cy.get('#author_1_familyName').should('have.value', '');
+        cy.get('#author_1_affiliation').should('have.value', '');
+
+        cy.get('#author_2_givenName').should('have.value', 'John');
+        cy.get('#author_2_familyName').should('have.value', 'Doe');
+        cy.get('#author_2_affiliation').should('have.value', '');
+
+        cy.get('#author_3_givenName').should('have.value', 'Jane');
+        cy.get('#author_3_familyName').should('have.value', '');
+        cy.get('#author_3_affiliation').should('have.value', 'Example Org');
+    });
+})
