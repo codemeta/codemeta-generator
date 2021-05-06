@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020  The Software Heritage developers
+ * Copyright (C) 2020-2021  The Software Heritage developers
  * See the AUTHORS file at the top-level directory of this distribution
  * License: GNU Affero General Public License version 3, or any later version
  * See top-level LICENSE file for more information
@@ -210,6 +210,149 @@ describe('URLs validation', function() {
         cy.get('#validateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '"codeRepository" must be a list of URLs (or a single URL), but it contains: {}');
+    });
+});
+
+describe('Things or URLs validation', function() {
+    it('accepts valid Thing', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": {
+                    "@type": "SoftwareApplication",
+                    "name": "Example Soft",
+                }
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts valid URL', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": "http://example.org/",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts empty list of Things', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": [],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('accepts list of Things', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": [
+                    {
+                        "@type": "SoftwareApplication",
+                        "name": "Example Soft",
+                    },
+                    {
+                        "@type": "SoftwareApplication",
+                        "name": "Test Soft",
+                    }
+                ]
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
+    it('errors on non-URL string', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "license": "Copyright 2021 Myself",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"license" must be an URL or a CreativeWork/SoftwareSourceCode/SoftwareApplication object, not: "Copyright 2021 Myself"');
+    });
+
+    it('errors on wrong type', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": 42,
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"isPartOf" must be a CreativeWork/SoftwareSourceCode/SoftwareApplication object or URI, not 42');
+    });
+
+    it('errors on non-Thing object', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": {},
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"isPartOf" must be a (list of) CreativeWork/SoftwareSourceCode/SoftwareApplication object(s) or an URI, but is missing a type/@type.');
+    });
+
+    it('errors on list with an invalid Thing at the beginning', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": [
+                    {},
+                    {
+                        "@type": "SoftwareApplication",
+                        "name": "Example Soft",
+                    }
+                ],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"isPartOf" must be a (list of) CreativeWork/SoftwareSourceCode/SoftwareApplication object(s) or an URI, but is missing a type/@type.');
+    });
+
+    it('errors on list with an invalid Thing at the end', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "isPartOf": [
+                    {
+                        "@type": "SoftwareApplication",
+                        "name": "Example Soft",
+                    },
+                    {}
+                ],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"isPartOf" must be a (list of) CreativeWork/SoftwareSourceCode/SoftwareApplication object(s) or an URI, but is missing a type/@type.');
     });
 });
 
