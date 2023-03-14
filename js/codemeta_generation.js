@@ -26,6 +26,11 @@ function setIfDefined(query, value) {
     }
 }
 
+function getLicenses() {
+    let selectedLicenses = Array.from(document.getElementById("selected-licenses").children);
+    return selectedLicenses.map(licenseDiv => SPDX_PREFIX + licenseDiv.children[0].innerText);
+}
+
 // Names of codemeta properties with a matching HTML field name
 const directCodemetaFields = [
     'codeRepository',
@@ -120,9 +125,9 @@ function generateCodemeta() {
             "@type": "SoftwareSourceCode",
         };
 
-        var license = getIfSet('#license')
-        if (license !== undefined) {
-            doc["license"] = SPDX_PREFIX + getIfSet('#license');
+        let licenses = getLicenses();
+        if (licenses.length > 0) {
+            doc["license"] = licenses;
         }
 
         // Generate most fields
@@ -210,9 +215,12 @@ function importCodemeta() {
     var doc = parseAndValidateCodemeta(false);
     resetForm();
 
-    if (doc['license'] !== undefined && doc['license'].indexOf(SPDX_PREFIX) == 0) {
-        var license = doc['license'].substring(SPDX_PREFIX.length);
-        document.querySelector('#license').value = license;
+    if (doc['license'] !== undefined) {
+        doc['license'].forEach(l => {
+            if (l.indexOf(SPDX_PREFIX) !== 0) { return; }
+            let licenseId = l.substring(SPDX_PREFIX.length);
+            insertLicenseElement(licenseId);
+        });
     }
 
     directCodemetaFields.forEach(function (item, index) {

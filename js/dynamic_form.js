@@ -23,7 +23,7 @@ function createPersonFieldset(personPrefix, legend) {
     fieldset.classList.add("person");
     fieldset.classList.add("leafFieldset");
     fieldset.id = personPrefix;
-    
+
     fieldset.innerHTML = `
         <legend>${legend}</legend>
         <div class="moveButtons">
@@ -123,7 +123,7 @@ function removePerson(prefix) {
 
     document.querySelector(`#${prefix}_${personId}`).remove();
 
-    setNbPersons(prefix, personId-1);
+    setNbPersons(prefix, personId - 1);
 }
 
 // Initialize a group of persons (authors, contributors) on page load.
@@ -149,6 +149,8 @@ function removePersons(prefix) {
 function resetForm() {
     removePersons('author');
     removePersons('contributor');
+    // Reset the list of selected licenses
+    document.getElementById("selected-licenses").innerHTML = '';
 
     // Reset the form after deleting elements, so nbPersons doesn't get
     // reset before it's read.

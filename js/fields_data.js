@@ -34,6 +34,19 @@ function initSpdx() {
     xhr.send();
 }
 
+function insertLicenseElement(licenseId) {
+    let selectedLicenses = document.getElementById("selected-licenses");
+    let newLicense = document.createElement("div");
+    newLicense.className = "selected-license";
+    newLicense.innerHTML = `
+        <span class="license-id">${licenseId}</span>
+        <button type="button" class="remove-license" onclick="removeLicense(this)">Remove</button>
+        `;
+
+    selectedLicenses.appendChild(newLicense);
+    return newLicense;
+}
+
 function validateLicense() {
     var licenseField = document.getElementById('license');
     var license = licenseField.value;
@@ -41,9 +54,16 @@ function validateLicense() {
         licenseField.setCustomValidity('Unknown license id');
     }
     else {
+        insertLicenseElement(license);
+
+        licenseField.value = "";
         licenseField.setCustomValidity('');
     }
+}
 
+function removeLicense(btn) {
+    btn.parentElement.remove();
+    generateCodemeta();
 }
 
 function initFieldsData() {
