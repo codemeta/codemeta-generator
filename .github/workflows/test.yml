@@ -23,8 +23,8 @@ jobs:
       - name: Install Cypress
         run: |
           npm install cypress
-          npm run cypress install
+          ./node_modules/.bin/cypress install
 
       - name: Run Cypress
         run: |
-          npm run cypress run
+          ./node_modules/.bin/cypress run
