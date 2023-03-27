@@ -22,7 +22,7 @@ jobs:
 
       - name: Install Cypress
         run: |
-          npm install cypress
+          npm install cypress@9.7.0
           ./node_modules/.bin/cypress install
 
       - name: Run Cypress
