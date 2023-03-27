@@ -1,0 +1,30 @@
+name: Run Cypress tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup npm cache
+        uses: actions/cache@v2
+        with:
+          path: '~/.npm'
+          key: ${{ runner.os }}-node
+          restore-keys: |
+            ${{ runner.os }}-node
+
+      - name: Install Cypress
+        run: |
+          npm install cypress@9.7.0
+          ./node_modules/.bin/cypress install
+
+      - name: Run Cypress
+        run: |
+          ./node_modules/.bin/cypress run
