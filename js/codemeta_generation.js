@@ -127,7 +127,7 @@ function generateCodemeta() {
 
         let licenses = getLicenses();
         if (licenses.length > 0) {
-            doc["license"] = licenses;
+            doc["license"] = (licenses.length === 1) ? licenses[0] : licenses;
         }
 
         // Generate most fields
@@ -216,6 +216,10 @@ function importCodemeta() {
     resetForm();
 
     if (doc['license'] !== undefined) {
+        if (typeof doc['license'] === 'string') {
+            doc['license'] = [doc['license']];
+        }
+
         doc['license'].forEach(l => {
             if (l.indexOf(SPDX_PREFIX) !== 0) { return; }
             let licenseId = l.substring(SPDX_PREFIX.length);

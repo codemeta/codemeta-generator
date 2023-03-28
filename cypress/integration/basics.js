@@ -34,7 +34,7 @@ describe('JSON Generation', function() {
         });
     });
 
-    it('works just from all main fields', function() {
+    it('works just from all main fields when using only one license', function() {
         cy.get('#name').type('My Test Software');
         cy.get('#description').type('This is a\ngreat piece of software');
         cy.get('#dateCreated').type('2019-10-02');
@@ -48,7 +48,33 @@ describe('JSON Generation', function() {
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "@type": "SoftwareSourceCode",
-                "license": ["https://spdx.org/licenses/AGPL-3.0"],
+                "license": "https://spdx.org/licenses/AGPL-3.0",
+                "dateCreated": "2019-10-02",
+                "datePublished": "2020-01-01",
+                "name": "My Test Software",
+                "description": "This is a\ngreat piece of software",
+        });
+    });
+
+    it('works just from all main fields when using multiple licenses', function() {
+        cy.get('#name').type('My Test Software');
+        cy.get('#description').type('This is a\ngreat piece of software');
+        cy.get('#dateCreated').type('2019-10-02');
+        cy.get('#datePublished').type('2020-01-01');
+        cy.get('#license').type('AGPL-3.0');
+        cy.get("#license").blur();
+        cy.get('#license').type('MIT');
+        cy.get("#license").blur();
+
+        cy.get('#generateCodemeta').click();
+
+        cy.get("#license").should('have.value', '');
+        cy.get('#errorMessage').should('have.text', '');
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "license": ["https://spdx.org/licenses/AGPL-3.0", "https://spdx.org/licenses/MIT"],
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
                 "name": "My Test Software",
@@ -71,12 +97,12 @@ describe('JSON Import', function() {
         cy.get('#name').should('have.value', 'My Test Software');
     });
 
-    it('works just from all main fields', function() {
+    it('works just from all main fields when using license as string', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "@type": "SoftwareSourceCode",
-                "license": ["https://spdx.org/licenses/AGPL-3.0"],
+                "license": "https://spdx.org/licenses/AGPL-3.0",
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
                 "name": "My Test Software",
@@ -92,6 +118,30 @@ describe('JSON Import', function() {
         cy.get('#license').should('have.value', '');
         cy.get("#selected-licenses").children().should('have.length', 1);
         cy.get("#selected-licenses").children().first().children().first().should('have.text', 'AGPL-3.0');
+    });
+
+    it('works just from all main fields when using license as array', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "license": ["https://spdx.org/licenses/AGPL-3.0", "https://spdx.org/licenses/MIT"],
+                "dateCreated": "2019-10-02",
+                "datePublished": "2020-01-01",
+                "name": "My Test Software",
+                "description": "This is a\ngreat piece of software",
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#name').should('have.value', 'My Test Software');
+        cy.get('#description').should('have.value', 'This is a\ngreat piece of software');
+        cy.get('#dateCreated').should('have.value', '2019-10-02');
+        cy.get('#datePublished').should('have.value', '2020-01-01');
+        cy.get('#license').should('have.value', '');
+        cy.get("#selected-licenses").children().should('have.length', 2);
+        cy.get("#selected-licenses").children().eq(0).children().first().should('have.text', 'AGPL-3.0');
+        cy.get("#selected-licenses").children().eq(1).children().first().should('have.text', 'MIT');
     });
 
     it('errors on invalid type', function() {
