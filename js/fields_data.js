@@ -47,7 +47,15 @@ function insertLicenseElement(licenseId) {
     return newLicense;
 }
 
-function validateLicense() {
+function validateLicense(e) {
+    // continue only if Enter key is pressed
+    if (e.keyCode && e.keyCode !== 13) {
+        return;
+    }
+    // Note: For some reason e.keyCode is undefined when Enter key is pressed.
+    // Maybe it's because of the datalist. But the above condition should
+    // work in either case.
+
     var licenseField = document.getElementById('license');
     var license = licenseField.value;
     if (SPDX_LICENSE_IDS !== null && SPDX_LICENSE_IDS.indexOf(license) == -1) {
@@ -58,6 +66,7 @@ function validateLicense() {
 
         licenseField.value = "";
         licenseField.setCustomValidity('');
+        generateCodemeta();
     }
 }
 

@@ -40,6 +40,7 @@ describe('JSON Generation', function() {
         cy.get('#dateCreated').type('2019-10-02');
         cy.get('#datePublished').type('2020-01-01');
         cy.get('#license').type('AGPL-3.0');
+        cy.get("#license").type('{enter}');
         cy.get('#generateCodemeta').click();
 
         cy.get("#license").should('have.value', '');
@@ -62,9 +63,9 @@ describe('JSON Generation', function() {
         cy.get('#dateCreated').type('2019-10-02');
         cy.get('#datePublished').type('2020-01-01');
         cy.get('#license').type('AGPL-3.0');
-        cy.get("#license").blur();
+        cy.get("#license").type('{enter}');
         cy.get('#license').type('MIT');
-        cy.get("#license").blur();
+        cy.get("#license").type('{enter}');
 
         cy.get('#generateCodemeta').click();
 
