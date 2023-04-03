@@ -48,11 +48,11 @@ function insertLicenseElement(licenseId) {
 }
 
 function validateLicense(e) {
-    // continue only if Enter key is pressed
-    if (e.keyCode && e.keyCode !== 13) {
+    // continue only if Enter/Tab key is pressed
+    if (e.keyCode && e.keyCode !== 13 && e.keyCode !== 9) {
         return;
     }
-    // Note: For some reason e.keyCode is undefined when Enter key is pressed.
+    // Note: For some reason e.keyCode is undefined when Enter/Tab key is pressed.
     // Maybe it's because of the datalist. But the above condition should
     // work in either case.
 
