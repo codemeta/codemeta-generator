@@ -71,7 +71,7 @@ See top-level LICENSE file for more information
             </p>
 
             <p>
-                <label for="license">License</label>
+                <label for="license">License(s)</label>
                 <input list="licenses" name="license" id="license"
                     aria-describedby="licenses_descr"> <!-- TODO: insert placeholder -->
 
@@ -81,6 +81,10 @@ See top-level LICENSE file for more information
 
                 <br />
                 <span class="field-description" id="licenses_descr">from <a href="https://spdx.org/license-list">SPDX licence list</a></span>
+
+                <div id="selected-licenses">
+                    <!-- This div is to be filled as the user selects licenses -->
+                </div>
             </p>
         </fieldset>
 

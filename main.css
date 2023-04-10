@@ -76,3 +76,7 @@ input[type=URL] {
 input:invalid {
     color: red;
 }
+
+.selected-license {
+    margin: 2px;
+}
