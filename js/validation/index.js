@@ -20,6 +20,21 @@ function validateDocument(doc) {
     }
     // TODO: validate id/@id
 
+    context = doc["@context"];
+    if (context == "https://doi.org/10.5063/schema/codemeta-2.0") {
+        // Correct
+    }
+    else if (Array.isArray(context) && context.includes("https://doi.org/10.5063/schema/codemeta-2.0")) {
+        if (context.length !== 1) {
+            setError(`Multiple values in @context are not supported (@context should be "https://doi.org/10.5063/schema/codemeta-2.0", not ${JSON.stringify(context)})`);
+            return false;
+        }
+    }
+    else {
+        setError(`@context must be "https://doi.org/10.5063/schema/codemeta-2.0", not ${JSON.stringify(context)}`);
+        return false;
+    }
+
     // TODO: check there is either type or @type but not both
     var type = getDocumentType(doc);
     if (type === undefined) {
@@ -37,13 +52,8 @@ function validateDocument(doc) {
             var fieldName = entry[0];
             var subdoc = entry[1];
             if (fieldName == "@context") {
-                if (subdoc == "https://doi.org/10.5063/schema/codemeta-2.0") {
-                    return true;
-                }
-                else {
-                    setError(`@context must be "https://doi.org/10.5063/schema/codemeta-2.0", not ${JSON.stringify(subdoc)}`);
-                    return false;
-                }
+                // Was checked before
+                return true;
             }
             else if (fieldName == "type" || fieldName == "@type") {
                 // Was checked before
