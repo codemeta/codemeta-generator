@@ -717,6 +717,33 @@ describe('Person validation', function() {
         cy.get('#errorMessage').should('have.text', '');
     });
 
+    it('accepts Person with multiple affiliations', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": {
+                    "@type": "Person",
+                    "@id": "http://example.org/~jdoe",
+                    "name": "Jane Doe",
+                    "affiliation": [
+                        {
+                            "@type": "Organization",
+                            "@id": "http://example.org/",
+                        },
+                        {
+                            "@type": "Organization",
+                            "@id": "http://example.com/",
+                        },
+                    ]
+                }
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
     it('errors on list with invalid Person at the beginning', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
