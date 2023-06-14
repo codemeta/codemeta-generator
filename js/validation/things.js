@@ -155,7 +155,7 @@ function validatePersons(fieldName, doc) {
 // Validates an Organization or an array of Organization
 function validateOrganizations(fieldName, doc) {
     return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
-        return validateOrganization(fieldName, doc);
+        return validateOrganization(fieldName, subdoc);
     });
 }
 
