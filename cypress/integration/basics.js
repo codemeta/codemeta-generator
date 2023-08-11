@@ -82,6 +82,29 @@ describe('JSON Generation', function() {
                 "description": "This is a\ngreat piece of software",
         });
     });
+
+    it('works when choosing licenses without the keyboard', function() {
+        cy.get('#name').type('My Test Software');
+        cy.get('#description').type('This is a\ngreat piece of software');
+        cy.get('#dateCreated').type('2019-10-02');
+        cy.get('#datePublished').type('2020-01-01');
+        cy.get('#license').type('AGPL-3.0');
+        // no cy.get("#license").type('{enter}'); here
+        cy.get('#generateCodemeta').click();
+
+        cy.get("#license").should('have.value', '');
+        cy.get('#errorMessage').should('have.text', '');
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "license": "https://spdx.org/licenses/AGPL-3.0",
+                "dateCreated": "2019-10-02",
+                "datePublished": "2020-01-01",
+                "name": "My Test Software",
+                "description": "This is a\ngreat piece of software",
+        });
+    });
 });
 
 describe('JSON Import', function() {

@@ -163,7 +163,7 @@ function fieldToLower(event) {
 
 function initCallbacks() {
     document.querySelector('#license')
-        .addEventListener('keyup', validateLicense);
+        .addEventListener('change', validateLicense);
 
     document.querySelector('#generateCodemeta')
         .addEventListener('click', generateCodemeta);
