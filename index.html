@@ -28,6 +28,19 @@ See top-level LICENSE file for more information
 
     <p>Most fields are optional. Mandatory fields will be highlighted when generating Codemeta.</p>
 
+    <form id="inputForm">
+
+    <fieldset id="fieldsetSoftwareItself" class="leafFieldset">
+        <legend>Codemeta config</legend>
+        <p>
+            Version:
+            <select id="codemetaVersion">
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+            </select>
+        </p>
+</fieldset>
+
     <noscript>
         <p id="noscriptError">
             This application requires Javascript to show dynamic fields in the form,
@@ -37,8 +50,6 @@ See top-level LICENSE file for more information
             or write the codemeta.json file directly.
         </p>
     </noscript>
-
-    <form id="inputForm">
         <fieldset id="fieldsetSoftwareItself" class="leafFieldset">
             <legend>The software itself</legend>
 
@@ -240,6 +251,17 @@ Bugfixes: that and this." ></textarea>
             </p>
 
 <!--TODO: referencePublication as ScholarlyArticle array -->
+
+        </fieldset>
+
+        <fieldset id="fieldsetSourceCode" class="leafFieldset">
+            <legend>Source code</legend>
+
+            <p title="Reference to the source code">
+                <label for="isSourceCodeOf">Is Source Code of</label>
+                <input type="URL" name="isSourceCodeOf" id="isSourceCodeOf"
+                    placeholder="https://codemeta.github.io" />
+            </p>
 
         </fieldset>
 
