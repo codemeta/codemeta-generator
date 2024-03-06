@@ -7,7 +7,20 @@
 
 "use strict";
 
+const CODEMETA_CONTEXT_URL = 'https://doi.org/10.5063/schema/codemeta-2.0';
+const CONTEXTS = {
+    [CODEMETA_CONTEXT_URL]: 'https://raw.githubusercontent.com/codemeta/codemeta/2.0/codemeta.jsonld'
+}
+
 const SPDX_PREFIX = 'https://spdx.org/licenses/';
+
+const jsonldCustomLoader = url => {
+    const xhrDocumentLoader = jsonld.documentLoaders.xhr();
+    if (url in CONTEXTS) {
+        return xhrDocumentLoader(CONTEXTS[url]);
+    }
+    return xhrDocumentLoader(url);
+};
 
 function emptyToUndefined(v) {
     if (v == null || v == "")
@@ -115,49 +128,56 @@ function generatePersons(prefix) {
     return persons;
 }
 
-function generateCodemeta() {
+
+function buildDoc() {
+    var doc = {
+        "@context": CODEMETA_CONTEXT_URL,
+        "@type": "SoftwareSourceCode",
+    };
+
+    let licenses = getLicenses();
+    if (licenses.length > 0) {
+        doc["license"] = (licenses.length === 1) ? licenses[0] : licenses;
+    }
+
+    // Generate most fields
+    directCodemetaFields.forEach(function (item, index) {
+        doc[item] = getIfSet('#' + item)
+    });
+
+    doc["funder"] = generateShortOrg('#funder', doc["affiliation"]);
+
+    // Generate simple fields parsed simply by splitting
+    splittedCodemetaFields.forEach(function (item, index) {
+        const id = item[0];
+        const separator = item[1];
+        const value = getIfSet('#' + id);
+        if (value !== undefined) {
+            doc[id] = value.split(separator).map(trimSpaces);
+        }
+    });
+
+    // Generate dynamic fields
+    var authors = generatePersons('author');
+    if (authors.length > 0) {
+        doc["author"] = authors;
+    }
+    var contributors = generatePersons('contributor');
+    if (contributors.length > 0) {
+        doc["contributor"] = contributors;
+    }
+    return doc;
+}
+
+async function generateCodemeta() {
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
 
     if (inputForm.checkValidity()) {
-        var doc = {
-            "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-            "@type": "SoftwareSourceCode",
-        };
-
-        let licenses = getLicenses();
-        if (licenses.length > 0) {
-            doc["license"] = (licenses.length === 1) ? licenses[0] : licenses;
-        }
-
-        // Generate most fields
-        directCodemetaFields.forEach(function (item, index) {
-            doc[item] = getIfSet('#' + item)
-        });
-
-        doc["funder"] = generateShortOrg('#funder', doc["affiliation"]);
-
-        // Generate simple fields parsed simply by splitting
-        splittedCodemetaFields.forEach(function (item, index) {
-            const id = item[0];
-            const separator = item[1];
-            const value = getIfSet('#' + id);
-            if (value !== undefined) {
-                doc[id] = value.split(separator).map(trimSpaces);
-            }
-        });
-
-        // Generate dynamic fields
-        var authors = generatePersons('author');
-        if (authors.length > 0) {
-            doc["author"] = authors;
-        }
-        var contributors = generatePersons('contributor');
-        if (contributors.length > 0) {
-            doc["contributor"] = contributors;
-        }
-
-        codemetaText = JSON.stringify(doc, null, 4);
+        var doc = buildDoc();
+        const expanded = await jsonld.expand(doc, {documentLoader: jsonldCustomLoader});
+        const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXT_URL, {documentLoader: jsonldCustomLoader});
+        codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
     }
     else {
