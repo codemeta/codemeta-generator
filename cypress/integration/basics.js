@@ -23,13 +23,13 @@ describe('JSON Generation', function() {
 
     it('works just from the software name', function() {
         cy.get('#name').type('My Test Software');
-        cy.get('#generateCodemeta').click();
+        cy.generateCodemetaAndWait();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
         });
     });
@@ -41,14 +41,14 @@ describe('JSON Generation', function() {
         cy.get('#datePublished').type('2020-01-01');
         cy.get('#license').type('AGPL-3.0');
         cy.get("#license").type('{enter}');
-        cy.get('#generateCodemeta').click();
+        cy.generateCodemetaAndWait();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "license": "https://spdx.org/licenses/AGPL-3.0",
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -67,14 +67,14 @@ describe('JSON Generation', function() {
         cy.get('#license').type('MIT');
         cy.get("#license").type('{enter}');
 
-        cy.get('#generateCodemeta').click();
+        cy.generateCodemetaAndWait();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "license": ["https://spdx.org/licenses/AGPL-3.0", "https://spdx.org/licenses/MIT"],
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -90,14 +90,14 @@ describe('JSON Generation', function() {
         cy.get('#datePublished').type('2020-01-01');
         cy.get('#license').type('AGPL-3.0');
         // no cy.get("#license").type('{enter}'); here
-        cy.get('#generateCodemeta').click();
+        cy.generateCodemetaAndWait();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "license": "https://spdx.org/licenses/AGPL-3.0",
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",

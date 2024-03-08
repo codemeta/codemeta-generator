@@ -169,15 +169,24 @@ function buildDoc() {
     return doc;
 }
 
+// FIXME this hack to make expansion work for now
+// (expansion does not accept empty values)
+function deleteEmptyValues(doc) {
+  return JSON.parse(JSON.stringify(doc));
+}
+
 async function generateCodemeta() {
     var inputForm = document.querySelector('#inputForm');
-    var codemetaText, errorHTML;
+    var codemetaText, codemetaTextToValidate, errorHTML;
 
     if (inputForm.checkValidity()) {
         var doc = buildDoc();
-        const expanded = await jsonld.expand(doc, {documentLoader: jsonldCustomLoader});
+        const expanded = await jsonld.expand(deleteEmptyValues(doc), {documentLoader: jsonldCustomLoader});
         const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXT_URL, {documentLoader: jsonldCustomLoader});
         codemetaText = JSON.stringify(compacted, null, 4);
+         // FIXME the hack below to make validation work for now
+        //  (use manually built doc instead of compacted doc for validation)
+        codemetaTextToValidate = JSON.stringify(doc, null, 4);
         errorHTML = "";
     }
     else {
@@ -194,7 +203,7 @@ async function generateCodemeta() {
     // If this finds a validation, it means there is a bug in our code (either
     // generation or validation), and the generation MUST NOT generate an
     // invalid codemeta file, regardless of user input.
-    if (codemetaText && !validateDocument(JSON.parse(codemetaText))) {
+    if (codemetaText && !validateDocument(JSON.parse(codemetaTextToValidate))) {
         alert('Bug detected! The data you wrote is correct; but for some reason, it seems we generated an invalid codemeta.json. Please report this bug at https://github.com/codemeta/codemeta-generator/issues/new and copy-paste the generated codemeta.json file. Thanks!');
     }
 
