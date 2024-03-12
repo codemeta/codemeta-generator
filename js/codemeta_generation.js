@@ -137,7 +137,7 @@ function buildDoc() {
 
     let licenses = getLicenses();
     if (licenses.length > 0) {
-        doc["license"] = (licenses.length === 1) ? licenses[0] : licenses;
+        doc["license"] = licenses;
     }
 
     // Generate most fields
