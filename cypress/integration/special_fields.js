@@ -16,7 +16,7 @@ describe('Funder id', function() {
 
         cy.get('#funder').type('http://example.org/');
 
-        cy.generateCodemetaAndWait();
+        cy.get('#generateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -55,7 +55,7 @@ describe('Funder name', function() {
 
         cy.get('#funder').type('Example Org');
 
-        cy.generateCodemetaAndWait();
+        cy.get('#generateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))

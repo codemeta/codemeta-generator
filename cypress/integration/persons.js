@@ -14,7 +14,7 @@
 describe('Zero author', function() {
     it('can be exported', function() {
         cy.get('#name').type('My Test Software');
-        cy.generateCodemetaAndWait();
+        cy.get('#generateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -84,7 +84,7 @@ describe('One full author', function() {
         cy.get('#author_1_id').type('http://example.org/~jdoe');
         cy.get('#author_1_affiliation').type('http://example.org/');
 
-        cy.generateCodemetaAndWait();
+        cy.get('#generateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -151,7 +151,7 @@ describe('Affiliation id', function() {
         cy.get('#author_1_givenName').type('Jane');
         cy.get('#author_1_affiliation').type('http://example.org/');
 
-        cy.generateCodemetaAndWait();
+        cy.get('#generateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -211,7 +211,7 @@ describe('Affiliation name', function() {
         cy.get('#author_1_givenName').type('Jane');
         cy.get('#author_1_affiliation').type('Example Org');
 
-        cy.generateCodemetaAndWait();
+        cy.get('#generateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -272,13 +272,11 @@ describe('Author order change', function() {
         cy.get('#author_1_affiliation').type('Example Org');
 
         cy.get('#author_1_moveToRight').click();
-        cy.wait(500);
 
         cy.get('#author_1_givenName').should('have.value', 'Jane');
         cy.get('#author_1_affiliation').should('have.value', 'Example Org');
 
         cy.get('#author_1_moveToLeft').click();
-        cy.wait(500);
 
         cy.get('#author_1_givenName').should('have.value', 'Jane');
         cy.get('#author_1_affiliation').should('have.value', 'Example Org');
@@ -297,7 +295,6 @@ describe('Author order change', function() {
         cy.get('#author_3_givenName').type('Alex');
 
         cy.get('#author_1_moveToRight').click();
-        cy.wait(500);
 
         cy.get('#author_1_givenName').should('have.value', 'John');
         cy.get('#author_1_familyName').should('have.value', 'Doe');
@@ -322,7 +319,7 @@ describe('Author order change', function() {
         cy.get('#author_2_givenName').type('John');
         cy.get('#author_2_familyName').type('Doe');
 
-        cy.generateCodemetaAndWait();
+        cy.get('#generateCodemeta').click();
 
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
@@ -347,7 +344,6 @@ describe('Author order change', function() {
         });
 
         cy.get('#author_1_moveToRight').click();
-        cy.wait(500);
 
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
@@ -385,7 +381,6 @@ describe('Author order change', function() {
         cy.get('#author_3_givenName').type('Alex');
 
         cy.get('#author_1_moveToLeft').click()
-        cy.wait(500);
 
         cy.get('#author_1_givenName').should('have.value', 'Alex');
         cy.get('#author_1_familyName').should('have.value', '');
@@ -413,7 +408,6 @@ describe('Author order change', function() {
         cy.get('#author_3_givenName').type('Alex');
 
         cy.get('#author_3_moveToRight').click()
-        cy.wait(500);
 
         cy.get('#author_1_givenName').should('have.value', 'Alex');
         cy.get('#author_1_familyName').should('have.value', '');
