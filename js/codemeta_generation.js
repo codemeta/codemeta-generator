@@ -107,7 +107,10 @@ function generateShortOrg(fieldName) {
 function generatePerson(idPrefix) {
     var doc = {
         "@type": "Person",
-        "@id": getIfSet(`#${idPrefix}_id`),
+    }
+    var id = getIfSet(`#${idPrefix}_id`);
+    if (id !== undefined) {
+        doc["@id"] = id;
     }
     directPersonCodemetaFields.forEach(function (item, index) {
         doc[item] = getIfSet(`#${idPrefix}_${item}`);
@@ -169,19 +172,13 @@ function buildDoc() {
     return doc;
 }
 
-// FIXME this hack to make expansion work for now
-// (expansion does not accept empty values)
-function deleteEmptyValues(doc) {
-  return JSON.parse(JSON.stringify(doc));
-}
-
 async function generateCodemeta() {
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
 
     if (inputForm.checkValidity()) {
         var doc = buildDoc();
-        const expanded = await jsonld.expand(deleteEmptyValues(doc), {documentLoader: jsonldCustomLoader});
+        const expanded = await jsonld.expand(doc, {documentLoader: jsonldCustomLoader});
         const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXT_URL, {documentLoader: jsonldCustomLoader});
         codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
