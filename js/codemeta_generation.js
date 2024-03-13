@@ -9,7 +9,7 @@
 
 const CODEMETA_CONTEXT_URL = 'https://doi.org/10.5063/schema/codemeta-2.0';
 const CONTEXTS = {
-    [CODEMETA_CONTEXT_URL]: `${window.location.origin}/contexts/codemeta.jsonld`
+    [CODEMETA_CONTEXT_URL]: `${window.location.origin}/contexts/codemeta-2.0.jsonld`
 }
 
 const SPDX_PREFIX = 'https://spdx.org/licenses/';
