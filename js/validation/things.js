@@ -83,7 +83,7 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
 
     for (expectedType in typeFieldValidators) {
         if (isCompactTypeEqual(documentType, expectedType)) {
-            fieldValidators = typeFieldValidators[expectedType];
+            var fieldValidators = typeFieldValidators[expectedType];
             return Object.entries(doc).every((entry) => {
                 var fieldName = entry[0];
                 var subdoc = entry[1];
