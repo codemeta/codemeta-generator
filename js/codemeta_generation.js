@@ -22,7 +22,6 @@ const getJsonldCustomLoader = contexts => {
     return url => {
         const xhrDocumentLoader = jsonld.documentLoaders.xhr();
         if (url in contexts) {
-            console.log(contexts);
             return {
                 contextUrl: null,
                 document: contexts[url],
