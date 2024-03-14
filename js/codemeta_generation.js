@@ -8,23 +8,34 @@
 "use strict";
 
 const CODEMETA_CONTEXT_URL = 'https://doi.org/10.5063/schema/codemeta-2.0';
-const CONTEXTS = {
-    [CODEMETA_CONTEXT_URL]: `${window.location.href}/../data/contexts/codemeta-2.0.jsonld` // Relative to index.html
-}
-
 const SPDX_PREFIX = 'https://spdx.org/licenses/';
 
-const jsonldCustomLoader = url => {
-    const xhrDocumentLoader = jsonld.documentLoaders.xhr();
-    if (url in CONTEXTS) {
-        return xhrDocumentLoader(CONTEXTS[url]);
+const initContext = async () => {
+    const contextResponse = await fetch("../data/contexts/codemeta-2.0.jsonld");
+    const context = await contextResponse.json();
+    return {
+        [CODEMETA_CONTEXT_URL]: context
     }
-    return xhrDocumentLoader(url);
+}
+
+const getJsonldCustomLoader = contexts => {
+    return url => {
+        const xhrDocumentLoader = jsonld.documentLoaders.xhr();
+        if (url in contexts) {
+            console.log(contexts);
+            return {
+                contextUrl: null,
+                document: contexts[url],
+                documentUrl: url
+            };
+        }
+        return xhrDocumentLoader(url);
+    }
 };
 
-const initJsonldLoader = () => {
-    jsonld.documentLoader = jsonldCustomLoader;
-}
+const initJsonldLoader = contexts => {
+    jsonld.documentLoader = getJsonldCustomLoader(contexts);
+};
 
 function emptyToUndefined(v) {
     if (v == null || v == "")
