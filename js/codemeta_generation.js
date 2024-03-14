@@ -22,6 +22,10 @@ const jsonldCustomLoader = url => {
     return xhrDocumentLoader(url);
 };
 
+const initJsonldLoader = () => {
+    jsonld.documentLoader = jsonldCustomLoader;
+}
+
 function emptyToUndefined(v) {
     if (v == null || v == "")
         return undefined;
@@ -178,8 +182,8 @@ async function generateCodemeta() {
 
     if (inputForm.checkValidity()) {
         var doc = buildDoc();
-        const expanded = await jsonld.expand(doc, {documentLoader: jsonldCustomLoader});
-        const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXT_URL, {documentLoader: jsonldCustomLoader});
+        const expanded = await jsonld.expand(doc);
+        const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXT_URL);
         codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
     }
