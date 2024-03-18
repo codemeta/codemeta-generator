@@ -352,9 +352,9 @@ Bugfixes: that and this." ></textarea>
 
   <script src="./js/libs/jsonld/jsonld.min.js"></script>
   <script>
-    initFieldsData();
     initContext().then(contexts => {
       initJsonldLoader(contexts);
+      initFieldsData();
       initCallbacks();
       loadStateFromStorage();
     });
