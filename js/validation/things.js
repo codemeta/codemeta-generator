@@ -15,6 +15,10 @@ function getDocumentType(doc) {
     return doc["type"] || doc["@type"] || doc["codemeta:type"]
 }
 
+function getDocumentId(doc) {
+    return doc["id"] || doc["@id"];
+}
+
 function isCompactTypeEqual(type, compactedType) {
     // FIXME: are all variants allowed?
     return (type == `${compactedType}`
@@ -64,7 +68,7 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
 
     var documentType = getDocumentType(doc);
 
-    var id = doc["id"] || doc["@id"];
+    var id = getDocumentId(doc);
     if (id !== undefined && !isUrl(id)) {
         setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
         return false;
