@@ -165,15 +165,18 @@ function initCallbacks() {
     document.querySelector('#license')
         .addEventListener('change', validateLicense);
 
+    document.querySelector('#generateCodemeta').disabled = false;
     document.querySelector('#generateCodemeta')
         .addEventListener('click', generateCodemeta);
 
     document.querySelector('#resetForm')
         .addEventListener('click', resetForm);
 
+    document.querySelector('#validateCodemeta').disabled = false;
     document.querySelector('#validateCodemeta')
         .addEventListener('click', () => parseAndValidateCodemeta(true));
 
+    document.querySelector('#importCodemeta').disabled = false;
     document.querySelector('#importCodemeta')
         .addEventListener('click', importCodemeta);
 

@@ -10,28 +10,22 @@
 var SPDX_LICENSES = null;
 var SPDX_LICENSE_IDS = null;
 
+const loadSpdxData = async () => {
+    const licensesResponse = await fetch("./data/spdx/licenses.json");
+    const licenseList = await licensesResponse.json();
+    return licenseList.licenses;
+}
 
 function initSpdx() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', './data/spdx/licenses.json', true);
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            SPDX_LICENSES = JSON.parse(xhr.response)['licenses'];
+    var datalist = document.getElementById('licenses');
 
-            var datalist = document.getElementById('licenses');
+    SPDX_LICENSES.forEach(function (license) {
+        var option = document.createElement('option');
+        option.value = license['licenseId'];
+        option.label = `${license['licenseId']}: ${license['name']}`;
+        datalist.appendChild(option);
+    });
 
-            SPDX_LICENSES.forEach(function (license) {
-                var option = document.createElement('option');
-                option.value = license['licenseId'];
-                option.label = `${license['licenseId']}: ${license['name']}`;
-                datalist.appendChild(option);
-            });
-            SPDX_LICENSE_IDS = SPDX_LICENSES.map(function (license) {
-                return license['licenseId'];
-            })
-        }
-    }
-    xhr.send();
 }
 
 function insertLicenseElement(licenseId) {
@@ -75,6 +69,6 @@ function removeLicense(btn) {
     generateCodemeta();
 }
 
-function initFieldsData() {
+function initFields() {
     initSpdx();
 }
