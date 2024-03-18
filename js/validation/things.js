@@ -65,7 +65,7 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
     var documentType = getDocumentType(doc);
 
     var id = doc["id"] || doc["@id"];
-    if (id !== undefined && !isUrl(id)) {
+    if (id !== undefined && !isBlankNodeId("_:") && !isUrl(id)) {
         setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
         return false;
     }
@@ -133,8 +133,8 @@ function validateCreativeWorks(fieldName, doc) {
 function validateCreativeWork(fieldName, doc) {
     return validateThingOrId(fieldName, {
         "CreativeWork": creativeWorkFieldValidators,
-        "SoftwareSourceCode": softwareFieldValidators,
-        "SoftwareApplication": softwareFieldValidators,
+        "SoftwareSourceCode": softwareFieldValidatorsV2,
+        "SoftwareApplication": softwareFieldValidatorsV2,
     }, doc);
 }
 
@@ -143,6 +143,12 @@ function validateActors(fieldName, doc) {
     return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
         return validateActor(fieldName, subdoc);
     });
+}
+
+// Validates an author or contributor
+function validateAuthorOrContributor(fieldName, doc) {
+    // TODO: Allow parsing Role?
+    return validateActors(fieldName, doc);
 }
 
 // Validates a Person or an array of Person
@@ -178,7 +184,7 @@ function validateOrganization(fieldName, doc) {
 }
 
 
-var softwareFieldValidators = {
+var softwareFieldValidatorsV2 = {
     "@id": validateUrl,
     "id": validateUrl,
 
@@ -243,6 +249,11 @@ var softwareFieldValidators = {
     "referencePublication": noValidation, // TODO?
     "readme": validateUrls,
 };
+
+var softwareFieldValidatorsV3 = {
+    ...softwareFieldValidatorsV2,
+    "isSourceCodeOf": validateUrls,
+}
 
 var creativeWorkFieldValidators = {
     "@id": validateUrl,

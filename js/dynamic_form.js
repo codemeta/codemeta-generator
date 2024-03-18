@@ -57,6 +57,11 @@ function createPersonFieldset(personPrefix, legend) {
             <input type="text" id="${personPrefix}_affiliation" name="${personPrefix}_affiliation"
                 placeholder="Department of Computer Science, University of Pisa" />
         </p>
+        <p>
+        <label for="${personPrefix}_roles">Roles</label>
+            <input type="text" id="${personPrefix}_roles" name="${personPrefix}_roles"
+                placeholder="Coding:2022:2023, Documentation:2022:2023" />
+        </p>
     `;
 
     return fieldset;

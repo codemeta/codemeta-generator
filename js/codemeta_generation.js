@@ -32,25 +32,34 @@ function getLicenses() {
 }
 
 // Names of codemeta properties with a matching HTML field name
-const directCodemetaFields = [
-    'codeRepository',
-    'contIntegration',
-    'dateCreated',
-    'datePublished',
-    'dateModified',
-    'downloadUrl',
-    'issueTracker',
-    'name',
-    'version',
-    'identifier',
-    'description',
-    'applicationCategory',
-    'releaseNotes',
-    'funding',
-    'developmentStatus',
-    'isPartOf',
-    'referencePublication'
-];
+const directCodemetaFieldsV2 = {
+    'codeRepository': '#codeRepository',
+    'contIntegration': '#contIntegration',
+    'dateCreated': '#dateCreated',
+    'datePublished': '#datePublished',
+    'dateModified': '#dateModified',
+    'downloadUrl': '#downloadUrl',
+    'issueTracker': '#issueTracker',
+    'name': '#name',
+    'version': '#version',
+    'identifier': '#identifier',
+    'description': '#description',
+    'applicationCategory': '#applicationCategory',
+    'releaseNotes': '#releaseNotes',
+    'funding': '#funding',
+    'developmentStatus': '#funding',
+    'isPartOf': '#isPartOf',
+    'referencePublication': '#referencePublication'
+};
+
+const directCodemetaFieldsV3 = {
+    ...directCodemetaFieldsV2,
+    // 'hasSourceCode': '#hasSourceCode', -> Generator is for SoftwareSource code not SoftwareApplication
+    'isSourceCodeOf': '#isSourceCodeOf',
+    'continuousIntegration': '#contIntegration',
+    // 'embargoEndDate': '#embargoDate' -> Not in use for v2. Not required for v3 either.
+};
+
 
 const splittedCodemetaFields = [
     ['keywords', ','],
@@ -94,12 +103,12 @@ function generateShortOrg(fieldName) {
 function generatePerson(idPrefix) {
     var doc = {
         "@type": "Person",
-        "@id": getIfSet(`#${idPrefix}_id`),
+        "@id": getIfSet(`#${idPrefix}_id`) || `_:${idPrefix}`,
     }
     directPersonCodemetaFields.forEach(function (item, index) {
         doc[item] = getIfSet(`#${idPrefix}_${item}`);
     });
-    doc["affiliation"] = generateShortOrg(`#${idPrefix}_affiliation`)
+    doc["affiliation"] = generateShortOrg(`#${idPrefix}_affiliation`);
 
     return doc;
 }
@@ -109,7 +118,24 @@ function generatePersons(prefix) {
     var nbPersons = getNbPersons(prefix);
 
     for (let personId = 1; personId <= nbPersons; personId++) {
-        persons.push(generatePerson(`${prefix}_${personId}`));
+        const personIdPrefix = `${prefix}_${personId}`;
+        persons.push(generatePerson(personIdPrefix));
+
+        const roles = getIfSet(`#${personIdPrefix}_roles`);
+        if (roles) {
+            for (let role of roles.split(",")) {
+                const [roleName, startDate, endDate] = role.split(":");
+                persons.push({
+                    "@type": "Role",
+                    "roleName": roleName,
+                    "startDate": startDate,
+                    "endDate": endDate,
+                    "author": {
+                        "@id": getIfSet(`#${personIdPrefix}_id`) || `_:${personIdPrefix}`,
+                    }
+                });
+            }
+        }
     }
 
     return persons;
@@ -120,8 +146,10 @@ function generateCodemeta() {
     var codemetaText, errorHTML;
 
     if (inputForm.checkValidity()) {
+        const isCodemetaV3 = inputForm.querySelector("#codemetaVersion").value === '3';
+
         var doc = {
-            "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+            "@context": `https://doi.org/10.5063/schema/codemeta-${isCodemetaV3 ? '3' : '2'}.0`,
             "@type": "SoftwareSourceCode",
         };
 
@@ -131,9 +159,10 @@ function generateCodemeta() {
         }
 
         // Generate most fields
-        directCodemetaFields.forEach(function (item, index) {
-            doc[item] = getIfSet('#' + item)
-        });
+        const directFields = isCodemetaV3 ? directCodemetaFieldsV3 : directCodemetaFieldsV2;
+        for (const key in directFields) {
+            doc[key] = getIfSet(directFields[key]);
+        }
 
         doc["funder"] = generateShortOrg('#funder', doc["affiliation"]);
 
@@ -198,16 +227,39 @@ function importPersons(prefix, legend, docs) {
         return;
     }
 
-    docs.forEach(function (doc, index) {
-        var personId = addPerson(prefix, legend);
+    const roles = {};
+    for (const doc of docs) {
+        if (doc['@type'] === 'Role') {
+            let authorId = doc['author']['@id'];
+            authorId = isBlankNodeId(authorId) ? authorId.substring(2) : authorId;
+            if (!!authorId && roles[authorId] === undefined) {
+                roles[authorId] = [];
+            }
+            roles[authorId].push(`${doc['roleName']}:${doc['startDate']}:${doc['endDate']}`);
+        }
+    }
 
-        setIfDefined(`#${prefix}_${personId}_id`, doc['@id']);
+    console.log('Roles are', roles);
+
+    docs.forEach(function (doc, index) {
+        if (doc['@type'] === 'Role') {
+            return;
+        }
+
+        const personId = addPerson(prefix, legend);
+        const personDocId = isBlankNodeId(doc['@id']) ? '' : doc['@id'];
+
+        setIfDefined(`#${prefix}_${personId}_id`, personDocId);
         directPersonCodemetaFields.forEach(function (item, index) {
             setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
         });
 
         importShortOrg(`#${prefix}_${personId}_affiliation`, doc['affiliation'])
     })
+
+    for (const authorId in roles) {
+        setIfDefined(`#${authorId}_roles`, roles[authorId].join(', '));
+    }
 }
 
 function importCodemeta() {
@@ -227,9 +279,13 @@ function importCodemeta() {
         });
     }
 
-    directCodemetaFields.forEach(function (item, index) {
-        setIfDefined('#' + item, doc[item]);
-    });
+    const isCodemetaV3 = doc['@context'] === 'https://doi.org/10.5063/schema/codemeta-3.0';
+
+    const directCodemetaField = (isCodemetaV3 ? directCodemetaFieldsV3 : directCodemetaFieldsV2);
+    for (const key in directCodemetaField) {
+        setIfDefined(directCodemetaField[key], doc[key]);
+    }
+
     importShortOrg('#funder', doc["funder"]);
 
     // Import simple fields by joining on their separator

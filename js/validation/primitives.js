@@ -29,7 +29,7 @@ function validateUrls(fieldName, doc) {
 
 // Validates a single URL
 function validateUrl(fieldName, doc) {
-    if (!isUrl(doc)) {
+    if (!isBlankNodeId(doc) && !isUrl(doc)) {
         setError(`Invalid URL in field "${fieldName}": ${JSON.stringify(doc)}`)
         return false;
     }

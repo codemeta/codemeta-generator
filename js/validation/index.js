@@ -21,7 +21,8 @@ function validateDocument(doc) {
     // TODO: validate id/@id
 
     context = doc["@context"];
-    if (context == "https://doi.org/10.5063/schema/codemeta-2.0") {
+    const isCodemetaV3 = context === "https://doi.org/10.5063/schema/codemeta-3.0";
+    if (context === "https://doi.org/10.5063/schema/codemeta-2.0" || context === "https://doi.org/10.5063/schema/codemeta-3.0") {
         // Correct
     }
     else if (Array.isArray(context) && context.includes("https://doi.org/10.5063/schema/codemeta-2.0")) {
@@ -60,7 +61,7 @@ function validateDocument(doc) {
                 return true;
             }
             else {
-                var validator = softwareFieldValidators[fieldName];
+                var validator = (isCodemetaV3 ? softwareFieldValidatorsV3: softwareFieldValidatorsV2)[fieldName];
                 if (validator === undefined) {
                     // TODO: find if it's a field that belongs to another type,
                     // and suggest that to the user
