@@ -5,4 +5,5 @@ beforeEach(function() {
         win.sessionStorage.clear()
     })
     cy.visit('./index.html');
+    cy.wait(500);
 });
