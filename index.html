@@ -352,11 +352,11 @@ Bugfixes: that and this." ></textarea>
 
   <script src="./js/libs/jsonld/jsonld.min.js"></script>
   <script>
-    loadSpdxData().then(licenses => {
+    Promise.all(([loadSpdxData(), loadContextData()]).then(results => {
+      const [licenses, contexts] = results;
       SPDX_LICENSES = licenses;
       SPDX_LICENSE_IDS = licenses.map(license => license['licenseId']);
-      return loadContextData();
-    }).then(contexts => {
+
       initJsonldLoader(contexts);
       initFields();
       initCallbacks();
