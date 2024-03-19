@@ -100,7 +100,6 @@ async function parseAndValidateCodemeta(showPopup) {
         }
     }
 
-    const expanded = await jsonld.expand(parsed);
-    doc = await jsonld.compact(expanded, CODEMETA_CONTEXT_URL);
+    doc = await jsonld.compact(parsed, CODEMETA_CONTEXT_URL);
     return doc;
 }
