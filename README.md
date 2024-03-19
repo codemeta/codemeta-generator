@@ -88,14 +88,13 @@ To run them, first install Cypress:
 
 ```
 sudo apt install npm  # or the equivalent on your system
-npm install cypress
-$(npm bin)/cypress install
+npx cypress@9.7.0 install
 ```
 
 Then, run the tests:
 
 ```
-$(npm bin)/cypress run
+npx cypress@9.7.0 run
 ```
 
 

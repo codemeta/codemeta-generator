@@ -29,7 +29,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
         });
     });
@@ -48,7 +48,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "license": "https://spdx.org/licenses/AGPL-3.0",
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -74,7 +74,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "license": ["https://spdx.org/licenses/AGPL-3.0", "https://spdx.org/licenses/MIT"],
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",
@@ -97,7 +97,7 @@ describe('JSON Generation', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "license": "https://spdx.org/licenses/AGPL-3.0",
                 "dateCreated": "2019-10-02",
                 "datePublished": "2020-01-01",

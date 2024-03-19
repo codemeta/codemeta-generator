@@ -20,7 +20,7 @@ describe('Zero author', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
         });
     });
@@ -90,18 +90,18 @@ describe('One full author', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "@type": "Person",
-                        "@id": "http://example.org/~jdoe",
+                        "type": "Person",
+                        "id": "http://example.org/~jdoe",
                         "givenName": "Jane",
                         "familyName": "Doe",
                         "email": "jdoe@example.org",
                         "affiliation": {
-                            "@type": "Organization",
-                            "@id": "http://example.org/",
+                            "type": "Organization",
+                            "id": "http://example.org/",
                         }
                     }
                 ],
@@ -157,15 +157,15 @@ describe('Affiliation id', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "@type": "Person",
+                        "type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
-                            "@type": "Organization",
-                            "@id": "http://example.org/",
+                            "type": "Organization",
+                            "id": "http://example.org/",
                         }
                     }
                 ],
@@ -217,14 +217,14 @@ describe('Affiliation name', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "@type": "Person",
+                        "type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
-                            "@type": "Organization",
+                            "type": "Organization",
                             "name": "Example Org",
                         }
                     }
@@ -271,12 +271,12 @@ describe('Author order change', function() {
         cy.get('#author_1_givenName').type('Jane');
         cy.get('#author_1_affiliation').type('Example Org');
 
-        cy.get('#author_1_moveToRight').click()
+        cy.get('#author_1_moveToRight').click();
 
         cy.get('#author_1_givenName').should('have.value', 'Jane');
         cy.get('#author_1_affiliation').should('have.value', 'Example Org');
 
-        cy.get('#author_1_moveToLeft').click()
+        cy.get('#author_1_moveToLeft').click();
 
         cy.get('#author_1_givenName').should('have.value', 'Jane');
         cy.get('#author_1_affiliation').should('have.value', 'Example Org');
@@ -294,7 +294,7 @@ describe('Author order change', function() {
         cy.get('#author_2_familyName').type('Doe');
         cy.get('#author_3_givenName').type('Alex');
 
-        cy.get('#author_1_moveToRight').click()
+        cy.get('#author_1_moveToRight').click();
 
         cy.get('#author_1_givenName').should('have.value', 'John');
         cy.get('#author_1_familyName').should('have.value', 'Doe');
@@ -324,19 +324,19 @@ describe('Author order change', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "@type": "Person",
+                        "type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
-                            "@type": "Organization",
+                            "type": "Organization",
                             "name": "Example Org",
                         }
                     },
                     {
-                        "@type": "Person",
+                        "type": "Person",
                         "givenName": "John",
                         "familyName": "Doe",
                     },
@@ -348,19 +348,19 @@ describe('Author order change', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
                     {
-                        "@type": "Person",
+                        "type": "Person",
                         "givenName": "John",
                         "familyName": "Doe",
                     },
                     {
-                        "@type": "Person",
+                        "type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
-                            "@type": "Organization",
+                            "type": "Organization",
                             "name": "Example Org",
                         }
                     },

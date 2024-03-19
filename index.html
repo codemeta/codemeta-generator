@@ -310,13 +310,13 @@ Bugfixes: that and this." ></textarea>
 
     </form>
     <form>
-        <input type="button" id="generateCodemeta" value="Generate codemeta.json"
+        <input type="button" id="generateCodemeta" value="Generate codemeta.json" disabled
             title="Creates a codemeta.json file below, from the information provided above." />
         <input type="button" id="resetForm" value="Reset form"
             title="Erases all fields." />
-        <input type="button" id="validateCodemeta" value="Validate codemeta.json"
+        <input type="button" id="validateCodemeta" value="Validate codemeta.json" disabled
             title="Checks the codemeta.json file below is valid, and displays errors." />
-        <input type="button" id="importCodemeta" value="Import codemeta.json"
+        <input type="button" id="importCodemeta" value="Import codemeta.json" disabled
             title="Fills the fields above based on the codemeta.json file below." />
     </form>
 
@@ -350,10 +350,18 @@ Bugfixes: that and this." ></textarea>
     </p>
   </footer>
 
+  <script src="./js/libs/jsonld/jsonld.min.js"></script>
   <script>
-    initFieldsData();
-    initCallbacks();
-    loadStateFromStorage();
+    Promise.all([loadSpdxData(), loadContextData()]).then(results => {
+      const [licenses, contexts] = results;
+      SPDX_LICENSES = licenses;
+      SPDX_LICENSE_IDS = licenses.map(license => license['licenseId']);
+
+      initJsonldLoader(contexts);
+      initFields();
+      initCallbacks();
+      loadStateFromStorage();
+    });
   </script>
 </body>
 </html>

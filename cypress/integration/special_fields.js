@@ -22,11 +22,11 @@ describe('Funder id', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "funder": {
-                    "@type": "Organization",
-                    "@id": "http://example.org/",
+                    "type": "Organization",
+                    "id": "http://example.org/",
                 },
             });
     });
@@ -61,10 +61,10 @@ describe('Funder name', function() {
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-                "@type": "SoftwareSourceCode",
+                "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "funder": {
-                    "@type": "Organization",
+                    "type": "Organization",
                     "name": "Example Org",
                 }
         });
