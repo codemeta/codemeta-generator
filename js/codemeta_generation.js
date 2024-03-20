@@ -11,7 +11,7 @@ const CODEMETA_CONTEXT_URL = 'https://doi.org/10.5063/schema/codemeta-2.0';
 const SPDX_PREFIX = 'https://spdx.org/licenses/';
 
 const loadContextData = async () => {
-    const contextResponse = await fetch("../data/contexts/codemeta-2.0.jsonld");
+    const contextResponse = await fetch("./data/contexts/codemeta-2.0.jsonld");
     const context = await contextResponse.json();
     return {
         [CODEMETA_CONTEXT_URL]: context
