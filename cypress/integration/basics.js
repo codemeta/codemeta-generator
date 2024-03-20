@@ -168,6 +168,24 @@ describe('JSON Import', function() {
         cy.get("#selected-licenses").children().eq(1).children().first().should('have.text', 'MIT');
     });
 
+    it('works with expanded document version', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "http://schema.org/name": [
+                    {
+                        "@value": "My Test Software"
+                    }
+                ],
+                "@type": [
+                    "http://schema.org/SoftwareSourceCode"
+                ]
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#name').should('have.value', 'My Test Software');
+    });
+
     it('errors on invalid type', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
