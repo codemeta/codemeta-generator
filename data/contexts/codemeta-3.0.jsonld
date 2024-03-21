@@ -21,7 +21,6 @@
       "contributor": { "@id": "schema:contributor"},
       "copyrightHolder": { "@id": "schema:copyrightHolder"},
       "copyrightYear": { "@id": "schema:copyrightYear"},
-      "creator": { "@id": "schema:creator"},
       "dateCreated": {"@id": "schema:dateCreated", "@type": "schema:Date" },
       "dateModified":  {"@id": "schema:dateModified", "@type": "schema:Date" },
       "datePublished":  {"@id": "schema:datePublished", "@type": "schema:Date" },
@@ -71,15 +70,12 @@
       "targetProduct": { "@id": "schema:targetProduct"},
       "url": { "@id": "schema:url", "@type": "@id"},
       "version": { "@id": "schema:version"},
-
       "author": { "@id": "schema:author", "@container": "@list" },
 
       "softwareSuggestions": { "@id": "codemeta:softwareSuggestions", "@type": "@id"},
-      "contIntegration": { "@id": "codemeta:contIntegration", "@type": "@id"},
       "continuousIntegration": { "@id": "codemeta:continuousIntegration", "@type": "@id"},
       "buildInstructions": { "@id": "codemeta:buildInstructions", "@type": "@id"},
       "developmentStatus": { "@id": "codemeta:developmentStatus", "@type": "@id"},
-      "embargoDate": { "@id":"codemeta:embargoDate", "@type": "schema:Date" },
       "embargoEndDate": { "@id":"codemeta:embargoEndDate", "@type": "schema:Date" },
       "funding": { "@id": "codemeta:funding" },
       "readme": { "@id":"codemeta:readme", "@type": "@id" },
