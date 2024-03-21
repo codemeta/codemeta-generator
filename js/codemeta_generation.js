@@ -7,14 +7,21 @@
 
 "use strict";
 
-const CODEMETA_CONTEXT_URL = 'https://doi.org/10.5063/schema/codemeta-2.0';
+const CODEMETA_LOCAL_CONTEXT_PATH = "./data/contexts/codemeta-local.jsonld";
+const CODEMETA_V2_CONTEXT_PATH = './data/contexts/codemeta-2.0.jsonld';
+const CODEMETA_LOCAL_CONTEXT_URL = 'local';
+const CODEMETA_V2_CONTEXT_URL = 'https://doi.org/10.5063/schema/codemeta-2.0';
 const SPDX_PREFIX = 'https://spdx.org/licenses/';
 
 const loadContextData = async () => {
-    const contextResponse = await fetch("./data/contexts/codemeta-2.0.jsonld");
-    const context = await contextResponse.json();
+    const [contextLocal, contextV2] =
+        await Promise.all([
+            fetch(CODEMETA_LOCAL_CONTEXT_PATH).then(response => response.json()),
+            fetch(CODEMETA_V2_CONTEXT_PATH).then(response => response.json()),
+        ]);
     return {
-        [CODEMETA_CONTEXT_URL]: context
+        [CODEMETA_LOCAL_CONTEXT_URL]: contextLocal,
+        [CODEMETA_V2_CONTEXT_URL]: contextV2,
     }
 }
 
@@ -145,10 +152,9 @@ function generatePersons(prefix) {
     return persons;
 }
 
-
-function buildDoc() {
+async function buildExpandedJson() {
     var doc = {
-        "@context": CODEMETA_CONTEXT_URL,
+        "@context": CODEMETA_LOCAL_CONTEXT_URL,
         "@type": "SoftwareSourceCode",
     };
 
@@ -183,7 +189,7 @@ function buildDoc() {
     if (contributors.length > 0) {
         doc["contributor"] = contributors;
     }
-    return doc;
+    return await jsonld.expand(doc);
 }
 
 async function generateCodemeta() {
@@ -191,9 +197,8 @@ async function generateCodemeta() {
     var codemetaText, errorHTML;
 
     if (inputForm.checkValidity()) {
-        var doc = buildDoc();
-        const expanded = await jsonld.expand(doc);
-        const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXT_URL);
+        const expanded = await buildExpandedJson();
+        const compacted = await jsonld.compact(expanded, CODEMETA_V2_CONTEXT_URL);
         codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
     }
