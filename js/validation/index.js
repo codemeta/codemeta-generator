@@ -21,7 +21,9 @@ function validateDocument(doc) {
     // TODO: validate id/@id
 
     context = doc["@context"];
-    if (context == "https://doi.org/10.5063/schema/codemeta-2.0") {
+    const contextUrls = Object.entries(CODEMETA_CONTEXTS)
+        .map(([version, value]) => value.url);
+    if (contextUrls.includes(context)) {
         // Correct
     }
     else if (Array.isArray(context) && context.includes("https://doi.org/10.5063/schema/codemeta-2.0")) {
@@ -31,7 +33,7 @@ function validateDocument(doc) {
         }
     }
     else {
-        setError(`@context must be "https://doi.org/10.5063/schema/codemeta-2.0", not ${JSON.stringify(context)}`);
+        setError(`@context must be one of "${contextUrls.join('", "')}", not ${JSON.stringify(context)}`);
         return false;
     }
 
@@ -57,6 +59,10 @@ function validateDocument(doc) {
             }
             else if (fieldName == "type" || fieldName == "@type") {
                 // Was checked before
+                return true;
+            }
+            else if (fieldName.startsWith("codemeta:") || fieldName.startsWith("schema:")) {
+                // Do not check fields from other versions FIXME ?
                 return true;
             }
             else {

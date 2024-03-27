@@ -23,7 +23,7 @@ describe('JSON Generation', function() {
 
     it('works just from the software name', function() {
         cy.get('#name').type('My Test Software');
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -41,7 +41,7 @@ describe('JSON Generation', function() {
         cy.get('#datePublished').type('2020-01-01');
         cy.get('#license').type('AGPL-3.0');
         cy.get("#license").type('{enter}');
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
@@ -67,7 +67,7 @@ describe('JSON Generation', function() {
         cy.get('#license').type('MIT');
         cy.get("#license").type('{enter}');
 
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
@@ -90,7 +90,7 @@ describe('JSON Generation', function() {
         cy.get('#datePublished').type('2020-01-01');
         cy.get('#license').type('AGPL-3.0');
         // no cy.get("#license").type('{enter}'); here
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
@@ -208,7 +208,7 @@ describe('JSON Import', function() {
         );
         cy.get('#importCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '@context must be "https://doi.org/10.5063/schema/codemeta-2.0", not "https://doi.org/10.5063/schema/codemeta-100000"');
+        cy.get('#errorMessage').should('have.text', '@context must be one of "https://doi.org/10.5063/schema/codemeta-2.0", "https://w3id.org/codemeta/3.0", not "https://doi.org/10.5063/schema/codemeta-100000"');
     });
 
     it('errors on invalid context URL in array', function() {
@@ -221,7 +221,7 @@ describe('JSON Import', function() {
         );
         cy.get('#importCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '@context must be "https://doi.org/10.5063/schema/codemeta-2.0", not ["https://doi.org/10.5063/schema/codemeta-100000"]');
+        cy.get('#errorMessage').should('have.text', '@context must be one of "https://doi.org/10.5063/schema/codemeta-2.0", "https://w3id.org/codemeta/3.0", not ["https://doi.org/10.5063/schema/codemeta-100000"]');
     });
 
     it('errors nicely when there are other contexts', function() {

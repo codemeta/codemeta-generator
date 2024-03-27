@@ -21,7 +21,7 @@ See top-level LICENSE file for more information
 </head>
 <body>
   <header>
-    <h1>CodeMeta generator</h1>
+    <h1>CodeMeta generator v3.0</h1><!-- Generate codemeta v2.0 by default for now, allow v3.0 generation by clicking -->
   </header>
 
   <main>
@@ -243,14 +243,31 @@ Bugfixes: that and this." ></textarea>
 
         </fieldset>
 
-        <fieldset id="fieldsetAdditionalInfo" class="leafFieldset">
-            <legend>Additional Info</legend>
+        <fieldset id="review_container" class="leafFieldset">
+            <legend>Editorial review</legend>
 
             <p title="Scholarly article describing this software">
                 <label for="referencePublication">Reference Publication</label>
                 <input type="URL" name="referencePublication" id="referencePublication"
                     placeholder="https://doi.org/10.1000/xyz123" />
             </p>
+
+            <p title="Part or facet of the object being review ">
+                <label for="reviewAspect">Review aspect</label>
+                <input type="text" name="reviewAspect" id="reviewAspect"
+                    placeholder="Object facet" />
+            </p>
+
+          <p title="The actual body of the review ">
+                <label for="reviewBody">Review body</label>
+                <textarea rows="4" cols="50"
+                    name="reviewBody" id="reviewBody"
+                    placeholder="Review about my software." ></textarea>
+            </p>
+        </fieldset>
+
+        <fieldset id="fieldsetAdditionalInfo" class="leafFieldset">
+            <legend>Additional Info</legend>
 
             <p title="Development Status">
             <label for="developmentStatus">Development Status</label>
@@ -271,6 +288,12 @@ Bugfixes: that and this." ></textarea>
                 <span class="field-description" id="developmentStatuses_descr">
                     see <a href="http://www.repostatus.org">www.repostatus.org</a> for details
                 </span>
+            </p>
+
+            <p title="Source Code of">
+                <label for="isSourceCodeOf">Is Source Code of</label>
+                <input type="text" name="isSourceCodeOf" id="isSourceCodeOf"
+                    placeholder="Bigger Application" />
             </p>
 
             <p title="Part of">
@@ -310,8 +333,10 @@ Bugfixes: that and this." ></textarea>
 
     </form>
     <form>
-        <input type="button" id="generateCodemeta" value="Generate codemeta.json" disabled
-            title="Creates a codemeta.json file below, from the information provided above." />
+      <input type="button" id="generateCodemetaV3" value="Generate codemeta.json v3.0" disabled
+             title="Creates a codemeta.json v3.0 file below, from the information provided above." />
+      <input type="button" id="generateCodemetaV2" value="Generate codemeta.json v2.0" disabled
+            title="Creates a codemeta.json v2.0 file below, from the information provided above." />
         <input type="button" id="resetForm" value="Reset form"
             title="Erases all fields." />
         <input type="button" id="validateCodemeta" value="Validate codemeta.json" disabled
@@ -339,6 +364,8 @@ Bugfixes: that and this." ></textarea>
         <br />
         The CodeMeta vocabulary -
         <a href="https://doi.org/10.5063/schema/codemeta-2.0">v2.0</a>
+        -
+        <a href="https://w3id.org/codemeta/3.0">v3.0</a>
     </p>
 
     <h2 style="text-align:right;">Contributed by</h2>

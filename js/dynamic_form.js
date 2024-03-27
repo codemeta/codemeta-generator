@@ -57,6 +57,8 @@ function createPersonFieldset(personPrefix, legend) {
             <input type="text" id="${personPrefix}_affiliation" name="${personPrefix}_affiliation"
                 placeholder="Department of Computer Science, University of Pisa" />
         </p>
+        <input type="hidden" id="${personPrefix}_role_index" value="0" />
+        <input type="button" id="${personPrefix}_role_add" value="Add one role" />
     `;
 
     return fieldset;
@@ -72,6 +74,8 @@ function addPersonWithId(container, prefix, legend, id) {
         .addEventListener('click', () => movePerson(prefix, id, "left"));
     document.querySelector(`#${personPrefix}_moveToRight`)
         .addEventListener('click', () => movePerson(prefix, id, "right"));
+    document.querySelector(`#${personPrefix}_role_add`)
+        .addEventListener('click', () => addRole(personPrefix));
 }
 
 function movePerson(prefix, id1, direction) {
@@ -146,6 +150,37 @@ function removePersons(prefix) {
     }
 }
 
+function addRole(personPrefix) {
+    const roleButtonGroup = document.querySelector(`#${personPrefix}_role_add`);
+    const roleIndexNode = document.querySelector(`#${personPrefix}_role_index`);
+    const roleIndex = parseInt(roleIndexNode.value, 10);
+
+    const ul = document.createElement("ul")
+    ul.classList.add("role");
+    ul.id = `${personPrefix}_role_${roleIndex}`;
+
+    ul.innerHTML = `
+        <li><label for="${personPrefix}_roleName_${roleIndex}">Role</label>
+            <input type="text" class="roleName" id="${personPrefix}_roleName_${roleIndex}" name="${personPrefix}_roleName_${roleIndex}"
+                placeholder="Developer" size="10" /></li>
+        <li><label for="${personPrefix}_startDate_${roleIndex}">Start date:</label>
+            <input type="date" class="startDate" id="${personPrefix}_startDate_${roleIndex}" name="${personPrefix}_startDate_${roleIndex}" /></li>
+        <li><label for="${personPrefix}_endDate_${roleIndex}">End date:</label>
+            <input type="date" class="endDate" id="${personPrefix}_endDate_${roleIndex}" name="${personPrefix}_endDate_${roleIndex}" /></li>
+        <li><input type="button" id="${personPrefix}_role_remove_${roleIndex}" value="X" title="Remove role" /></li>
+    `;
+    roleButtonGroup.after(ul);
+
+    document.querySelector(`#${personPrefix}_role_remove_${roleIndex}`)
+        .addEventListener('click', () => removeRole(personPrefix, roleIndex));
+
+    roleIndexNode.value = roleIndex + 1;
+}
+
+function removeRole(personPrefix, roleIndex) {
+    document.querySelector(`#${personPrefix}_role_${roleIndex}`).remove();
+}
+
 function resetForm() {
     removePersons('author');
     removePersons('contributor');
@@ -165,9 +200,13 @@ function initCallbacks() {
     document.querySelector('#license')
         .addEventListener('change', validateLicense);
 
-    document.querySelector('#generateCodemeta').disabled = false;
-    document.querySelector('#generateCodemeta')
-        .addEventListener('click', generateCodemeta);
+    document.querySelector('#generateCodemetaV2').disabled = false;
+    document.querySelector('#generateCodemetaV2')
+        .addEventListener('click', () => generateCodemeta("2.0"));
+
+    document.querySelector('#generateCodemetaV3').disabled = false;
+    document.querySelector('#generateCodemetaV3')
+        .addEventListener('click', () => generateCodemeta("3.0"));
 
     document.querySelector('#resetForm')
         .addEventListener('click', resetForm);
@@ -181,7 +220,7 @@ function initCallbacks() {
         .addEventListener('click', importCodemeta);
 
     document.querySelector('#inputForm')
-        .addEventListener('change', generateCodemeta);
+        .addEventListener('change', () => generateCodemeta());
 
     document.querySelector('#developmentStatus')
         .addEventListener('change', fieldToLower);

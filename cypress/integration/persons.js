@@ -14,7 +14,7 @@
 describe('Zero author', function() {
     it('can be exported', function() {
         cy.get('#name').type('My Test Software');
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -84,7 +84,7 @@ describe('One full author', function() {
         cy.get('#author_1_id').type('http://example.org/~jdoe');
         cy.get('#author_1_affiliation').type('http://example.org/');
 
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -151,7 +151,7 @@ describe('Affiliation id', function() {
         cy.get('#author_1_givenName').type('Jane');
         cy.get('#author_1_affiliation').type('http://example.org/');
 
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -211,7 +211,7 @@ describe('Affiliation name', function() {
         cy.get('#author_1_givenName').type('Jane');
         cy.get('#author_1_affiliation').type('Example Org');
 
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -319,7 +319,7 @@ describe('Author order change', function() {
         cy.get('#author_2_givenName').type('John');
         cy.get('#author_2_familyName').type('Doe');
 
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
             .should('deep.equal', {

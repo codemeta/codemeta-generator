@@ -620,7 +620,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Role/Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 
     it('errors on Person with wrong type', function() {
@@ -635,7 +635,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Person/Organization object(s), not "SoftwareSourceCode"');
+        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Role/Person/Organization object(s), not "SoftwareSourceCode"');
     });
 
     it('errors on Person with unknown field', function() {
@@ -766,7 +766,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Role/Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 
     it('errors on list with invalid Person at the end', function() {
@@ -790,7 +790,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Role/Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 });
 
@@ -826,7 +826,7 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Role/Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 
     it('errors on Organization with wrong type', function() {
@@ -841,7 +841,7 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Person/Organization object(s), not "SoftwareSourceCode"');
+        cy.get('#errorMessage').should('have.text', '"author" type must be a (list of) Role/Person/Organization object(s), not "SoftwareSourceCode"');
     });
 
     it('errors on Organization with unknown field', function() {
@@ -918,7 +918,7 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Role/Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 
     it('errors on list with invalid Organization at the end', function() {
@@ -939,7 +939,7 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Person/Organization object(s) or an URI, but is missing a type/@type.');
+        cy.get('#errorMessage').should('have.text', '"author" must be a (list of) Role/Person/Organization object(s) or an URI, but is missing a type/@type.');
     });
 });
 
