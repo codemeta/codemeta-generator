@@ -309,7 +309,7 @@ function importShortOrg(fieldName, doc) {
     if (doc !== undefined) {
         // Use @id if set, else use name
         setIfDefined(fieldName, doc["name"]);
-        setIfDefined(fieldName, doc["@id"]);
+        setIfDefined(fieldName, getDocumentId(doc));
     }
 }
 
@@ -321,7 +321,7 @@ function importPersons(prefix, legend, docs) {
     docs.forEach(function (doc, index) {
         var personId = addPerson(prefix, legend);
 
-        setIfDefined(`#${prefix}_${personId}_id`, doc['@id']);
+        setIfDefined(`#${prefix}_${personId}_id`, getDocumentId(doc));
         directPersonCodemetaFields.forEach(function (item, index) {
             setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
         });
@@ -330,9 +330,9 @@ function importPersons(prefix, legend, docs) {
     })
 }
 
-function importCodemeta() {
+async function importCodemeta() {
     var inputForm = document.querySelector('#inputForm');
-    var doc = parseAndValidateCodemeta(false);
+    var doc = await parseAndValidateCodemeta(false);
     resetForm();
 
     if (doc['license'] !== undefined) {

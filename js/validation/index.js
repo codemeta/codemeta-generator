@@ -20,23 +20,6 @@ function validateDocument(doc) {
     }
     // TODO: validate id/@id
 
-    context = doc["@context"];
-    const contextUrls = Object.entries(CODEMETA_CONTEXTS)
-        .map(([version, value]) => value.url);
-    if (contextUrls.includes(context)) {
-        // Correct
-    }
-    else if (Array.isArray(context) && context.includes("https://doi.org/10.5063/schema/codemeta-2.0")) {
-        if (context.length !== 1) {
-            setError(`Multiple values in @context are not supported (@context should be "https://doi.org/10.5063/schema/codemeta-2.0", not ${JSON.stringify(context)})`);
-            return false;
-        }
-    }
-    else {
-        setError(`@context must be one of "${contextUrls.join('", "')}", not ${JSON.stringify(context)}`);
-        return false;
-    }
-
     // TODO: check there is either type or @type but not both
     var type = getDocumentType(doc);
     if (type === undefined) {
@@ -82,12 +65,12 @@ function validateDocument(doc) {
 }
 
 
-function parseAndValidateCodemeta(showPopup) {
+async function parseAndValidateCodemeta(showPopup) {
     var codemetaText = document.querySelector('#codemetaText').innerText;
-    var doc;
+    let parsed, doc;
 
     try {
-        doc = JSON.parse(codemetaText);
+        parsed = JSON.parse(codemetaText);
     }
     catch (e) {
         setError(`Could not read codemeta document because it is not valid JSON (${e}). Check for missing or extra quote, colon, or bracket characters.`);
@@ -96,7 +79,7 @@ function parseAndValidateCodemeta(showPopup) {
 
     setError("");
 
-    var isValid = validateDocument(doc);
+    var isValid = validateDocument(parsed);
     if (showPopup) {
         if (isValid) {
             alert('Document is valid!')
@@ -106,5 +89,6 @@ function parseAndValidateCodemeta(showPopup) {
         }
     }
 
+    doc = await jsonld.compact(parsed, CODEMETA_CONTEXT_URL);
     return doc;
 }

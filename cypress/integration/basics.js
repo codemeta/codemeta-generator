@@ -168,6 +168,24 @@ describe('JSON Import', function() {
         cy.get("#selected-licenses").children().eq(1).children().first().should('have.text', 'MIT');
     });
 
+    it('works with expanded document version', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "http://schema.org/name": [
+                    {
+                        "@value": "My Test Software"
+                    }
+                ],
+                "@type": [
+                    "http://schema.org/SoftwareSourceCode"
+                ]
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#name').should('have.value', 'My Test Software');
+    });
+
     it('errors on invalid type', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
@@ -196,48 +214,6 @@ describe('JSON Import', function() {
         cy.get('#importCodemeta').click();
 
         cy.get('#name').should('have.value', 'My Test Software');
-    });
-
-    it('errors on invalid context URL', function() {
-        cy.get('#codemetaText').then((elem) =>
-            elem.text(JSON.stringify({
-                "@context": "https://doi.org/10.5063/schema/codemeta-100000",
-                "@type": "SoftwareSourceCode",
-                "name": "My Test Software",
-            }))
-        );
-        cy.get('#importCodemeta').click();
-
-        cy.get('#errorMessage').should('have.text', '@context must be one of "https://doi.org/10.5063/schema/codemeta-2.0", "https://w3id.org/codemeta/3.0", not "https://doi.org/10.5063/schema/codemeta-100000"');
-    });
-
-    it('errors on invalid context URL in array', function() {
-        cy.get('#codemetaText').then((elem) =>
-            elem.text(JSON.stringify({
-                "@context": ["https://doi.org/10.5063/schema/codemeta-100000"],
-                "@type": "SoftwareSourceCode",
-                "name": "My Test Software",
-            }))
-        );
-        cy.get('#importCodemeta').click();
-
-        cy.get('#errorMessage').should('have.text', '@context must be one of "https://doi.org/10.5063/schema/codemeta-2.0", "https://w3id.org/codemeta/3.0", not ["https://doi.org/10.5063/schema/codemeta-100000"]');
-    });
-
-    it('errors nicely when there are other contexts', function() {
-        cy.get('#codemetaText').then((elem) =>
-            elem.text(JSON.stringify({
-                "@context": [
-                    "https://doi.org/10.5063/schema/codemeta-2.0",
-                    "https://schema.org/",
-                ],
-                "@type": "SoftwareSourceCode",
-                "name": "My Test Software",
-            }))
-        );
-        cy.get('#importCodemeta').click();
-
-        cy.get('#errorMessage').should('have.text', 'Multiple values in @context are not supported (@context should be "https://doi.org/10.5063/schema/codemeta-2.0", not ["https://doi.org/10.5063/schema/codemeta-2.0","https://schema.org/"])');
     });
 
 });
