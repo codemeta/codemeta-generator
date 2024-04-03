@@ -89,6 +89,6 @@ async function parseAndValidateCodemeta(showPopup) {
         }
     }
 
-    doc = await jsonld.compact(parsed, CODEMETA_CONTEXT_URL);
+    doc = await jsonld.compact(parsed, CODEMETA_CONTEXTS["2.0"].url); // Only import codemeta v2.0 for now
     return doc;
 }
