@@ -20,6 +20,11 @@ function validateDocument(doc) {
     }
     // TODO: validate id/@id
 
+    if (doc["@context"] === undefined) {
+        setError("Missing context (required to determine import version).")
+        return false;
+    }
+
     // TODO: check there is either type or @type but not both
     var type = getDocumentType(doc);
     if (type === undefined) {
@@ -89,6 +94,6 @@ async function parseAndValidateCodemeta(showPopup) {
         }
     }
 
-    doc = await jsonld.compact(parsed, CODEMETA_CONTEXTS["2.0"].url); // Only import codemeta v2.0 for now
+    doc = await jsonld.compact(parsed, parsed["@context"]);
     return doc;
 }
