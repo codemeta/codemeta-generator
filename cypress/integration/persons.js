@@ -423,7 +423,7 @@ describe('Author order change', function() {
     });
 });
 
-describe('One role', function () {
+describe('One author with a role', function () {
     it('can be exported in both codemeta v2.0 and v3.0 versions', function () {
         cy.get('#name').type('My Test Software');
 
