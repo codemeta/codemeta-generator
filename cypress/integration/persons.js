@@ -484,7 +484,7 @@ describe('One author with a role', function () {
             });
     });
 
-    it('and a second one can be exported', function () {
+    it('can have two roles', function () {
         cy.get('#name').type('My Test Software');
 
         cy.get('#author_add').click();
