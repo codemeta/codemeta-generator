@@ -443,6 +443,10 @@ describe('One role', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
                         "type": "schema:Role",
                         "schema:author": {
                             "type": "Person",
@@ -462,6 +466,10 @@ describe('One role', function () {
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
                     {
                         "type": "Role",
                         "schema:author": {
@@ -499,6 +507,10 @@ describe('One role', function () {
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
                     {
                         "type": "Role",
                         "schema:author": {
@@ -548,6 +560,10 @@ describe('One role', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
                         "type": "Role",
                         "schema:author": {
                             "type": "Person",
@@ -594,6 +610,10 @@ describe('Multiple authors', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
                         "type": "Role",
                         "schema:author": {
                             "type": "Person",
@@ -602,6 +622,10 @@ describe('Multiple authors', function () {
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
+                    },
+                    {
+                        "type": "Person",
+                        "givenName": "Joe"
                     },
                     {
                         "type": "Role",
@@ -638,6 +662,10 @@ describe('Multiple authors', function () {
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
                     {
                         "type": "Role",
                         "schema:author": {

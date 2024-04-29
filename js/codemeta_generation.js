@@ -197,11 +197,10 @@ function generatePersons(prefix) {
     for (let personId = 1; personId <= nbPersons; personId++) {
         const idPrefix = `${prefix}_${personId}`;
         const person = generatePerson(idPrefix);
+        persons.push(person);
         const roles = generateRoles(idPrefix, person);
         if (roles.length > 0) {
             persons = persons.concat(roles);
-        } else {
-            persons.push(person);
         }
     }
 
