@@ -23,7 +23,7 @@ describe('JSON Generation', function() {
 
     it('works just from the software name', function() {
         cy.get('#name').type('My Test Software');
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get('#errorMessage').should('have.text', '');
         cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
@@ -41,7 +41,7 @@ describe('JSON Generation', function() {
         cy.get('#datePublished').type('2020-01-01');
         cy.get('#license').type('AGPL-3.0');
         cy.get("#license").type('{enter}');
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
@@ -67,7 +67,7 @@ describe('JSON Generation', function() {
         cy.get('#license').type('MIT');
         cy.get("#license").type('{enter}');
 
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
@@ -90,7 +90,7 @@ describe('JSON Generation', function() {
         cy.get('#datePublished').type('2020-01-01');
         cy.get('#license').type('AGPL-3.0');
         // no cy.get("#license").type('{enter}'); here
-        cy.get('#generateCodemeta').click();
+        cy.get('#generateCodemetaV2').click();
 
         cy.get("#license").should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
@@ -103,6 +103,54 @@ describe('JSON Generation', function() {
                 "datePublished": "2020-01-01",
                 "name": "My Test Software",
                 "description": "This is a\ngreat piece of software",
+        });
+    });
+
+    it('works for new codemeta terms in both versions', function() {
+        cy.get('#name').type('My Test Software');
+        cy.get('#contIntegration').type('https://test-ci.org/my-software');
+        cy.get('#isSourceCodeOf').type('Bigger Application');
+        cy.get('#reviewAspect').type('Some software aspect');
+        cy.get('#reviewBody').type('Some review');
+
+        cy.get('#generateCodemetaV2').click();
+        cy.get('#errorMessage').should('have.text', '');
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contIntegration": "https://test-ci.org/my-software",
+                "codemeta:continuousIntegration": {
+                    "id": "https://test-ci.org/my-software"
+                },
+                "codemeta:isSourceCodeOf": {
+                    "id": "Bigger Application"
+                },
+                "schema:review": {
+                    "type": "schema:Review",
+                    "schema:reviewAspect": "Some software aspect",
+                    "schema:reviewBody": "Some review"
+                }
+        });
+
+        cy.get('#generateCodemetaV3').click();
+        cy.get('#errorMessage').should('have.text', '');
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "continuousIntegration": "https://test-ci.org/my-software",
+                "codemeta:contIntegration": {
+                    "id": "https://test-ci.org/my-software"
+                },
+                "isSourceCodeOf": "Bigger Application",
+                "review": {
+                    "type": "Review",
+                    "reviewAspect": "Some software aspect",
+                    "reviewBody": "Some review"
+                }
         });
     });
 });

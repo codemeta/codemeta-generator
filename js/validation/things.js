@@ -28,6 +28,11 @@ function isCompactTypeEqual(type, compactedType) {
     );
 }
 
+function isFieldFromOtherVersionToIgnore(fieldName) {
+    return ["codemeta:contIntegration", "codemeta:continuousIntegration", "codemeta:isSourceCodeOf",
+        "schema:review", "schema:reviewAspect", "schema:reviewBody"].includes(fieldName);
+}
+
 function noValidation(fieldName, doc) {
     return true;
 }
@@ -93,6 +98,10 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
                 var subdoc = entry[1];
                 if (fieldName == "type" || fieldName == "@type") {
                     // Was checked before
+                    return true;
+                }
+                else if (isFieldFromOtherVersionToIgnore(fieldName)) {
+                    // Do not check fields from other versions FIXME
                     return true;
                 }
                 else {
@@ -166,6 +175,7 @@ function validateOrganizations(fieldName, doc) {
 // Validates a single Person or Organization
 function validateActor(fieldName, doc) {
     return validateThingOrId(fieldName, {
+        "Role": roleFieldValidators,
         "Person": personFieldValidators,
         "Organization": organizationFieldValidators,
     }, doc);
@@ -179,6 +189,10 @@ function validatePerson(fieldName, doc) {
 // Validates a single Organization object
 function validateOrganization(fieldName, doc) {
     return validateThingOrId(fieldName, {"Organization": organizationFieldValidators}, doc);
+}
+
+function validateReview(fieldName, doc) {
+    return validateThingOrId(fieldName, {"Review": reviewFieldValidators}, doc);
 }
 
 
@@ -226,6 +240,7 @@ var softwareFieldValidators = {
     "sponsor": validateActors,
     "version": validateNumberOrText,
     "isAccessibleForFree": validateBoolean,
+    "isSourceCodeOf": validateTextsOrUrls,
     "isPartOf": validateCreativeWorks,
     "hasPart": validateCreativeWorks,
     "position": noValidation,
@@ -235,13 +250,16 @@ var softwareFieldValidators = {
     "sameAs": validateUrls,
     "url": validateUrls,
     "relatedLink": validateUrls,
+    "review": validateReview,
 
     "softwareSuggestions": noValidation, // TODO: validate SoftwareSourceCode
     "maintainer": validateActors,
     "contIntegration": validateUrls,
+    "continuousIntegration": validateUrls,
     "buildInstructions": validateUrls,
     "developmentStatus": validateText, // TODO: use only repostatus strings?
     "embargoDate": validateDate,
+    "embargoEndDate": validateDate,
     "funding": validateText,
     "issueTracker": validateUrls,
     "referencePublication": noValidation, // TODO?
@@ -282,6 +300,14 @@ var creativeWorkFieldValidators = {
     "url": validateUrls,
 };
 
+var roleFieldValidators = {
+    "roleName": validateText,
+    "startDate": validateDate,
+    "endDate": validateDate,
+
+    "schema:author": validateActor
+};
+
 var personFieldValidators = {
     "@id": validateUrl,
     "id": validateUrl,
@@ -311,3 +337,8 @@ var organizationFieldValidators = {
 
     // TODO: add more?
 };
+
+const reviewFieldValidators = {
+    "reviewAspect": validateText,
+    "reviewBody": validateText,
+}

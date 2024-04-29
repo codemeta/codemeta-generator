@@ -7,14 +7,32 @@
 
 "use strict";
 
-const CODEMETA_CONTEXT_URL = 'https://doi.org/10.5063/schema/codemeta-2.0';
+const LOCAL_CONTEXT_PATH = "./data/contexts/codemeta-local.jsonld";
+const LOCAL_CONTEXT_URL = "local";
+const CODEMETA_CONTEXTS = {
+    "2.0": {
+        path: "./data/contexts/codemeta-2.0.jsonld",
+        url: "https://doi.org/10.5063/schema/codemeta-2.0"
+    },
+    "3.0": {
+        path: "./data/contexts/codemeta-3.0.jsonld",
+        url: "https://w3id.org/codemeta/3.0"
+    }
+}
+
 const SPDX_PREFIX = 'https://spdx.org/licenses/';
 
 const loadContextData = async () => {
-    const contextResponse = await fetch("./data/contexts/codemeta-2.0.jsonld");
-    const context = await contextResponse.json();
+    const [contextLocal, contextV2, contextV3] =
+        await Promise.all([
+            fetch(LOCAL_CONTEXT_PATH).then(response => response.json()),
+            fetch(CODEMETA_CONTEXTS["2.0"].path).then(response => response.json()),
+            fetch(CODEMETA_CONTEXTS["3.0"].path).then(response => response.json())
+        ]);
     return {
-        [CODEMETA_CONTEXT_URL]: context
+        [LOCAL_CONTEXT_URL]: contextLocal,
+        [CODEMETA_CONTEXTS["2.0"].url]: contextV2,
+        [CODEMETA_CONTEXTS["3.0"].url]: contextV3
     }
 }
 
@@ -75,6 +93,7 @@ const directCodemetaFields = [
     'releaseNotes',
     'funding',
     'developmentStatus',
+    'isSourceCodeOf',
     'isPartOf',
     'referencePublication'
 ];
@@ -96,6 +115,22 @@ const directPersonCodemetaFields = [
     'email',
     'affiliation',
 ];
+
+const directRoleCodemetaFields = [
+    'roleName',
+    'startDate',
+    'endDate',
+];
+
+const directReviewCodemetaFields = [
+    'reviewAspect',
+    'reviewBody'
+];
+
+const crossedCodemetaFields = {
+    "contIntegration": ["contIntegration", "continuousIntegration"],
+    "embargoDate": ["embargoDate", "embargoEndDate"],
+};
 
 function generateShortOrg(fieldName) {
     var affiliation = getIfSet(fieldName);
@@ -129,9 +164,30 @@ function generatePerson(idPrefix) {
     directPersonCodemetaFields.forEach(function (item, index) {
         doc[item] = getIfSet(`#${idPrefix}_${item}`);
     });
-    doc["affiliation"] = generateShortOrg(`#${idPrefix}_affiliation`)
+    doc["affiliation"] = generateShortOrg(`#${idPrefix}_affiliation`);
 
     return doc;
+}
+
+function generateRole(id) {
+    const doc = {
+        "@type": "Role"
+    };
+    directRoleCodemetaFields.forEach(function (item, index) {
+        doc[item] = getIfSet(`#${id} .${item}`);
+    });
+    return doc;
+}
+
+function generateRoles(idPrefix, person) {
+    const roles = [];
+    const roleNodes = document.querySelectorAll(`ul[id^=${idPrefix}_role_`);
+    roleNodes.forEach(roleNode => {
+        const role = generateRole(roleNode.id);
+        role["schema:author"] = person; // Prefix with "schema:" to prevent it from expanding into a list
+        roles.push(role);
+    });
+    return roles;
 }
 
 function generatePersons(prefix) {
@@ -139,16 +195,31 @@ function generatePersons(prefix) {
     var nbPersons = getNbPersons(prefix);
 
     for (let personId = 1; personId <= nbPersons; personId++) {
-        persons.push(generatePerson(`${prefix}_${personId}`));
+        const idPrefix = `${prefix}_${personId}`;
+        const person = generatePerson(idPrefix);
+        persons.push(person);
+        const roles = generateRoles(idPrefix, person);
+        if (roles.length > 0) {
+            persons = persons.concat(roles);
+        }
     }
 
     return persons;
 }
 
+function generateReview() {
+    const doc = {
+        "@type": "Review"
+    };
+    directReviewCodemetaFields.forEach(function (item, index) {
+        doc[item] = getIfSet(`#${item}`);
+    });
+    return doc;
+}
 
-function buildDoc() {
+async function buildExpandedJson() {
     var doc = {
-        "@context": CODEMETA_CONTEXT_URL,
+        "@context": LOCAL_CONTEXT_URL,
         "@type": "SoftwareSourceCode",
     };
 
@@ -163,6 +234,11 @@ function buildDoc() {
     });
 
     doc["funder"] = generateShortOrg('#funder', doc["affiliation"]);
+
+    const review = generateReview();
+    if (review["reviewAspect"] || review["reviewBody"]) {
+        doc["review"] = generateReview();
+    }
 
     // Generate simple fields parsed simply by splitting
     splittedCodemetaFields.forEach(function (item, index) {
@@ -183,17 +259,23 @@ function buildDoc() {
     if (contributors.length > 0) {
         doc["contributor"] = contributors;
     }
-    return doc;
+
+    for (const [key, values] of Object.entries(crossedCodemetaFields)) {
+        values.forEach(value => {
+           doc[value] = doc[key];
+        });
+    }
+    return await jsonld.expand(doc);
 }
 
-async function generateCodemeta() {
+// v2.0 is still default version for generation, for now
+async function generateCodemeta(codemetaVersion = "2.0") {
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
 
     if (inputForm.checkValidity()) {
-        var doc = buildDoc();
-        const expanded = await jsonld.expand(doc);
-        const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXT_URL);
+        const expanded = await buildExpandedJson();
+        const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXTS[codemetaVersion].url);
         codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
     }
