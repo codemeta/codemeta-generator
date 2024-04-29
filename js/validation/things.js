@@ -28,6 +28,11 @@ function isCompactTypeEqual(type, compactedType) {
     );
 }
 
+function isFieldFromOtherVersionToIgnore(fieldName) {
+    return ["codemeta:contIntegration", "codemeta:continuousIntegration", "codemeta:isSourceCodeOf",
+        "schema:review", "schema:reviewAspect", "schema:reviewBody"].includes(fieldName);
+}
+
 function noValidation(fieldName, doc) {
     return true;
 }
@@ -95,8 +100,8 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
                     // Was checked before
                     return true;
                 }
-                else if (fieldName.startsWith("codemeta:") || fieldName.startsWith("schema:")) {
-                    // Do not check fields from other versions FIXME ?
+                else if (isFieldFromOtherVersionToIgnore(fieldName)) {
+                    // Do not check fields from other versions FIXME
                     return true;
                 }
                 else {

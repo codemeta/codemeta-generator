@@ -44,8 +44,8 @@ function validateDocument(doc) {
                 // Was checked before
                 return true;
             }
-            else if (fieldName.startsWith("codemeta:") || fieldName.startsWith("schema:")) {
-                // Do not check fields from other versions FIXME ?
+            else if (isFieldFromOtherVersionToIgnore(fieldName)) {
+                // Do not check fields from other versions FIXME
                 return true;
             }
             else {
