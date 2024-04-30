@@ -288,7 +288,7 @@ describe('JSON Import', function() {
         cy.get('#reviewBody').should('have.value', 'Some review');
     });
 
-    it('works for codemeta v2.0 terms in v3.0 version', function() {
+    it('imports codemeta v2.0 properties from document with v3.0 context', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
