@@ -323,6 +323,7 @@ function importReview(doc) {
 function authorsEqual(author1, author2) {
     // TODO should test more properties for equality?
     return author1.givenName === author2.givenName
+        && author1.familyName === author2.familyName
         && author1.email === author2.email;
 }
 
@@ -353,8 +354,15 @@ function importPersons(prefix, legend, docs) {
         return;
     }
 
-    let allAuthorDocs = docs.filter(doc => getDocumentType(doc) === "Person");
-    allAuthorDocs = allAuthorDocs.concat(getSingleAuthorsFromRoles(docs));
+    const authors = docs.filter(doc => getDocumentType(doc) === "Person");
+    const authorsFromRoles = getSingleAuthorsFromRoles(docs);
+    const allAuthorDocs = authors.concat(authorsFromRoles)
+        .reduce((authors, currentAuthor) => {
+            if (!authors.find(author => authorsEqual(author, currentAuthor))) {
+                authors.push(currentAuthor);
+            }
+            return authors;
+        }, []);
 
     allAuthorDocs.forEach(function (doc, index) {
         var personId = addPerson(prefix, legend);

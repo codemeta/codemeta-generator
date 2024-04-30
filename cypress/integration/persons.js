@@ -585,6 +585,10 @@ describe('One author with a role', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
                         "type": "Role",
                         "schema:author": {
                             "type": "Person",
@@ -599,6 +603,7 @@ describe('One author with a role', function () {
         );
         cy.get('#importCodemeta').click();
 
+        cy.get('#author_nb').should('have.value', '1');
         cy.get('#author_1_givenName').should('have.value', 'Jane');
         cy.get('#author_1_roleName_0').should('have.value', 'Developer');
         cy.get('#author_1_startDate_0').should('have.value', '2024-03-04');
@@ -612,6 +617,10 @@ describe('One author with a role', function () {
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "author": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
                     {
                         "type": "Role",
                         "schema:author": {
@@ -758,6 +767,10 @@ describe('Multiple authors', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
                         "type": "Role",
                         "schema:author": {
                             "type": "Person",
@@ -766,6 +779,10 @@ describe('Multiple authors', function () {
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
+                    },
+                    {
+                        "type": "Person",
+                        "givenName": "Joe"
                     },
                     {
                         "type": "Role",
@@ -801,6 +818,10 @@ describe('Multiple authors', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
                         "type": "Role",
                         "schema:author": {
                             "type": "Person",
@@ -820,10 +841,10 @@ describe('Multiple authors', function () {
         cy.get('#importCodemeta').click();
 
         cy.get('#author_nb').should('have.value', '2');
-        cy.get('#author_1_givenName').should('have.value', 'Joe');
-        cy.get('#author_2_givenName').should('have.value', 'Jane');
-        cy.get('#author_2_roleName_0').should('have.value', 'Developer');
-        cy.get('#author_2_startDate_0').should('have.value', '2024-03-04');
-        cy.get('#author_2_endDate_0').should('have.value', '2024-04-03');
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_roleName_0').should('have.value', 'Developer');
+        cy.get('#author_1_startDate_0').should('have.value', '2024-03-04');
+        cy.get('#author_1_endDate_0').should('have.value', '2024-04-03');
+        cy.get('#author_2_givenName').should('have.value', 'Joe');
     });
 });
