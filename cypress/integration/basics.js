@@ -265,7 +265,7 @@ describe('JSON Import', function() {
         cy.get('#name').should('have.value', 'My Test Software');
     });
 
-    it('works for new codemeta v3.0 terms', function() {
+    it('imports properties introduced in codemeta v3.0', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
