@@ -108,7 +108,7 @@ describe('One full author', function() {
         });
     });
 
-    it('can be imported', function() {
+    it('can be imported even if there is also a role-less author', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -610,7 +610,7 @@ describe('One author with a role', function () {
         cy.get('#author_1_endDate_0').should('have.value', '2024-04-03');
     });
 
-    it('and second one for the same author can be imported (and they are merged)', function () {
+    it('can be imported when there is a second one, and they are merged', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",

@@ -219,7 +219,6 @@ describe('JSON Import', function() {
     it('works with expanded document version', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
-                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "http://schema.org/name": [
                     {
                         "@value": "My Test Software"
