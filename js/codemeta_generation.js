@@ -127,9 +127,9 @@ const directReviewCodemetaFields = [
     'reviewBody'
 ];
 
-const crossedCodemetaFields = {
+const crossCodemetaFields = {
     "contIntegration": ["contIntegration", "continuousIntegration"],
-    "embargoDate": ["embargoDate", "embargoEndDate"],
+    // "embargoDate": ["embargoDate", "embargoEndDate"], Not present in the form yet TODO ?
 };
 
 function generateShortOrg(fieldName) {
@@ -260,9 +260,9 @@ async function buildExpandedJson() {
         doc["contributor"] = contributors;
     }
 
-    for (const [key, values] of Object.entries(crossedCodemetaFields)) {
-        values.forEach(value => {
-           doc[value] = doc[key];
+    for (const [key, items] of Object.entries(crossCodemetaFields)) {
+        items.forEach(item => {
+           doc[item] = doc[key];
         });
     }
     return await jsonld.expand(doc);
@@ -312,12 +312,59 @@ function importShortOrg(fieldName, doc) {
     }
 }
 
+function importReview(doc) {
+    if (doc !== undefined) {
+        directReviewCodemetaFields.forEach(item => {
+            setIfDefined('#' + item, doc[item]);
+        });
+    }
+}
+
+function authorsEqual(author1, author2) {
+    // TODO should test more properties for equality?
+    return author1.givenName === author2.givenName
+        && author1.familyName === author2.familyName
+        && author1.email === author2.email;
+}
+
+function getSingleAuthorsFromRoles(docs) {
+    return docs.filter(doc => getDocumentType(doc) === "Role")
+        .map(doc => doc["schema:author"])
+        .reduce((authorSet, currentAuthor) => {
+            const foundAuthor = authorSet.find(author => authorsEqual(author, currentAuthor));
+            if (!foundAuthor) {
+                return authorSet.concat([currentAuthor]);
+            } else {
+                return authorSet;
+            }
+        }, []);
+}
+
+function importRoles(personPrefix, roles) {
+    roles.forEach(role => {
+        const roleId = addRole(`${personPrefix}`);
+        directRoleCodemetaFields.forEach(item => {
+            setIfDefined(`#${personPrefix}_${item}_${roleId}`, role[item]);
+        });
+    });
+}
+
 function importPersons(prefix, legend, docs) {
     if (docs === undefined) {
         return;
     }
 
-    docs.forEach(function (doc, index) {
+    const authors = docs.filter(doc => getDocumentType(doc) === "Person");
+    const authorsFromRoles = getSingleAuthorsFromRoles(docs);
+    const allAuthorDocs = authors.concat(authorsFromRoles)
+        .reduce((authors, currentAuthor) => {
+            if (!authors.find(author => authorsEqual(author, currentAuthor))) {
+                authors.push(currentAuthor);
+            }
+            return authors;
+        }, []);
+
+    allAuthorDocs.forEach(function (doc, index) {
         var personId = addPerson(prefix, legend);
 
         setIfDefined(`#${prefix}_${personId}_id`, getDocumentId(doc));
@@ -325,8 +372,12 @@ function importPersons(prefix, legend, docs) {
             setIfDefined(`#${prefix}_${personId}_${item}`, doc[item]);
         });
 
-        importShortOrg(`#${prefix}_${personId}_affiliation`, doc['affiliation'])
-    })
+        importShortOrg(`#${prefix}_${personId}_affiliation`, doc['affiliation']);
+
+        const roles = docs.filter(currentDoc => getDocumentType(currentDoc) === "Role")
+            .filter(currentDoc => authorsEqual(currentDoc["schema:author"], doc));
+        importRoles(`${prefix}_${personId}`, roles);
+    });
 }
 
 async function importCodemeta() {
@@ -350,6 +401,7 @@ async function importCodemeta() {
         setIfDefined('#' + item, doc[item]);
     });
     importShortOrg('#funder', doc["funder"]);
+    importReview(doc["review"]);
 
     // Import simple fields by joining on their separator
     splittedCodemetaFields.forEach(function (item, index) {
@@ -363,6 +415,14 @@ async function importCodemeta() {
             setIfDefined('#' + id, value);
         }
     });
+
+    for (const [key, items] of Object.entries(crossCodemetaFields)) {
+        let value = "";
+        items.forEach(item => {
+           value = doc[item] || value;
+        });
+        setIfDefined(`#${key}`, value);
+    }
 
     importPersons('author', 'Author', doc['author'])
     importPersons('contributor', 'Contributor', doc['contributor'])

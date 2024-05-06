@@ -175,6 +175,8 @@ function addRole(personPrefix) {
         .addEventListener('click', () => removeRole(personPrefix, roleIndex));
 
     roleIndexNode.value = roleIndex + 1;
+
+    return roleIndex;
 }
 
 function removeRole(personPrefix, roleIndex) {

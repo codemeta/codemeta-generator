@@ -264,4 +264,101 @@ describe('JSON Import', function() {
         cy.get('#name').should('have.value', 'My Test Software');
     });
 
+    it('imports properties introduced in codemeta v3.0', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "continuousIntegration": "https://test-ci.org/my-software",
+                "isSourceCodeOf": "Bigger Application",
+                "review": {
+                    "type": "Review",
+                    "reviewAspect": "Some software aspect",
+                    "reviewBody": "Some review"
+                }
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contIntegration').should('have.value', 'https://test-ci.org/my-software');
+        cy.get('#isSourceCodeOf').should('have.value', 'Bigger Application');
+        cy.get('#reviewAspect').should('have.value', 'Some software aspect');
+        cy.get('#reviewBody').should('have.value', 'Some review');
+    });
+
+    it('imports codemeta v2.0 properties from document with v3.0 context', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "codemeta:contIntegration": {
+                    "id": "https://test-ci.org/my-software"
+                }
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contIntegration').should('have.value', 'https://test-ci.org/my-software');
+    });
+
+    it('imports codemeta v3.0 properties from document with v2.0 context', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "codemeta:continuousIntegration": {
+                    "id": "https://test-ci.org/my-software"
+                },
+                "codemeta:isSourceCodeOf": {
+                    "id": "Bigger Application"
+                },
+                "schema:review": {
+                    "type": "schema:Review",
+                    "schema:reviewAspect": "Some software aspect",
+                    "schema:reviewBody": "Some review"
+                }
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contIntegration').should('have.value', 'https://test-ci.org/my-software');
+        cy.get('#isSourceCodeOf').should('have.value', 'Bigger Application');
+        cy.get('#reviewAspect').should('have.value', 'Some software aspect');
+        cy.get('#reviewBody').should('have.value', 'Some review');
+    });
+
+    it('imports newest version property when it is duplicate in multiple version context', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contIntegration": "https://test-ci1.org/my-software",
+                "codemeta:continuousIntegration": {
+                    "id": "https://test-ci2.org/my-software"
+                },
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contIntegration').should('have.value', 'https://test-ci2.org/my-software');
+
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "continuousIntegration": "https://test-ci1.org/my-software",
+                "codemeta:contIntegration": {
+                    "id": "https://test-ci2.org/my-software"
+                },
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contIntegration').should('have.value', 'https://test-ci1.org/my-software');
+    });
 });

@@ -108,7 +108,7 @@ describe('One full author', function() {
         });
     });
 
-    it('can be imported', function() {
+    it('can be imported even if there is also a role-less author', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -578,7 +578,82 @@ describe('One author with a role', function () {
     });
 
     it('can be imported', function () {
-        // TODO
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "type": "Role",
+                        "schema:author": {
+                            "type": "Person",
+                            "givenName": "Jane"
+                        },
+                        "roleName": "Developer",
+                        "startDate": "2024-03-04",
+                        "endDate": "2024-04-03"
+                    }
+                ]
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#author_nb').should('have.value', '1');
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_roleName_0').should('have.value', 'Developer');
+        cy.get('#author_1_startDate_0').should('have.value', '2024-03-04');
+        cy.get('#author_1_endDate_0').should('have.value', '2024-04-03');
+    });
+
+    it('can be imported when there is a second one, and they are merged', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "type": "Role",
+                        "schema:author": {
+                            "type": "Person",
+                            "givenName": "Jane"
+                        },
+                        "roleName": "Maintainer",
+                        "startDate": "2024-04-04",
+                        "endDate": "2024-05-05"
+                    },
+                    {
+                        "type": "Role",
+                        "schema:author": {
+                            "type": "Person",
+                            "givenName": "Jane"
+                        },
+                        "roleName": "Developer",
+                        "startDate": "2024-03-04",
+                        "endDate": "2024-04-03"
+                    }
+                ]
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#author_nb').should('have.value', '1');
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_roleName_0').should('have.value', 'Maintainer');
+        cy.get('#author_1_startDate_0').should('have.value', '2024-04-04');
+        cy.get('#author_1_endDate_0').should('have.value', '2024-05-05');
+        cy.get('#author_1_roleName_1').should('have.value', 'Developer');
+        cy.get('#author_1_startDate_1').should('have.value', '2024-03-04');
+        cy.get('#author_1_endDate_1').should('have.value', '2024-04-03');
     });
 });
 
@@ -682,5 +757,94 @@ describe('Multiple authors', function () {
                     }
                 ]
             });
+    });
+
+    it('who both have roles can be imported', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                 "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "type": "Role",
+                        "schema:author": {
+                            "type": "Person",
+                            "givenName": "Jane"
+                        },
+                        "roleName": "Developer",
+                        "startDate": "2024-03-04",
+                        "endDate": "2024-04-03"
+                    },
+                    {
+                        "type": "Person",
+                        "givenName": "Joe"
+                    },
+                    {
+                        "type": "Role",
+                        "schema:author": {
+                            "type": "Person",
+                            "givenName": "Joe"
+                        },
+                        "roleName": "Maintainer",
+                        "startDate": "2024-04-04",
+                        "endDate": "2024-05-05"
+                    }
+                ]
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#author_nb').should('have.value', '2');
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_roleName_0').should('have.value', 'Developer');
+        cy.get('#author_1_startDate_0').should('have.value', '2024-03-04');
+        cy.get('#author_1_endDate_0').should('have.value', '2024-04-03');
+        cy.get('#author_2_givenName').should('have.value', 'Joe');
+        cy.get('#author_2_roleName_0').should('have.value', 'Maintainer');
+        cy.get('#author_2_startDate_0').should('have.value', '2024-04-04');
+        cy.get('#author_2_endDate_0').should('have.value', '2024-05-05');
+    });
+
+    it('whose one has a role and the other not can be imported', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                 "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "type": "Role",
+                        "schema:author": {
+                            "type": "Person",
+                            "givenName": "Jane"
+                        },
+                        "roleName": "Developer",
+                        "startDate": "2024-03-04",
+                        "endDate": "2024-04-03"
+                    },
+                    {
+                        "type": "Person",
+                        "givenName": "Joe"
+                    }
+                ]
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#author_nb').should('have.value', '2');
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_roleName_0').should('have.value', 'Developer');
+        cy.get('#author_1_startDate_0').should('have.value', '2024-03-04');
+        cy.get('#author_1_endDate_0').should('have.value', '2024-04-03');
+        cy.get('#author_2_givenName').should('have.value', 'Joe');
     });
 });
