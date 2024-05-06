@@ -294,10 +294,9 @@ describe('JSON Import', function() {
                 "@context": "https://w3id.org/codemeta/3.0",
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
-                "continuousIntegration": "https://test-ci.org/my-software",
                 "codemeta:contIntegration": {
                     "id": "https://test-ci.org/my-software"
-                },
+                }
             }))
         );
         cy.get('#importCodemeta').click();
@@ -305,13 +304,12 @@ describe('JSON Import', function() {
         cy.get('#contIntegration').should('have.value', 'https://test-ci.org/my-software');
     });
 
-    it('works for codemeta v3.0 terms in v2.0 version, and does not work for new terms', function() {
+    it('imports codemeta v3.0 properties from document with v2.0 context', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
-                "contIntegration": "https://test-ci.org/my-software",
                 "codemeta:continuousIntegration": {
                     "id": "https://test-ci.org/my-software"
                 },
@@ -328,8 +326,25 @@ describe('JSON Import', function() {
         cy.get('#importCodemeta').click();
 
         cy.get('#contIntegration').should('have.value', 'https://test-ci.org/my-software');
-        cy.get('#isSourceCodeOf').should('have.value', '');
-        cy.get('#reviewAspect').should('have.value', '');
-        cy.get('#reviewBody').should('have.value', '');
+        cy.get('#isSourceCodeOf').should('have.value', 'Bigger Application');
+        cy.get('#reviewAspect').should('have.value', 'Some software aspect');
+        cy.get('#reviewBody').should('have.value', 'Some review');
+    });
+
+    it('imports newest version property when it is duplicate in multiple version context', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contIntegration": "https://test-ci1.org/my-software",
+                "codemeta:continuousIntegration": {
+                    "id": "https://test-ci2.org/my-software"
+                },
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contIntegration').should('have.value', 'https://test-ci2.org/my-software');
     });
 });
