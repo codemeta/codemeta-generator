@@ -346,5 +346,20 @@ describe('JSON Import', function() {
         cy.get('#importCodemeta').click();
 
         cy.get('#contIntegration').should('have.value', 'https://test-ci2.org/my-software');
+
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "continuousIntegration": "https://test-ci1.org/my-software",
+                "codemeta:contIntegration": {
+                    "id": "https://test-ci2.org/my-software"
+                },
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contIntegration').should('have.value', 'https://test-ci1.org/my-software');
     });
 });
