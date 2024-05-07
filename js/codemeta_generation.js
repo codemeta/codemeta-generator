@@ -435,3 +435,12 @@ function loadStateFromStorage() {
         importCodemeta();
     }
 }
+
+function downloadCodemeta() {
+    const codemetaText = document.querySelector('#codemetaText').innerText;
+    const blob = new Blob([codemetaText], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    document.querySelector('#downloadCodemeta').href = url;
+    document.querySelector('#downloadCodemeta').download = "codemeta.json";
+    URL.revokeObjectURL(url);
+}
