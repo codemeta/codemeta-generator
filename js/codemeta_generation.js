@@ -7,8 +7,8 @@
 
 "use strict";
 
-const LOCAL_CONTEXT_PATH = "./data/contexts/codemeta-local.jsonld";
-const LOCAL_CONTEXT_URL = "local";
+const INTERNAL_CONTEXT_PATH = "./data/contexts/codemeta-local.jsonld";
+const INTERNAL_CONTEXT_URL = "internal";
 const CODEMETA_CONTEXTS = {
     "2.0": {
         path: "./data/contexts/codemeta-2.0.jsonld",
@@ -25,12 +25,12 @@ const SPDX_PREFIX = 'https://spdx.org/licenses/';
 const loadContextData = async () => {
     const [contextLocal, contextV2, contextV3] =
         await Promise.all([
-            fetch(LOCAL_CONTEXT_PATH).then(response => response.json()),
+            fetch(INTERNAL_CONTEXT_PATH).then(response => response.json()),
             fetch(CODEMETA_CONTEXTS["2.0"].path).then(response => response.json()),
             fetch(CODEMETA_CONTEXTS["3.0"].path).then(response => response.json())
         ]);
     return {
-        [LOCAL_CONTEXT_URL]: contextLocal,
+        [INTERNAL_CONTEXT_URL]: contextLocal,
         [CODEMETA_CONTEXTS["2.0"].url]: contextV2,
         [CODEMETA_CONTEXTS["3.0"].url]: contextV3
     }
@@ -219,7 +219,7 @@ function generateReview() {
 
 async function buildExpandedJson() {
     var doc = {
-        "@context": LOCAL_CONTEXT_URL,
+        "@context": INTERNAL_CONTEXT_URL,
         "@type": "SoftwareSourceCode",
     };
 
@@ -272,10 +272,11 @@ async function buildExpandedJson() {
 async function generateCodemeta(codemetaVersion = "2.0") {
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
+    let compacted;
 
     if (inputForm.checkValidity()) {
         const expanded = await buildExpandedJson();
-        const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXTS[codemetaVersion].url);
+        compacted = await jsonld.compact(expanded, CODEMETA_CONTEXTS[codemetaVersion].url);
         codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
     }
@@ -293,7 +294,8 @@ async function generateCodemeta(codemetaVersion = "2.0") {
     // If this finds a validation, it means there is a bug in our code (either
     // generation or validation), and the generation MUST NOT generate an
     // invalid codemeta file, regardless of user input.
-    if (codemetaText && !validateDocument(JSON.parse(codemetaText))) {
+    const isValid = codemetaText && (await parseAndValidateCodemeta(false));
+    if (!isValid) {
         alert('Bug detected! The data you wrote is correct; but for some reason, it seems we generated an invalid codemeta.json. Please report this bug at https://github.com/codemeta/codemeta-generator/issues/new and copy-paste the generated codemeta.json file. Thanks!');
     }
 

@@ -9,35 +9,6 @@
  * Validators for codemeta objects derived from http://schema.org/Thing.
  */
 
-function getDocumentType(doc) {
-    // TODO: check there is at most one.
-    // FIXME: is the last variant allowed?
-    return doc["type"] || doc["@type"] || doc["codemeta:type"]
-}
-
-function getDocumentId(doc) {
-    return doc["id"] || doc["@id"];
-}
-
-function isCompactTypeEqual(type, compactedType) {
-    // FIXME: are all variants allowed?
-    return (type == `${compactedType}`
-        || type == `schema:${compactedType}`
-        || type == `codemeta:${compactedType}`
-        || type == `http://schema.org/${compactedType}`
-    );
-}
-
-function isFieldFromOtherVersionToIgnore(fieldName) {
-    return ["codemeta:contIntegration", "codemeta:continuousIntegration", "codemeta:isSourceCodeOf",
-        "schema:review", "schema:reviewAspect", "schema:reviewBody"].includes(fieldName);
-}
-
-function noValidation(fieldName, doc) {
-    return true;
-}
-
-
 // Validates subtypes of Thing, or URIs
 //
 // typeFieldValidators is a map: {type => {fieldName => fieldValidator}}
@@ -93,30 +64,21 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
     for (expectedType in typeFieldValidators) {
         if (isCompactTypeEqual(documentType, expectedType)) {
             var fieldValidators = typeFieldValidators[expectedType];
-            return Object.entries(doc).every((entry) => {
-                var fieldName = entry[0];
-                var subdoc = entry[1];
-                if (fieldName == "type" || fieldName == "@type") {
-                    // Was checked before
-                    return true;
-                }
-                else if (isFieldFromOtherVersionToIgnore(fieldName)) {
-                    // Do not check fields from other versions FIXME
-                    return true;
-                }
-                else {
-                    var validator = fieldValidators[fieldName];
+
+            return Object.entries(doc)
+                .filter(([fieldName]) => !isKeyword(fieldName))
+                .every(([fieldName, subdoc]) => {
+                    const compactedFieldName = getCompactType(fieldName);
+                    var validator = fieldValidators[compactedFieldName];
                     if (validator === undefined) {
                         // TODO: find if it's a field that belongs to another type,
                         // and suggest that to the user
-                        setError(`Unknown field "${fieldName}" in "${parentFieldName}".`)
+                        setError(`Unknown field "${compactedFieldName}".`)
                         return false;
+                    } else {
+                        return validator(compactedFieldName, subdoc);
                     }
-                    else {
-                        return validator(fieldName, subdoc);
-                    }
-                }
-            });
+                });
         }
     }
 
@@ -193,152 +155,4 @@ function validateOrganization(fieldName, doc) {
 
 function validateReview(fieldName, doc) {
     return validateThingOrId(fieldName, {"Review": reviewFieldValidators}, doc);
-}
-
-
-var softwareFieldValidators = {
-    "@id": validateUrl,
-    "id": validateUrl,
-
-    "codeRepository": validateUrls,
-    "programmingLanguage": noValidation,
-    "runtimePlatform": validateTexts,
-    "targetProduct": noValidation, // TODO: validate SoftwareApplication
-    "applicationCategory": validateTextsOrUrls,
-    "applicationSubCategory": validateTextsOrUrls,
-    "downloadUrl": validateUrls,
-    "fileSize": validateText,  // TODO
-    "installUrl": validateUrls,
-    "memoryRequirements": validateTextsOrUrls,
-    "operatingSystem": validateTexts,
-    "permissions": validateTexts,
-    "processorRequirements": validateTexts,
-    "releaseNotes": validateTextsOrUrls,
-    "softwareHelp": validateCreativeWorks,
-    "softwareRequirements": noValidation, // TODO: validate SoftwareSourceCode
-    "softwareVersion": validateText, // TODO?
-    "storageRequirements": validateTextsOrUrls,
-    "supportingData": noValidation, // TODO
-    "author": validateActors,
-    "citation": validateCreativeWorks, // TODO
-    "contributor": validateActors,
-    "copyrightHolder": validateActors,
-    "copyrightYear": validateNumbers,
-    "creator": validateActors, // TODO: still in codemeta 2.0, but removed from master
-    "dateCreated": validateDate,
-    "dateModified": validateDate,
-    "datePublished": validateDate,
-    "editor": validatePersons,
-    "encoding": noValidation,
-    "fileFormat": validateTextsOrUrls,
-    "funder": validateActors, // TODO: may be other types
-    "keywords": validateTexts,
-    "license": validateCreativeWorks,
-    "producer": validateActors,
-    "provider": validateActors,
-    "publisher": validateActors,
-    "sponsor": validateActors,
-    "version": validateNumberOrText,
-    "isAccessibleForFree": validateBoolean,
-    "isSourceCodeOf": validateTextsOrUrls,
-    "isPartOf": validateCreativeWorks,
-    "hasPart": validateCreativeWorks,
-    "position": noValidation,
-    "identifier": noValidation, // TODO
-    "description": validateText,
-    "name": validateText,
-    "sameAs": validateUrls,
-    "url": validateUrls,
-    "relatedLink": validateUrls,
-    "review": validateReview,
-
-    "softwareSuggestions": noValidation, // TODO: validate SoftwareSourceCode
-    "maintainer": validateActors,
-    "contIntegration": validateUrls,
-    "continuousIntegration": validateUrls,
-    "buildInstructions": validateUrls,
-    "developmentStatus": validateText, // TODO: use only repostatus strings?
-    "embargoDate": validateDate,
-    "embargoEndDate": validateDate,
-    "funding": validateText,
-    "issueTracker": validateUrls,
-    "referencePublication": noValidation, // TODO?
-    "readme": validateUrls,
-};
-
-var creativeWorkFieldValidators = {
-    "@id": validateUrl,
-    "id": validateUrl,
-
-    "author": validateActors,
-    "citation": validateCreativeWorks, // TODO
-    "contributor": validateActors,
-    "copyrightHolder": validateActors,
-    "copyrightYear": validateNumbers,
-    "creator": validateActors, // TODO: still in codemeta 2.0, but removed from master
-    "dateCreated": validateDate,
-    "dateModified": validateDate,
-    "datePublished": validateDate,
-    "editor": validatePersons,
-    "encoding": noValidation,
-    "funder": validateActors, // TODO: may be other types
-    "keywords": validateTexts,
-    "license": validateCreativeWorks,
-    "producer": validateActors,
-    "provider": validateActors,
-    "publisher": validateActors,
-    "sponsor": validateActors,
-    "version": validateNumberOrText,
-    "isAccessibleForFree": validateBoolean,
-    "isPartOf": validateCreativeWorks,
-    "hasPart": validateCreativeWorks,
-    "position": noValidation,
-    "identifier": noValidation, // TODO
-    "description": validateText,
-    "name": validateText,
-    "sameAs": validateUrls,
-    "url": validateUrls,
-};
-
-var roleFieldValidators = {
-    "roleName": validateText,
-    "startDate": validateDate,
-    "endDate": validateDate,
-
-    "schema:author": validateActor
-};
-
-var personFieldValidators = {
-    "@id": validateUrl,
-    "id": validateUrl,
-
-    "givenName": validateText,
-    "familyName": validateText,
-    "email": validateText,
-    "affiliation": validateOrganizations,
-    "identifier": validateUrls,
-    "name": validateText,  // TODO: this is technically valid, but should be allowed here?
-    "url": validateUrls,
-};
-
-
-var organizationFieldValidators = {
-    "@id": validateUrl,
-    "id": validateUrl,
-
-    "email": validateText,
-    "identifier": validateUrls,
-    "name": validateText,
-    "address": validateText,
-    "sponsor": validateActors,
-    "funder": validateActors, // TODO: may be other types
-    "isPartOf": validateOrganizations,
-    "url": validateUrls,
-
-    // TODO: add more?
-};
-
-const reviewFieldValidators = {
-    "reviewAspect": validateText,
-    "reviewBody": validateText,
 }
