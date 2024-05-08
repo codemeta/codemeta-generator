@@ -65,12 +65,12 @@ function validateDocument(doc) {
 }
 
 
-async function parseAndValidateCodemeta(showPopup) {
+function parseAndValidateCodemeta(showPopup) {
     var codemetaText = document.querySelector('#codemetaText').innerText;
-    let parsed, doc;
+    var doc;
 
     try {
-        parsed = JSON.parse(codemetaText);
+        doc = JSON.parse(codemetaText);
     }
     catch (e) {
         setError(`Could not read codemeta document because it is not valid JSON (${e}). Check for missing or extra quote, colon, or bracket characters.`);
@@ -79,7 +79,7 @@ async function parseAndValidateCodemeta(showPopup) {
 
     setError("");
 
-    var isValid = validateDocument(parsed);
+    var isValid = validateDocument(doc);
     if (showPopup) {
         if (isValid) {
             alert('Document is valid!')
@@ -89,8 +89,5 @@ async function parseAndValidateCodemeta(showPopup) {
         }
     }
 
-    parsed["@context"] = LOCAL_CONTEXT_URL;
-    const expanded = await jsonld.expand(parsed);
-    doc = await jsonld.compact(expanded, LOCAL_CONTEXT_URL);
     return doc;
 }

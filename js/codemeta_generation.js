@@ -7,8 +7,6 @@
 
 "use strict";
 
-const LOCAL_CONTEXT_PATH = "./data/contexts/codemeta-local.jsonld";
-const LOCAL_CONTEXT_URL = "local";
 const CODEMETA_CONTEXTS = {
     "2.0": {
         path: "./data/contexts/codemeta-2.0.jsonld",
@@ -23,14 +21,12 @@ const CODEMETA_CONTEXTS = {
 const SPDX_PREFIX = 'https://spdx.org/licenses/';
 
 const loadContextData = async () => {
-    const [contextLocal, contextV2, contextV3] =
+    const [contextV2, contextV3] =
         await Promise.all([
-            fetch(LOCAL_CONTEXT_PATH).then(response => response.json()),
             fetch(CODEMETA_CONTEXTS["2.0"].path).then(response => response.json()),
             fetch(CODEMETA_CONTEXTS["3.0"].path).then(response => response.json())
         ]);
     return {
-        [LOCAL_CONTEXT_URL]: contextLocal,
         [CODEMETA_CONTEXTS["2.0"].url]: contextV2,
         [CODEMETA_CONTEXTS["3.0"].url]: contextV3
     }
@@ -53,6 +49,10 @@ const getJsonldCustomLoader = contexts => {
 const initJsonldLoader = contexts => {
     jsonld.documentLoader = getJsonldCustomLoader(contexts);
 };
+
+const getAllCodemetaContextUrls= () => {
+    return Object.values(CODEMETA_CONTEXTS).map(context => context.url);
+}
 
 function emptyToUndefined(v) {
     if (v == null || v == "")
@@ -217,9 +217,9 @@ function generateReview() {
     return doc;
 }
 
-async function buildExpandedJson() {
+async function buildExpandedDocWithAllContexts() {
     var doc = {
-        "@context": LOCAL_CONTEXT_URL,
+        "@context": getAllCodemetaContextUrls(),
         "@type": "SoftwareSourceCode",
     };
 
@@ -274,7 +274,9 @@ async function generateCodemeta(codemetaVersion = "2.0") {
     var codemetaText, errorHTML;
 
     if (inputForm.checkValidity()) {
-        const expanded = await buildExpandedJson();
+        // Expand document with all contexts before compacting
+        // to allow generating property from any context
+        const expanded = await buildExpandedDocWithAllContexts();
         const compacted = await jsonld.compact(expanded, CODEMETA_CONTEXTS[codemetaVersion].url);
         codemetaText = JSON.stringify(compacted, null, 4);
         errorHTML = "";
@@ -380,9 +382,23 @@ function importPersons(prefix, legend, docs) {
     });
 }
 
+async function recompactDocWithAllContexts(doc) {
+    const allContexts = getAllCodemetaContextUrls();
+    const newDoc = structuredClone(doc);
+    newDoc["@context"] = allContexts;
+    const expanded = await jsonld.expand(newDoc);
+    const compacted = await jsonld.compact(expanded, allContexts);
+    return compacted;
+}
+
 async function importCodemeta() {
     var inputForm = document.querySelector('#inputForm');
-    var doc = await parseAndValidateCodemeta(false);
+    var doc = parseAndValidateCodemeta(false);
+
+    // Re-compact document with all contexts
+    // to allow importing property from any context
+    doc = await recompactDocWithAllContexts(doc);
+
     resetForm();
 
     if (doc['license'] !== undefined) {
