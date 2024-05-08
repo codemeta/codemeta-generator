@@ -348,7 +348,7 @@ describe('JSON Import', function() {
 
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
-                "@context": "https://doi.org/10.5063/schema/codemeta-3.0",
+                "@context": "https://w3id.org/codemeta/3.0",
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "continuousIntegration": "https://test-ci1.org/my-software",
