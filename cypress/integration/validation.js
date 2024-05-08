@@ -651,7 +651,7 @@ describe('Person validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', 'Unknown field "foo" in "author".');
+        cy.get('#errorMessage').should('have.text', 'Unknown field "foo".');
     });
 
     it('errors on Person with invalid field', function() {
@@ -857,7 +857,7 @@ describe('Organization validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', 'Unknown field "foo" in "author".');
+        cy.get('#errorMessage').should('have.text', 'Unknown field "foo".');
     });
 
     it('errors on Organization with invalid field', function() {
@@ -1005,7 +1005,7 @@ describe('CreativeWork validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-        cy.get('#errorMessage').should('have.text', 'Unknown field "foo" in "isPartOf".');
+        cy.get('#errorMessage').should('have.text', 'Unknown field "foo".');
     });
 
     it('errors on CreativeWork with invalid field', function() {

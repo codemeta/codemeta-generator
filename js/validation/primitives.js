@@ -9,6 +9,10 @@
  * Validators for native schema.org data types.
  */
 
+function noValidation(fieldName, doc) {
+    return true;
+}
+
 // Validates an URL or an array of URLs
 function validateUrls(fieldName, doc) {
     return validateListOrSingle(fieldName, doc, (subdoc, inList) => {
