@@ -38,6 +38,16 @@ function validateUrl(fieldName, doc) {
     }
 }
 
+function validateUrlOrBlankNode(fieldName, doc) {
+    if (!isUrlOrBlankNode(doc)) {
+        setError(`Invalid URL or blank node in field "${fieldName}": ${JSON.stringify(doc)}`)
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 // Validates a Text/URL or an array of Texts/URLs
 function validateTextsOrUrls(fieldName, doc) {
     return validateListOrSingle(fieldName, doc, (subdoc, inList) => {

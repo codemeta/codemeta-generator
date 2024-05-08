@@ -47,7 +47,7 @@ function validateThingOrId(parentFieldName, typeFieldValidators, doc) {
     var acceptedTypesString = Object.keys(typeFieldValidators).join('/');
 
     if (typeof doc == 'string') {
-        if (!isUrl(doc)) {
+        if (!isUrlOrBlankNode(doc)) {
             setError(`"${parentFieldName}" must be an URL or a ${acceptedTypesString} object, not: ${JSON.stringify(doc)}`);
             return false;
         }
@@ -76,8 +76,8 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
     var documentType = getDocumentType(doc);
 
     var id = getDocumentId(doc);
-    if (id !== undefined && !isUrl(id)) {
-        setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
+    if (id !== undefined && !isUrlOrBlankNode(id)) {
+        setError(`"${parentFieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
         return false;
     }
 
@@ -311,8 +311,8 @@ var roleFieldValidators = {
 };
 
 var personFieldValidators = {
-    "@id": validateUrl,
-    "id": validateUrl,
+    "@id": validateUrlOrBlankNode,
+    "id": validateUrlOrBlankNode,
 
     "givenName": validateText,
     "familyName": validateText,
