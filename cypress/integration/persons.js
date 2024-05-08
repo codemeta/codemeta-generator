@@ -141,6 +141,27 @@ describe('One full author', function() {
         cy.get('#author_1_id').should('have.value', 'http://example.org/~jdoe');
         cy.get('#author_1_affiliation').should('have.value', 'http://example.org/');
     });
+
+    it('is imported without its id if it is a blank node', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "@type": "Person",
+                        "@id": "_:author_1",
+                        "givenName": "Jane",
+                    }
+                ],
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_id').should('have.value', '');
+    });
 });
 
 describe('Affiliation id', function() {
@@ -161,6 +182,7 @@ describe('Affiliation id', function() {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
@@ -221,6 +243,7 @@ describe('Affiliation name', function() {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
@@ -328,6 +351,7 @@ describe('Author order change', function() {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
@@ -336,6 +360,7 @@ describe('Author order change', function() {
                         }
                     },
                     {
+                        "id": "_:author_2",
                         "type": "Person",
                         "givenName": "John",
                         "familyName": "Doe",
@@ -352,11 +377,13 @@ describe('Author order change', function() {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "John",
                         "familyName": "Doe",
                     },
                     {
+                        "id": "_:author_2",
                         "type": "Person",
                         "givenName": "Jane",
                         "affiliation": {
@@ -443,15 +470,13 @@ describe('One author with a role', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane"
                     },
                     {
                         "type": "schema:Role",
-                        "schema:author": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "schema:author": "_:author_1",
                         "schema:roleName": "Developer",
                         "schema:startDate": "2024-03-04",
                         "schema:endDate": "2024-04-03"
@@ -467,15 +492,13 @@ describe('One author with a role', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane"
                     },
                     {
                         "type": "Role",
-                        "schema:author": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
@@ -508,25 +531,20 @@ describe('One author with a role', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane"
                     },
                     {
                         "type": "Role",
-                        "schema:author": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "schema:author": "_:author_1",
                         "roleName": "Maintainer",
                         "startDate": "2024-04-04",
                         "endDate": "2024-05-05"
                     },
                     {
                         "type": "Role",
-                        "schema:author": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
@@ -560,15 +578,13 @@ describe('One author with a role', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane"
                     },
                     {
                         "type": "Role",
-                        "schema:author": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "schema:author": "_:author_1",
                         "roleName": "Maintainer",
                         "startDate": "2024-04-04",
                         "endDate": "2024-05-05"
@@ -578,6 +594,37 @@ describe('One author with a role', function () {
     });
 
     it('can be imported', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "id": "_:author_1",
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "type": "Role",
+                        "schema:author": "_:author_1",
+                        "roleName": "Developer",
+                        "startDate": "2024-03-04",
+                        "endDate": "2024-04-03"
+                    }
+                ]
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#author_nb').should('have.value', '1');
+        cy.get('#author_1_givenName').should('have.value', 'Jane');
+        cy.get('#author_1_roleName_0').should('have.value', 'Developer');
+        cy.get('#author_1_startDate_0').should('have.value', '2024-03-04');
+        cy.get('#author_1_endDate_0').should('have.value', '2024-04-03');
+    });
+
+    it('can be imported without an id', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://w3id.org/codemeta/3.0",
@@ -685,29 +732,25 @@ describe('Multiple authors', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane"
                     },
                     {
                         "type": "Role",
-                        "schema:author": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
                     },
                     {
+                        "id": "_:author_2",
                         "type": "Person",
                         "givenName": "Joe"
                     },
                     {
                         "type": "Role",
-                        "schema:author": {
-                            "type": "Person",
-                            "givenName": "Joe"
-                        },
+                        "schema:author": "_:author_2",
                         "roleName": "Maintainer",
                         "startDate": "2024-04-04",
                         "endDate": "2024-05-05"
@@ -738,20 +781,19 @@ describe('Multiple authors', function () {
                 "name": "My Test Software",
                 "author": [
                     {
+                        "id": "_:author_1",
                         "type": "Person",
                         "givenName": "Jane"
                     },
                     {
                         "type": "Role",
-                        "schema:author": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "schema:author": "_:author_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
                     },
                     {
+                        "id": "_:author_2",
                         "type": "Person",
                         "givenName": "Joe"
                     }

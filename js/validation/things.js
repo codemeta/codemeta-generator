@@ -29,14 +29,16 @@ function isCompactTypeEqual(type, compactedType) {
 }
 
 function isFieldFromOtherVersionToIgnore(fieldName) {
-    return ["codemeta:contIntegration", "codemeta:continuousIntegration", "codemeta:isSourceCodeOf",
-        "schema:review", "schema:reviewAspect", "schema:reviewBody"].includes(fieldName);
+    return ["codemeta:contIntegration", "codemeta:continuousIntegration",
+        "codemeta:isSourceCodeOf",
+        "schema:roleName", "schema:startDate", "schema:endDate",
+        "schema:review", "schema:reviewAspect", "schema:reviewBody",
+        "schema:releaseNotes"].includes(fieldName);
 }
 
 function noValidation(fieldName, doc) {
     return true;
 }
-
 
 // Validates subtypes of Thing, or URIs
 //
@@ -45,7 +47,7 @@ function validateThingOrId(parentFieldName, typeFieldValidators, doc) {
     var acceptedTypesString = Object.keys(typeFieldValidators).join('/');
 
     if (typeof doc == 'string') {
-        if (!isUrl(doc)) {
+        if (!isUrlOrBlankNodeId(doc)) {
             setError(`"${parentFieldName}" must be an URL or a ${acceptedTypesString} object, not: ${JSON.stringify(doc)}`);
             return false;
         }
@@ -74,8 +76,8 @@ function validateThing(parentFieldName, typeFieldValidators, doc) {
     var documentType = getDocumentType(doc);
 
     var id = getDocumentId(doc);
-    if (id !== undefined && !isUrl(id)) {
-        setError(`"${fieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
+    if (id !== undefined && !isUrlOrBlankNodeId(id)) {
+        setError(`"${parentFieldName}" has an invalid URI as id: ${JSON.stringify(id)}"`);
         return false;
     }
 
@@ -309,8 +311,8 @@ var roleFieldValidators = {
 };
 
 var personFieldValidators = {
-    "@id": validateUrl,
-    "id": validateUrl,
+    "@id": validateUrlOrBlankNode,
+    "id": validateUrlOrBlankNode,
 
     "givenName": validateText,
     "familyName": validateText,

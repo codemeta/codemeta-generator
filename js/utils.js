@@ -34,3 +34,11 @@ function isUrl(s) {
         return false;
     }
 }
+
+function isBlankNodeId(s) {
+    return typeof s === 'string' && s.startsWith("_:");
+}
+
+function isUrlOrBlankNodeId(s) {
+    return isUrl(s) || isBlankNodeId(s);
+}
