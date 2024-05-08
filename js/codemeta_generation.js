@@ -132,7 +132,7 @@ const crossCodemetaFields = {
     // "embargoDate": ["embargoDate", "embargoEndDate"], Not present in the form yet TODO ?
 };
 
-function generateBlankNode(customId) {
+function generateBlankNodeId(customId) {
     return `_:${customId}`;
 }
 
@@ -162,7 +162,7 @@ function generatePerson(idPrefix) {
         "@type": "Person",
     }
     const id = getIfSet(`#${idPrefix}_id`);
-    doc["@id"] = id? id : generateBlankNode(idPrefix);
+    doc["@id"] = id? id : generateBlankNodeId(idPrefix);
     directPersonCodemetaFields.forEach(function (item, index) {
         doc[item] = getIfSet(`#${idPrefix}_${item}`);
     });
@@ -373,7 +373,7 @@ function importPersons(prefix, legend, docs) {
     allAuthorDocs.forEach(function (doc, index) {
         var personId = addPerson(prefix, legend);
 
-        if (!isBlankNode(getDocumentId(doc))) {
+        if (!isBlankNodeId(getDocumentId(doc))) {
             setIfDefined(`#${prefix}_${personId}_id`, getDocumentId(doc));
         }
         directPersonCodemetaFields.forEach(function (item, index) {

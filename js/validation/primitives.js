@@ -39,7 +39,7 @@ function validateUrl(fieldName, doc) {
 }
 
 function validateUrlOrBlankNode(fieldName, doc) {
-    if (!isUrlOrBlankNode(doc)) {
+    if (!isUrlOrBlankNodeId(doc)) {
         setError(`Invalid URL or blank node in field "${fieldName}": ${JSON.stringify(doc)}`)
         return false;
     }

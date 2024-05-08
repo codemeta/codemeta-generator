@@ -35,10 +35,10 @@ function isUrl(s) {
     }
 }
 
-function isBlankNode(s) {
+function isBlankNodeId(s) {
     return typeof s === 'string' && s.startsWith("_:");
 }
 
-function isUrlOrBlankNode(s) {
-    return isUrl(s) || isBlankNode(s);
+function isUrlOrBlankNodeId(s) {
+    return isUrl(s) || isBlankNodeId(s);
 }
