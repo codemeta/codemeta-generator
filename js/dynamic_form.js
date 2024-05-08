@@ -221,6 +221,10 @@ function initCallbacks() {
     document.querySelector('#importCodemeta')
         .addEventListener('click', importCodemeta);
 
+    document.querySelector('#downloadCodemeta input').disabled = false;
+    document.querySelector('#downloadCodemeta input')
+        .addEventListener('click', downloadCodemeta);
+
     document.querySelector('#inputForm')
         .addEventListener('change', () => generateCodemeta());
 
