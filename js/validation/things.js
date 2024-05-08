@@ -29,14 +29,16 @@ function isCompactTypeEqual(type, compactedType) {
 }
 
 function isFieldFromOtherVersionToIgnore(fieldName) {
-    return ["codemeta:contIntegration", "codemeta:continuousIntegration", "codemeta:isSourceCodeOf",
-        "schema:review", "schema:reviewAspect", "schema:reviewBody"].includes(fieldName);
+    return ["codemeta:contIntegration", "codemeta:continuousIntegration",
+        "codemeta:isSourceCodeOf",
+        "schema:roleName", "schema:startDate", "schema:endDate",
+        "schema:review", "schema:reviewAspect", "schema:reviewBody",
+        "schema:releaseNotes"].includes(fieldName);
 }
 
 function noValidation(fieldName, doc) {
     return true;
 }
-
 
 // Validates subtypes of Thing, or URIs
 //
