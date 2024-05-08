@@ -326,8 +326,10 @@ function authorsEqual(author1, author2) {
     const id1 = typeof author1 === "string"? author1 : getDocumentId(author1);
     const id2 = typeof author2 === "string"? author2 : getDocumentId(author2);
     if (id1 || id2) {
+        // Use their id if both authors have one
         return id1 === id2;
     }
+    // Fall back to comparing values otherwise
     return author1.givenName === author2.givenName
         && author1.familyName === author2.familyName
         && author1.email === author2.email;
