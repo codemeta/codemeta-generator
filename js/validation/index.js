@@ -74,7 +74,7 @@ function parseAndValidateCodemeta(showPopup) {
     }
     catch (e) {
         setError(`Could not read codemeta document because it is not valid JSON (${e}). Check for missing or extra quote, colon, or bracket characters.`);
-        return;
+        return {};
     }
 
     setError("");
