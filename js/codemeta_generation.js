@@ -50,7 +50,7 @@ const initJsonldLoader = contexts => {
     jsonld.documentLoader = getJsonldCustomLoader(contexts);
 };
 
-const getAllCodemetaContextUrls= () => {
+const getAllCodemetaContextUrls = () => {
     return Object.values(CODEMETA_CONTEXTS).map(context => context.url);
 }
 
@@ -450,8 +450,12 @@ async function importCodemeta() {
         setIfDefined(`#${key}`, value);
     }
 
-    importPersons('author', 'Author', doc['author'])
-    importPersons('contributor', 'Contributor', doc['contributor'])
+    importPersons('author', 'Author', doc['author']);
+    if (doc['contributor']) {
+        // If only one contributor, it is compacted to an object
+        const contributors = Array.isArray(doc['contributor'])? doc['contributor'] : [doc['contributor']];
+        importPersons('contributor', 'Contributor', contributors);
+    }
 }
 
 function loadStateFromStorage() {
