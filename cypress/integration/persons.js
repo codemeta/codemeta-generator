@@ -905,9 +905,9 @@ describe('Contributors', function () {
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": {
-                        "id": "_:contributor_1",
-                        "type": "Person",
-                        "givenName": "Jane"
+                    "id": "_:contributor_1",
+                    "type": "Person",
+                    "givenName": "Jane"
                 }
             });
     });
@@ -945,12 +945,12 @@ describe('Contributors', function () {
     it('can be imported when unique', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
-                 "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.0",
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": {
-                        "type": "Person",
-                        "givenName": "Jane"
+                    "type": "Person",
+                    "givenName": "Jane"
                  }
             }))
         );
@@ -963,7 +963,7 @@ describe('Contributors', function () {
     it('can be imported when multiple', function () {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
-                 "@context": "https://w3id.org/codemeta/3.0",
+                "@context": "https://w3id.org/codemeta/3.0",
                 "type": "SoftwareSourceCode",
                 "name": "My Test Software",
                 "contributor": [
