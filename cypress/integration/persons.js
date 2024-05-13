@@ -890,3 +890,98 @@ describe('Multiple authors', function () {
         cy.get('#author_2_givenName').should('have.value', 'Joe');
     });
 });
+
+describe('Contributors', function () {
+    it('are exported as an object when unique', function () {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#contributor_add').click();
+        cy.get('#contributor_1_givenName').type('Jane');
+
+        cy.get('#generateCodemetaV3').click();
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contributor": {
+                        "id": "_:contributor_1",
+                        "type": "Person",
+                        "givenName": "Jane"
+                }
+            });
+    });
+
+    it('are exported as an array when multiple', function () {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#contributor_add').click();
+        cy.get('#contributor_1_givenName').type('Jane');
+
+        cy.get('#contributor_add').click();
+        cy.get('#contributor_2_givenName').type('Joe');
+
+        cy.get('#generateCodemetaV3').click();
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contributor": [
+                    {
+                        "id": "_:contributor_1",
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "id": "_:contributor_2",
+                        "type": "Person",
+                        "givenName": "Joe"
+                    }
+                ]
+            });
+    });
+
+    it('can be imported when unique', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                 "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contributor": {
+                        "type": "Person",
+                        "givenName": "Jane"
+                 }
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contributor_nb').should('have.value', '1');
+        cy.get('#contributor_1_givenName').should('have.value', 'Jane');
+    });
+
+    it('can be imported when multiple', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                 "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contributor": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "type": "Person",
+                        "givenName": "Joe"
+                    }
+                ]
+            }))
+        );
+        cy.get('#importCodemeta').click();
+
+        cy.get('#contributor_nb').should('have.value', '2');
+        cy.get('#contributor_1_givenName').should('have.value', 'Jane');
+        cy.get('#contributor_2_givenName').should('have.value', 'Joe');
+    });
+});
