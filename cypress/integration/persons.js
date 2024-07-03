@@ -985,3 +985,65 @@ describe('Contributors', function () {
         cy.get('#contributor_2_givenName').should('have.value', 'Joe');
     });
 });
+
+describe('One contributor with a role', function () {
+    it('can be exported in both codemeta v2.0 and v3.0 versions', function () {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#contributor_add').click();
+        cy.get('#contributor_1_givenName').type('Jane');
+
+        cy.get('#contributor_1_role_add').click();
+        cy.get('#contributor_1_roleName_0').type('Developer');
+        cy.get('#contributor_1_startDate_0').type('2024-03-04');
+        cy.get('#contributor_1_endDate_0').type('2024-04-03');
+
+        cy.get('#generateCodemetaV2').click();
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contributor": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "type": "schema:Role",
+                        "schema:contributor": {
+                            "type": "Person",
+                            "givenName": "Jane"
+                        },
+                        "schema:roleName": "Developer",
+                        "schema:startDate": "2024-03-04",
+                        "schema:endDate": "2024-04-03"
+                    }
+                ]
+            });
+
+        cy.get('#generateCodemetaV3').click();
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://w3id.org/codemeta/3.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "contributor": [
+                    {
+                        "type": "Person",
+                        "givenName": "Jane"
+                    },
+                    {
+                        "type": "Role",
+                        "schema:contributor": {
+                            "type": "Person",
+                            "givenName": "Jane"
+                        },
+                        "roleName": "Developer",
+                        "startDate": "2024-03-04",
+                        "endDate": "2024-04-03"
+                    }
+                ]
+            });
+    });
+});

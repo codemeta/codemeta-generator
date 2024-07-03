@@ -181,26 +181,26 @@ function generateRole(id) {
     return doc;
 }
 
-function generateRoles(idPrefix, person) {
+function generateRoles(property, idPrefix, person) {
     const roles = [];
     const roleNodes = document.querySelectorAll(`ul[id^=${idPrefix}_role_`);
     roleNodes.forEach(roleNode => {
         const role = generateRole(roleNode.id);
-        role["schema:author"] = getDocumentId(person); // Prefix with "schema:" to prevent it from expanding into a list
+        role[`schema:${property}`] = getDocumentId(person); // Prefix with "schema:" to prevent it from expanding into a list
         roles.push(role);
     });
     return roles;
 }
 
-function generatePersons(prefix) {
+function generatePersons(property) {
     var persons = [];
-    var nbPersons = getNbPersons(prefix);
+    var nbPersons = getNbPersons(property);
 
     for (let personId = 1; personId <= nbPersons; personId++) {
-        const idPrefix = `${prefix}_${personId}`;
+        const idPrefix = `${property}_${personId}`;
         const person = generatePerson(idPrefix);
         persons.push(person);
-        const roles = generateRoles(idPrefix, person);
+        const roles = generateRoles(property, idPrefix, person);
         if (roles.length > 0) {
             persons = persons.concat(roles);
         }
