@@ -1006,15 +1006,13 @@ describe('One contributor with a role', function () {
                 "name": "My Test Software",
                 "contributor": [
                     {
+                        "id": "_:contributor_1",
                         "type": "Person",
                         "givenName": "Jane"
                     },
                     {
                         "type": "schema:Role",
-                        "contributor": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "contributor": "_:contributor_1",
                         "schema:roleName": "Developer",
                         "schema:startDate": "2024-03-04",
                         "schema:endDate": "2024-04-03"
@@ -1030,15 +1028,13 @@ describe('One contributor with a role', function () {
                 "name": "My Test Software",
                 "contributor": [
                     {
+                        "id": "_:contributor_1",
                         "type": "Person",
                         "givenName": "Jane"
                     },
                     {
                         "type": "Role",
-                        "contributor": {
-                            "type": "Person",
-                            "givenName": "Jane"
-                        },
+                        "contributor": "_:contributor_1",
                         "roleName": "Developer",
                         "startDate": "2024-03-04",
                         "endDate": "2024-04-03"
