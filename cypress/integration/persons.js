@@ -1011,7 +1011,7 @@ describe('One contributor with a role', function () {
                     },
                     {
                         "type": "schema:Role",
-                        "schema:contributor": {
+                        "contributor": {
                             "type": "Person",
                             "givenName": "Jane"
                         },
@@ -1035,7 +1035,7 @@ describe('One contributor with a role', function () {
                     },
                     {
                         "type": "Role",
-                        "schema:contributor": {
+                        "contributor": {
                             "type": "Person",
                             "givenName": "Jane"
                         },
