@@ -307,7 +307,8 @@ var roleFieldValidators = {
     "startDate": validateDate,
     "endDate": validateDate,
 
-    "schema:author": validateActor
+    "schema:author": validateActor,
+    "contributor": validateActor
 };
 
 var personFieldValidators = {
