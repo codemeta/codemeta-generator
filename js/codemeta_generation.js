@@ -263,7 +263,7 @@ async function buildExpandedDocWithAllContexts() {
         const deserializer = item[3];
         let value = getIfSet('#' + id);
         if (value !== undefined) {
-            value = value.split(separator).map(trimSpaces);
+            value = value.split(separator).map(trimSpaces).filter((item) => item != "");
             if (serializer !== undefined) {
                 value = value.map((item) => serializer(id, item));
             }

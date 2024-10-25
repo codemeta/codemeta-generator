@@ -146,6 +146,23 @@ describe('Software requirements', function() {
             });
     });
 
+    it('can be exported despite a trailing newline', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#softwareRequirements').type('https://github.com/GNOME/libxml2\n');
+
+        cy.get('#generateCodemetaV2').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "softwareRequirements": "https://github.com/GNOME/libxml2",
+            });
+    });
+
     it('can be imported from a single URI', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
