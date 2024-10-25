@@ -98,12 +98,14 @@ const directCodemetaFields = [
     'referencePublication'
 ];
 
+// Tuples of codemeta property, character joining/splitting items in a textarea, and optionally
+// post-processing for deserialization and pre-processing for deserialization
 const splittedCodemetaFields = [
     ['keywords', ','],
     ['programmingLanguage', ','],
     ['runtimePlatform', ','],
     ['operatingSystem', ','],
-    ['softwareRequirements', '\n'],
+    ['softwareRequirements', '\n', generateUri, importUri],
     ['relatedLink', '\n'],
 ]
 
@@ -134,6 +136,17 @@ const crossCodemetaFields = {
 
 function generateBlankNodeId(customId) {
     return `_:${customId}`;
+}
+
+// Unambiguously converts a free-form text field that might be a URI or actual free text
+// in JSON-LD
+function generateUri(fieldName, text) {
+    if (isUrl(text)) {
+        return {"@id": text};
+    } else {
+        setError(`Invalid URL in field "${fieldName}": "${text}"`);
+        return undefined;
+    }
 }
 
 function generateShortOrg(fieldName) {
@@ -246,9 +259,15 @@ async function buildExpandedDocWithAllContexts() {
     splittedCodemetaFields.forEach(function (item, index) {
         const id = item[0];
         const separator = item[1];
-        const value = getIfSet('#' + id);
+        const serializer = item[2];
+        const deserializer = item[3];
+        let value = getIfSet('#' + id);
         if (value !== undefined) {
-            doc[id] = value.split(separator).map(trimSpaces);
+            value = value.split(separator).map(trimSpaces);
+            if (serializer !== undefined) {
+                value = value.map((item) => serializer(id, item));
+            }
+            doc[id] = value;
         }
     });
 
@@ -275,6 +294,8 @@ async function generateCodemeta(codemetaVersion = "2.0") {
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
 
+    setError("");
+
     if (inputForm.checkValidity()) {
         // Expand document with all contexts before compacting
         // to allow generating property from any context
@@ -285,12 +306,11 @@ async function generateCodemeta(codemetaVersion = "2.0") {
     }
     else {
         codemetaText = "";
-        errorHTML = "invalid input (see error above)";
+        setError("invalid input (see error above)");
         inputForm.reportValidity();
     }
 
     document.querySelector('#codemetaText').innerText = codemetaText;
-    setError(errorHTML);
 
 
     // Run validator on the exported value, for extra validation.
@@ -305,6 +325,11 @@ async function generateCodemeta(codemetaVersion = "2.0") {
         // For restoring the form state on page reload
         sessionStorage.setItem('codemetaText', codemetaText);
     }
+}
+
+// Imports a field that can be either URI or free-form text into a free-form text field
+function importUri(fieldName, doc) {
+    return doc;
 }
 
 // Imports a single field (name or @id) from an Organization.
@@ -433,10 +458,19 @@ async function importCodemeta() {
     splittedCodemetaFields.forEach(function (item, index) {
         const id = item[0];
         const separator = item[1];
+        const serializer = item[2];
+        const deserializer = item[3];
         let value = doc[id];
         if (value !== undefined) {
             if (Array.isArray(value)) {
+                if (deserializer !== undefined) {
+                    value = value.map((item) => deserializer(id, item));
+                }
                 value = value.join(separator);
+            } else {
+                if (deserializer !== undefined) {
+                    value = deserializer(id, value);
+                }
             }
             setIfDefined('#' + id, value);
         }
