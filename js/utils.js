@@ -29,6 +29,10 @@ function trimSpaces(s) {
 function isUrl(s) {
     try {
         const url = new URL(s);
+        if (url.origin == "null") {
+            // forbids "foo: bar" as a URL, for example
+            return false;
+        }
         return true;
     } catch (e) {
         return false;
