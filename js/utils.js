@@ -28,7 +28,7 @@ function trimSpaces(s) {
 // From https://stackoverflow.com/a/43467144
 function isUrl(s) {
     try {
-        new URL(s);
+        const url = new URL(s);
         return true;
     } catch (e) {
         return false;
