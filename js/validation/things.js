@@ -217,7 +217,7 @@ var softwareFieldValidators = {
     "processorRequirements": validateTexts,
     "releaseNotes": validateTextsOrUrls,
     "softwareHelp": validateCreativeWorks,
-    "softwareRequirements": noValidation, // TODO: validate SoftwareSourceCode
+    "softwareRequirements": validateUrls,
     "softwareVersion": validateText, // TODO?
     "storageRequirements": validateTextsOrUrls,
     "supportingData": noValidation, // TODO
