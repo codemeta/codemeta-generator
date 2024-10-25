@@ -160,6 +160,19 @@ describe('URLs validation', function() {
         cy.get('#errorMessage').should('have.text', 'Invalid URL in field "codeRepository": "foo"');
     });
 
+    it('errors on invalid URL that Javascript considers to be valid', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": "foo: bar",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', 'Invalid URL in field "codeRepository": "foo: bar"');
+    });
+
     it('errors on non-string instead of URL', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
