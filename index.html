@@ -80,7 +80,7 @@ See top-level LICENSE file for more information
                 <!-- This datalist is be filled automatically -->
 
                 <br />
-                <span class="field-description" id="licenses_descr">from <a href="https://spdx.org/licenses/">SPDX licence list</a></span>
+                <span class="field-description" id="licenses_descr">from <a href="https://spdx.org/licenses/">SPDX License List</a></span>
 
                 <div id="selected-licenses">
                     <!-- This div is to be filled as the user selects licenses -->
@@ -98,7 +98,7 @@ See top-level LICENSE file for more information
 
                 <br />
                 <span class="field-description" id="identifier_descr">
-                    such as ISBNs, GTIN codes, UUIDs etc..  <a href="http://schema.org/identifier">http://schema.org/identifier</a>
+                    such as ISBNs, GTIN codes, UUIDs, etc. see <a href="http://schema.org/identifier">http://schema.org/identifier</a>
                 </span>
             </p>
             <!-- TODO:define better
@@ -125,7 +125,9 @@ See top-level LICENSE file for more information
             <p title="Comma-separated list of keywords">
                 <label for="keywords">Keywords</label>
                 <input type="text" name="keywords" id="keywords"
-                    placeholder="ephemerides, orbit, astronomy"  />
+                    placeholder="ephemerides, orbit, astronomy"
+                    aria-describedby="keywords_descr" />
+                <span class="field-description" id="keywords_descr">separated by commas (<code>,</code>)</span>
             </p>
 
             <p title="Funding / grant">
@@ -175,7 +177,10 @@ See top-level LICENSE file for more information
                 <br />
                 <textarea rows="4" cols="50"
                     name="relatedLink" id="relatedLink"
-                    placeholder="https://www.example.com"></textarea>
+                    placeholder=
+"https://www.example.com
+https://www.example.org"
+                    aria-describedby="relatedLink_descr"></textarea>
                 <span class="field-description" id="relatedLink_descr">URL(s), one URL per line</span>
             </p>
         </fieldset>
@@ -184,21 +189,27 @@ See top-level LICENSE file for more information
             <legend>Run-time environment</legend>
 
             <p title="Programming Languages, separated by commas">
-                <label for="programmingLanguage">Programming Language</label>
+                <label for="programmingLanguage">Programming language</label>
                 <input type="text" name="programmingLanguage" id="programmingLanguage"
-                    placeholder="C#, Java, Python 3"  />
+                    placeholder="C#, Java, Python 3"
+                    aria-describedby="programmingLanguage_descr" />
+                <span class="field-description" id="programmingLanguage_descr">separated by commas (<code>,</code>)</span>
             </p>
 
             <p title="Runtime Platforms, separated by commas">
-                <label for="runtimePlatform">Runtime Platform</label>
+                <label for="runtimePlatform">Runtime platform</label>
                 <input type="text" name="runtimePlatform" id="runtimePlatform"
-                    placeholder=".NET, JVM" />
+                    placeholder=".NET, JVM"
+                    aria-describedby="runtimePlatform_descr" />
+                <span class="field-description" id="runtimePlatform_descr">separated by commas (<code>,</code>)</span>
             </p>
 
             <p title="Operating Systems, separated by commas">
-                <label for="operatingSystem">Operating System</label>
+                <label for="operatingSystem">Operating system</label>
                 <input type="text" name="operatingSystem" id="operatingSystem"
-                    placeholder="Android 1.6, Linux, Windows, macOS" />
+                    placeholder="Android 1.6, Linux, Windows, macOS"
+                    aria-describedby="operatingSystem_descr" />
+                <span class="field-description" id="operatingSystem_descr">separated by commas (<code>,</code>)</span>
             </p>
 
             <p title="Required software to run/use this one.">
@@ -208,7 +219,8 @@ See top-level LICENSE file for more information
                     name="softwareRequirements" id="softwareRequirements"
                     placeholder=
 "https://www.python.org/downloads/release/python-3130/
-https://github.com/psf/requests"></textarea>
+https://github.com/psf/requests"
+                    aria-describedby="softwareRequirements_descr"></textarea>
                 <span class="field-description" id="softwareRequirements_descr">URL(s), one URL per line</span>
             </p>
         </fieldset>
@@ -252,7 +264,7 @@ Bugfixes: that and this." ></textarea>
             <legend>Editorial review</legend>
 
             <p title="Scholarly article describing this software">
-                <label for="referencePublication">Reference Publication</label>
+                <label for="referencePublication">Reference publication</label>
                 <input type="URL" name="referencePublication" id="referencePublication"
                     placeholder="https://doi.org/10.1000/xyz123" />
             </p>
@@ -272,10 +284,10 @@ Bugfixes: that and this." ></textarea>
         </fieldset>
 
         <fieldset id="fieldsetAdditionalInfo" class="leafFieldset">
-            <legend>Additional Info</legend>
+            <legend>Additional information</legend>
 
             <p title="Development Status">
-            <label for="developmentStatus">Development Status</label>
+            <label for="developmentStatus">Development status</label>
                 <datalist id="developmentStatuses">
                         <option value="concept">
                         <option value="wip">
@@ -296,7 +308,7 @@ Bugfixes: that and this." ></textarea>
             </p>
 
             <p title="Source Code of">
-                <label for="isSourceCodeOf">Is Source Code of</label>
+                <label for="isSourceCodeOf">Is source code of</label>
                 <input type="text" name="isSourceCodeOf" id="isSourceCodeOf"
                     placeholder="Bigger Application" />
             </p>
@@ -304,7 +316,7 @@ Bugfixes: that and this." ></textarea>
             <p title="Part of">
                 <label for="isPartOf">Is part of</label>
                 <input type="URL" name="isPartOf" id="isPartOf"
-                    placeholder="http://The.Bigger.Framework.org"  />
+                    placeholder="http://The.Bigger.Framework.org" />
             </p>
         </fieldset>
 
