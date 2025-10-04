@@ -43,7 +43,7 @@ function insertLicenseElement(licenseId) {
 
 function validateLicense(e) {
     // continue only if Enter/Tab key is pressed
-    if (e.keyCode && e.keyCode !== 13 && e.keyCode !== 9) {
+    if (e.key && e.key !== "Enter" && e.keyCode !== "Tab") {
         return;
     }
     // Note: For some reason e.keyCode is undefined when Enter/Tab key is pressed.
