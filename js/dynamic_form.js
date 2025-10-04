@@ -201,6 +201,10 @@ function fieldToLower(event) {
 function initCallbacks() {
     document.querySelector('#license')
         .addEventListener('change', validateLicense);
+    document.querySelector('#license')
+        .addEventListener('keydown', validateLicense);
+    document.querySelector('#license')
+        .addEventListener('input', validateLicense);
 
     document.querySelector('#generateCodemetaV2').disabled = false;
     document.querySelector('#generateCodemetaV2')
