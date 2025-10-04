@@ -56,11 +56,19 @@ function validateLicense(e) {
         licenseField.setCustomValidity('Unknown license id');
     }
     else {
-        insertLicenseElement(license);
+        let selectedLicenses = document.getElementById("selected-licenses");
+        let existingLicense = Array.from(selectedLicenses.getElementsByClassName("license-id"))
+            .some(el => el.textContent === license);
 
-        licenseField.value = "";
-        licenseField.setCustomValidity('');
-        generateCodemeta();
+        // Only add if not already existing
+        if (!existingLicense) {
+            insertLicenseElement(license);
+            licenseField.value = "";
+            licenseField.setCustomValidity('');
+            generateCodemeta();
+        } else {
+            licenseField.setCustomValidity('License already added');
+        }
     }
 }
 
