@@ -67,6 +67,7 @@ function validateLicense(e) {
             licenseField.setCustomValidity('');
             generateCodemeta();
         } else {
+            licenseField.value = "";
             licenseField.setCustomValidity('License already added');
         }
     }
