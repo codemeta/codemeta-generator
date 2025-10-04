@@ -174,7 +174,10 @@ See top-level LICENSE file for more information
                 <label for="relatedLink">Related links</label>
                 <br />
                 <textarea rows="4" cols="50"
-                    name="relatedLink" id="relatedLink"></textarea>
+                    name="relatedLink" id="relatedLink"
+                    placeholder="https://www.example.com"></textarea>
+                <span class="field-description" id="relatedLink_descr">URL(s), one URL per line</span>
+            </p>
         </fieldset>
 
         <fieldset id="fieldsetRuntime" class="leafFieldset">
@@ -206,6 +209,8 @@ See top-level LICENSE file for more information
                     placeholder=
 "https://www.python.org/downloads/release/python-3130/
 https://github.com/psf/requests"></textarea>
+                <span class="field-description" id="softwareRequirements_descr">URL(s), one URL per line</span>
+            </p>
         </fieldset>
 
         <fieldset id="fieldsetCurrentVersion" class="leafFieldset">
@@ -333,9 +338,9 @@ Bugfixes: that and this." ></textarea>
 
     </form>
     <form>
-      <input type="button" id="generateCodemetaV3" value="Generate codemeta.json v3.0" disabled
-             title="Creates a codemeta.json v3.0 file below, from the information provided above." />
-      <input type="button" id="generateCodemetaV2" value="Generate codemeta.json v2.0" disabled
+        <input type="button" id="generateCodemetaV3" value="Generate codemeta.json v3.0" disabled
+            title="Creates a codemeta.json v3.0 file below, from the information provided above." />
+        <input type="button" id="generateCodemetaV2" value="Generate codemeta.json v2.0" disabled
             title="Creates a codemeta.json v2.0 file below, from the information provided above." />
         <input type="button" id="resetForm" value="Reset form"
             title="Erases all fields." />
