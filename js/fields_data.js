@@ -42,8 +42,8 @@ function insertLicenseElement(licenseId) {
 }
 
 function validateLicense(e) {
-    // Continue only if Enter/Tab key is pressed
-    if (e.type === "keydown" && e.key && e.key !== "Enter" && e.keyCode !== "Tab") {
+    // continue only if Enter/Tab key is pressed
+    if (e.key && e.key !== "Enter" && e.keyCode !== "Tab") {
         return;
     }
     // Note: For some reason e.keyCode is undefined when Enter/Tab key is pressed.
@@ -69,7 +69,6 @@ function validateLicense(e) {
         }
         else {
             licenseField.value = "";
-            licenseField.setCustomValidity('License already added');
         }
     }
 }
