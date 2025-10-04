@@ -6,7 +6,7 @@
     "dateCreated": "2019-10-02",
     "issueTracker": "https://github.com/codemeta/codemeta-generator/issues",
     "continuousIntegration": "https://travis-ci.org/codemeta/codemeta-generator/",
-    "name": "Codemeta Generator",
+    "name": "CodeMeta Generator",
     "keywords": ["codemeta", "metadata", "json"],
     "author": [
         {
