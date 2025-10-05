@@ -1,0 +1,15 @@
+{
+  "name": "codemeta-generator",
+  "version": "3.0",
+  "description": "Client-side web app to generate CodeMeta documents",
+  "private": true,
+  "scripts": {
+    "test": "npx cypress run",
+    "cypress:open": "npx cypress open",
+    "cypress:install": "npx cypress install"
+  },
+  "devDependencies": {
+    "cypress": "^15.3.0"
+  },
+  "license": "AGPL-3.0-or-later"
+}

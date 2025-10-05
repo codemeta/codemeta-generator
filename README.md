@@ -84,17 +84,19 @@ then open [http://localhost:8000/](http://localhost:8000/) in your web browser.
 In addition to manual testing, we have automated tests to check for bugs
 quickly, using [Cypress](https://www.cypress.io/).
 
-To run them, first install Cypress:
+To run them, first make sure you have npm and Cypress installed on your system.
+
+From the project root:
 
 ```shell
-sudo apt install npm  # or the equivalent on your system
-npx cypress@9.7.0 install
+npm ci
+npm run cypress:install  # installs the Cypress binary
 ```
 
 Then, run the tests:
 
 ```shell
-npx cypress@9.7.0 run
+npm test  # runs the Cypress test suite (uses the package.json script)
 ```
 
 ## Contributed by

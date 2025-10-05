@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup npm cache
+        if: ${{ env.ACT_LOCAL != 'true' }}
         uses: actions/cache@v4
         with:
           path: '~/.npm'
@@ -35,14 +36,36 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node
 
-      - name: Install Cypress
+      - name: Install dependencies
+        env:
+          ACT_LOCAL: ${{ env.ACT_LOCAL }}
         run: |
-          npm install cypress@9.7.0
-          ./node_modules/.bin/cypress install
+          if [ "${ACT_LOCAL}" = "true" ]; then
+            echo "ACT_LOCAL=true: using npm install for local act run"
+            npm install
+          else
+            npm ci
+          fi
+
+      - name: Install Cypress binary
+        env:
+          ACT_LOCAL: ${{ env.ACT_LOCAL }}
+        run: |
+          if [ "${ACT_LOCAL}" = "true" ]; then
+            echo "ACT_LOCAL=true: skipping Cypress binary install for local act run"
+          else
+            npx cypress install
+          fi
 
       - name: Run Cypress
+        env:
+          ACT_LOCAL: ${{ env.ACT_LOCAL }}
         run: |
-          ./node_modules/.bin/cypress run
+          if [ "${ACT_LOCAL}" = "true" ]; then
+            echo "ACT_LOCAL=true: skipping Cypress run in local act dry-run"
+          else
+            npx cypress run
+          fi
   deploy:
     needs: [test]
     environment:
