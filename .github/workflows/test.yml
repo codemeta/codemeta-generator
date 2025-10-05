@@ -8,33 +8,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      ACT_LOCAL: ${{ secrets.ACT_LOCAL }}
-    container:
-      image: cypress/included:15.3.0
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup npm cache
-        if: ${{ env.ACT_LOCAL != 'true' }}
-        uses: actions/cache@v4
+      - name: Setup Node
+        uses: actions/setup-node@v5
         with:
-          path: '~/.npm'
-          key: ${{ runner.os }}-node
-          restore-keys: |
-            ${{ runner.os }}-node
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install dependencies
-        env:
-          ACT_LOCAL: ${{ env.ACT_LOCAL }}
         run: |
-          if [ "${ACT_LOCAL}" = "true" ]; then
-            echo "ACT_LOCAL=true: using npm install for local act run"
-            npm install
-          else
-            npm ci
-          fi
+          npm ci
+
+      - name: Install Cypress
+        run: |
+          npx cypress install
 
       - name: Run Cypress
         run: |

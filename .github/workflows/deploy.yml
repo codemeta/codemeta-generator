@@ -25,47 +25,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Setup npm cache
-        if: ${{ env.ACT_LOCAL != 'true' }}
-        uses: actions/cache@v4
+      - name: Setup Node
+        uses: actions/setup-node@v5
         with:
-          path: '~/.npm'
-          key: ${{ runner.os }}-node
-          restore-keys: |
-            ${{ runner.os }}-node
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install dependencies
-        env:
-          ACT_LOCAL: ${{ env.ACT_LOCAL }}
         run: |
-          if [ "${ACT_LOCAL}" = "true" ]; then
-            echo "ACT_LOCAL=true: using npm install for local act run"
-            npm install
-          else
-            npm ci
-          fi
+          npm ci
 
-      - name: Install Cypress binary
-        env:
-          ACT_LOCAL: ${{ env.ACT_LOCAL }}
+      - name: Install Cypress
         run: |
-          if [ "${ACT_LOCAL}" = "true" ]; then
-            echo "ACT_LOCAL=true: skipping Cypress binary install for local act run"
-          else
-            npx cypress install
-          fi
+          npx cypress install
 
       - name: Run Cypress
-        env:
-          ACT_LOCAL: ${{ env.ACT_LOCAL }}
         run: |
-          if [ "${ACT_LOCAL}" = "true" ]; then
-            echo "ACT_LOCAL=true: skipping Cypress run in local act dry-run"
-          else
-            npx cypress run
-          fi
+          npx cypress run --spec "cypress/integration/**/*.js"
+
   deploy:
     needs: [test]
     environment:
@@ -74,11 +53,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           # Upload entire repository
           path: '.'

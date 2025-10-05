@@ -90,13 +90,13 @@ From the project root:
 
 ```shell
 npm ci
-npm run cypress:install  # installs the Cypress binary
+npm run cypress:install
 ```
 
 Then, run the tests:
 
 ```shell
-npm test  # runs the Cypress test suite (uses the package.json script)
+npm test
 ```
 
 ## Contributed by
