@@ -44,9 +44,10 @@ function insertLicenseElement(licenseId) {
 function validateLicense(e) {
     // If license is empty or SPDX_LICENSE_IDS is not loaded yet, do nothing
     var licenseField = document.getElementById('license');
+    licenseField.setCustomValidity(''); // Clear previous validation message
+
     var license = licenseField.value.trim();
     if (!license || !SPDX_LICENSE_IDS) {
-        licenseField.setCustomValidity('');
         return;
     }
 
@@ -76,26 +77,20 @@ function validateLicense(e) {
         licenseField.setCustomValidity('Unknown license id');
     }
     else {
-        licenseField.setCustomValidity('');
+        licenseField.value = "";
         const selectedLicenses = document.getElementById("selected-licenses");
         const duplicated = Array.from(selectedLicenses.getElementsByClassName("license-id"))
             .some(el => el.textContent === license);
-        // Only add the license if it's not already added
-        if (duplicated) {
-            licenseField.value = "";
-        }
-        else {
+        if (!duplicated) {
             insertLicenseElement(license);
-            licenseField.value = "";
             generateCodemeta();
-
-            // Detaching and reattaching the datalist of license field,
-            // to hide the datalist popup in Chrome after insertion
-            licenseField.removeAttribute('list');
-            setTimeout(() => {
-                licenseField.setAttribute('list', 'licenses');
-            }, 0);
         }
+        // Detaching and reattaching the datalist of license field,
+        // to hide the datalist popup in Chrome after insertion.
+        licenseField.removeAttribute('list');
+        setTimeout(() => {
+            licenseField.setAttribute('list', 'licenses');
+        }, 0);
     }
 }
 
