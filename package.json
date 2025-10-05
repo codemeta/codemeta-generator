@@ -8,6 +8,9 @@
     "cypress:open": "npx cypress open",
     "cypress:install": "npx cypress install"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "devDependencies": {
     "cypress": "^15.3.0"
   },
