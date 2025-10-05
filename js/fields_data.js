@@ -42,25 +42,60 @@ function insertLicenseElement(licenseId) {
 }
 
 function validateLicense(e) {
-    // continue only if Enter/Tab key is pressed
-    if (e.keyCode && e.keyCode !== 13 && e.keyCode !== 9) {
+    // If license is empty or SPDX_LICENSE_IDS is not loaded yet, do nothing
+    var licenseField = document.getElementById('license');
+    var license = licenseField.value.trim();
+    if (!license || !SPDX_LICENSE_IDS) {
+        licenseField.setCustomValidity('');
         return;
     }
-    // Note: For some reason e.keyCode is undefined when Enter/Tab key is pressed.
-    // Maybe it's because of the datalist. But the above condition should
-    // work in either case.
 
-    var licenseField = document.getElementById('license');
-    var license = licenseField.value;
-    if (SPDX_LICENSE_IDS !== null && SPDX_LICENSE_IDS.indexOf(license) == -1) {
+    // datalist can show case-insensitive matches during typing,
+    // but to insert we need the value with correct casing.
+    // Do casing correction here to allow user to type in any casing
+    // and hit Enter to insert the license immediately.    
+    // Do this only on 'change' event (change is committed) or on 'keydown'
+    // event of Enter/Tab key to avoid interfering while user is still typing.
+    if ((e.type === "change") ||
+        (e.type === "keydown" && (e.key === "Enter" || e.key === "Tab"))) {
+        const match = SPDX_LICENSE_IDS.find(id =>
+            id.toLowerCase() === license.toLowerCase());
+        if (match) {
+            license = match;
+            licenseField.value = match;
+        }
+    }
+    // Avoid premature validation/insertion
+    // (e.g., immediately insert "MIT" when user in between typing "MIT-0")
+    else if (e.key || (e.inputType && e.inputType.startsWith("insertText"))) {
+        return;
+    }
+
+    // Validation and insertion
+    if (SPDX_LICENSE_IDS.indexOf(license) == -1) {
         licenseField.setCustomValidity('Unknown license id');
     }
     else {
-        insertLicenseElement(license);
-
-        licenseField.value = "";
         licenseField.setCustomValidity('');
-        generateCodemeta();
+        const selectedLicenses = document.getElementById("selected-licenses");
+        const duplicated = Array.from(selectedLicenses.getElementsByClassName("license-id"))
+            .some(el => el.textContent === license);
+        // Only add the license if it's not already added
+        if (duplicated) {
+            licenseField.value = "";
+        }
+        else {
+            insertLicenseElement(license);
+            licenseField.value = "";
+            generateCodemeta();
+
+            // Detaching and reattaching the datalist of license field,
+            // to hide the datalist popup in Chrome after insertion
+            licenseField.removeAttribute('list');
+            setTimeout(() => {
+                licenseField.setAttribute('list', 'licenses');
+            }, 0);
+        }
     }
 }
 

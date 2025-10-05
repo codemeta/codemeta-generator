@@ -199,8 +199,20 @@ function fieldToLower(event) {
 }
 
 function initCallbacks() {
+    // To keep behaviour consistent across browsers, we listen to
+    // 'input', 'change', and 'keydown' events for the license field
+    // and handle situations in the validateLicense function.
+    // This works with Firefox, Safari, and Chrome-based browsers.
+
+    // Firefox needs 'input' to catch datalist selection with mouse click.
+    // Firefox datalist selection without Enter press does not trigger 'change'.
+    document.querySelector('#license')
+        .addEventListener('input', validateLicense);
     document.querySelector('#license')
         .addEventListener('change', validateLicense);
+    // Safari needs keydown to catch Enter press when datalist is open
+    document.querySelector('#license')
+        .addEventListener('keydown', validateLicense);
 
     document.querySelector('#generateCodemetaV2').disabled = false;
     document.querySelector('#generateCodemetaV2')
