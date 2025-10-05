@@ -42,9 +42,8 @@ function insertLicenseElement(licenseId) {
 }
 
 function validateLicense(e) {
-    // If license is empty or SPDX_LICENSE_IDS is not loaded yet, do nothing
     var licenseField = document.getElementById('license');
-    licenseField.setCustomValidity(''); // Clear previous validation message
+    licenseField.setCustomValidity('');
 
     var license = licenseField.value.trim();
     if (!license || !SPDX_LICENSE_IDS) {
@@ -54,7 +53,7 @@ function validateLicense(e) {
     // Datalist can show case-insensitive matches during typing,
     // but to insert we need the value with correct casing.
     // Do casing correction here to allow user to type in any casing
-    // and hit Enter to insert the license immediately.    
+    // and hit Enter once to insert the license immediately.    
     // Do this only on 'change' event (change is committed) or on 'keydown'
     // event of Enter/Tab key to avoid interfering while user is still typing.
     if ((e.type === "change") ||
@@ -72,7 +71,6 @@ function validateLicense(e) {
         return;
     }
 
-    // Validation and insertion
     if (SPDX_LICENSE_IDS.indexOf(license) == -1) {
         licenseField.setCustomValidity('Unknown license id');
     }
@@ -85,8 +83,8 @@ function validateLicense(e) {
             insertLicenseElement(license);
             generateCodemeta();
         }
-        // Detaching and reattaching the datalist of license field,
-        // to hide the datalist popup in Chrome after insertion.
+        // Chrome: Detaching and reattaching the datalist of license field,
+        // to hide the datalist popup after insertion.
         licenseField.removeAttribute('list');
         setTimeout(() => {
             licenseField.setAttribute('list', 'licenses');
