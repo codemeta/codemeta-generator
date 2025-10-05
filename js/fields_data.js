@@ -51,7 +51,7 @@ function validateLicense(e) {
         return;
     }
 
-    // datalist can show case-insensitive matches during typing,
+    // Datalist can show case-insensitive matches during typing,
     // but to insert we need the value with correct casing.
     // Do casing correction here to allow user to type in any casing
     // and hit Enter to insert the license immediately.    
