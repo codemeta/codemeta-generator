@@ -38,12 +38,12 @@ describe('License input field', function () {
         cy.get('#license').should('have.value', '');
     });
 
-/*     it('can add a license by typing and it does not hijacked by a shorter license with same prefix', function () {
+    it('can add a license by typing and it does not hijacked by a shorter license with same prefix', function () {
         // "MIT-0" vs "MIT"
         cy.get('#license').type('MIT-0{enter}');
         cy.get('#selected-licenses .license-id').should('contain', 'MIT-0');
         cy.get('#license').should('have.value', '');
-    }); */
+    });
 
     it('should not insert a duplicated license', function () {
         cy.get('#license').type('MIT{enter}');
@@ -59,16 +59,16 @@ describe('License input field', function () {
         cy.get('#license:invalid').should('exist');
     });
 
-/*     it('should not insert until user confirms with Enter', function () {
+    it('should not insert until user confirms with Enter', function () {
         // Type "MIT" but do not confirm with Enter yet
         cy.get('#license').type('MIT');
         cy.get('#selected-licenses .license-id').should('not.exist');
         // Move caret right (ArrowRight)
         cy.get('#license').trigger('keydown', { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39, which: 39 });
         cy.get('#selected-licenses .license-id').should('not.exist');
-    }); */
+    });
 
-/*     it('should insert when user confirms with Enter', function () {
+    it('should insert when user confirms with Enter', function () {
         // Type "MIT" but do not confirm with Enter yet
         cy.get('#license').type('MIT');
         cy.get('#selected-licenses .license-id').should('not.exist');
@@ -76,9 +76,9 @@ describe('License input field', function () {
         cy.get('#license').trigger('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13 });
         cy.get('#selected-licenses .license-id').should('contain', 'MIT');
         cy.get('#license').should('have.value', '');
-    }); */
+    });
 
-/*     it('should insert when user press Tab', function () {
+    it('should insert when user press Tab', function () {
         // Type "MIT" but do not press Tab yet
         cy.get('#license').type('MIT');
         cy.get('#selected-licenses .license-id').should('not.exist');
@@ -86,5 +86,5 @@ describe('License input field', function () {
         cy.get('#license').trigger('keydown', { key: 'Tab', code: 'Tab', keyCode: 9, which: 9 });
         cy.get('#selected-licenses .license-id').should('contain', 'MIT');
         cy.get('#license').should('have.value', '');
-    }); */
+    });
 });
