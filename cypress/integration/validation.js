@@ -6,7 +6,7 @@
  */
 
 /*
- * Tests the basic features of the application.
+ * Tests validations.
  */
 
 "use strict";
