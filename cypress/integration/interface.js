@@ -18,6 +18,10 @@ describe('License input field', function () {
             win.document.getElementById('selected-licenses').innerHTML = '';
         })
         cy.visit('./index.html');
+        // Wait for the license list to be loaded asynchronously before running
+        // license field-related tests. This prevents races where tests trigger
+        // input/change events before SPDX_LICENSE_IDS is available.
+        cy.window().its('SPDX_LICENSE_IDS.length').should('be.gt', 0);
         cy.get('#license').should('exist');
         cy.get('#selected-licenses').should('exist');
         cy.get('#selected-licenses').children().should('have.length', 0);
