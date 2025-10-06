@@ -6,7 +6,8 @@
  */
 
 /*
- * Tests the author/contributor dynamic fieldsets
+ * Tests fields that need special treatment.
+ * For example, URLs and newlines handling.
  */
 
 "use strict";

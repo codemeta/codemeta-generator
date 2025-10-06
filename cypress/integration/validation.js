@@ -6,7 +6,7 @@
  */
 
 /*
- * Tests the basic features of the application.
+ * Tests the validation of field values and CodeMeta document
  */
 
 "use strict";

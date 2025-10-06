@@ -10,21 +10,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup npm cache
         uses: actions/cache@v4
         with:
           path: '~/.npm'
-          key: ${{ runner.os }}-node
+          key: ${{ runner.os }}-node-24-${{ hashFiles('**/package.json') }}
           restore-keys: |
-            ${{ runner.os }}-node
+            ${{ runner.os }}-node-24-
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: |
+          npm install
 
       - name: Install Cypress
         run: |
-          npm install cypress@9.7.0
-          ./node_modules/.bin/cypress install
+          npm run cypress:install
 
-      - name: Run Cypress
+      - name: Run test
         run: |
-          ./node_modules/.bin/cypress run
+          npm test
