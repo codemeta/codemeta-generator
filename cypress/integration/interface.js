@@ -38,10 +38,19 @@ describe('License input field', function () {
         cy.get('#license').should('have.value', '');
     });
 
-    it('can add a license by typing and it does not hijacked by a shorter license with same prefix', function () {
-        // "MIT-0" vs "MIT"
-        cy.get('#license').type('MIT-0{enter}');
-        cy.get('#selected-licenses .license-id').should('contain', 'MIT-0');
+    it('can add a license by clicking on the pop-up list', function () {
+        // inputType "insertReplacementText" typically appears when the browser
+        // inserts/replaces the input value as a single operation
+        // (for example when the user picks an item from a datalist with the
+        // mouse or when autocompletion replaces the current text)
+        cy.get('#license').invoke('val', 'MIT').trigger('input', { inputType: 'insertReplacementText' });
+        cy.get('#selected-licenses .license-id').should('contain', 'MIT');
+        cy.get('#license').should('have.value', '');
+    });
+
+    it('can add a license on "change" event (e.g., selecting via keyboard)', function () {
+        cy.get('#license').invoke('val', 'MIT').trigger('change');
+        cy.get('#selected-licenses .license-id').should('contain', 'MIT');
         cy.get('#license').should('have.value', '');
     });
 
@@ -57,6 +66,13 @@ describe('License input field', function () {
         cy.get('#license').type('INVALID_LICENSE00{enter}');
         cy.get('#selected-licenses .license-id').should('not.exist');
         cy.get('#license:invalid').should('exist');
+    });
+
+    it('should not insert a shorter match while typing a longer id with same prefix', function () {
+        // "MIT-0" vs "MIT"
+        cy.get('#license').type('MIT-0{enter}');
+        cy.get('#selected-licenses .license-id').should('contain', 'MIT-0');
+        cy.get('#license').should('have.value', '');
     });
 
     it('should not insert until user confirms with Enter', function () {
