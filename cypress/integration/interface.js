@@ -14,11 +14,13 @@
 describe('License input field', function () {
     beforeEach(function () {
         cy.window().then((win) => {
-            win.sessionStorage.clear()
+            win.sessionStorage.clear();
+            win.document.getElementById('selected-licenses').innerHTML = '';
         })
         cy.visit('./index.html');
         cy.get('#license').should('exist');
         cy.get('#selected-licenses').should('exist');
+        cy.get('#selected-licenses').children().should('have.length', 0);
     });
 
     it('can add a license by typing', function () {
@@ -28,8 +30,8 @@ describe('License input field', function () {
     });
 
     it('can add a license by typing non-strictly with spaces', function () {
-        // "  MIT  " -> "MIT"
-        cy.get('#license').type('  MIT{enter}');
+        // "  MIT " -> "MIT"
+        cy.get('#license').type('  MIT {enter}');
         cy.get('#selected-licenses .license-id').should('contain', 'MIT');
         cy.get('#license').should('have.value', '');
     });
@@ -48,8 +50,7 @@ describe('License input field', function () {
         // mouse or when autocompletion replaces the current text)
         cy.get('#license')
             .invoke('val', 'MIT')
-            .trigger('input', { inputType: 'insertReplacementText' })
-            .trigger('change');
+            .trigger('input', { inputType: 'insertReplacementText' });
         cy.get('#selected-licenses .license-id', { timeout: 5000 })
             .should('contain', 'MIT');
         cy.get('#license').should('have.value', '');
