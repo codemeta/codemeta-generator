@@ -92,6 +92,19 @@ describe('License input field', function () {
         cy.get('#selected-licenses .license-id').should('not.exist');
     });
 
+    it('should not insert when edits produce a matching ID', function () {
+        // Note the space after "MIT"
+        cy.get('#license').type('MIT -0');
+        cy.get('#selected-licenses .license-id').should('not.exist');
+        // Remove the space, to produce "MIT-0"
+        cy.get('#license').type('{leftarrow}{leftarrow}{backspace}');
+        cy.get('#selected-licenses .license-id').should('not.exist');
+        // Confirm with Enter
+        cy.get('#license').type('{enter}');
+        cy.get('#selected-licenses .license-id').should('contain', 'MIT-0');
+        cy.get('#license').should('have.value', '');
+    });
+
     it('should insert when user confirms with Enter', function () {
         // Type "MIT" but do not confirm with Enter yet
         cy.get('#license').type('MIT');
