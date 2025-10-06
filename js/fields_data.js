@@ -61,12 +61,13 @@ function validateLicense(e) {
     } else if (e.type === "keydown" && (e.key === "Enter" || e.key === "Tab")) {
         confirmed = true;
     } else if (e.type === "input") {
-        // inputType may be undefined in some browsers; only treat as
-        // confirmation when it's present and not a plain text insertion.
-        if (e.inputType && e.inputType !== 'insertText') {
+        const CONFIRM_INPUT_TYPES = new Set([
+            'insertReplacementText', // from datalist selection
+        ]);
+        if (e.inputType && CONFIRM_INPUT_TYPES.has(e.inputType)) {
             confirmed = true;
         } else {
-            // Plain character typing (insertText) — do not validate/insert yet
+            // Typing characters, pasting, deletions - don't proceed 
             return;
         }
     } else {
@@ -105,7 +106,7 @@ function validateLicense(e) {
         if (isChrome) {
             licenseField.removeAttribute('list');
             setTimeout(() => {
-               licenseField.setAttribute('list', 'licenses');
+                licenseField.setAttribute('list', 'licenses');
             }, 0);
         }
     }
