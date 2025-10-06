@@ -43,32 +43,47 @@ function insertLicenseElement(licenseId) {
 
 function validateLicense(e) {
     var licenseField = document.getElementById('license');
-    licenseField.setCustomValidity('');
+    licenseField.setCustomValidity(''); // Reset previous message
 
     var license = licenseField.value.trim();
     if (!license || !SPDX_LICENSE_IDS) {
         return;
     }
 
-    // Datalist can show case-insensitive matches during typing,
-    // but to insert we need the value with correct casing.
-    // Do casing correction here to allow user to type in any casing
-    // and hit Enter once to insert the license immediately.    
-    // Do this only on 'change' event (change is committed) or on 'keydown'
-    // event of Enter/Tab key to avoid interfering while user is still typing.
-    if ((e.type === "change") ||
-        (e.type === "keydown" && (e.key === "Enter" || e.key === "Tab"))) {
+    // Only perform insertion/validation when the user explicitly confirms
+    // their choice (change event, or keydown Enter/Tab).
+    // Some browsers/selection actions can trigger an 'input' event that is
+    // not a simple text insertion (e.g. a datalist selection via mouse); we
+    // treat those as confirmation too (inputType !== 'insertText').
+    var confirmed = false;
+    if (e.type === "change") {
+        confirmed = true;
+    } else if (e.type === "keydown" && (e.key === "Enter" || e.key === "Tab")) {
+        confirmed = true;
+    } else if (e.type === "input") {
+        // inputType may be undefined in some browsers; only treat as
+        // confirmation when it's present and not a plain text insertion.
+        if (e.inputType && e.inputType !== 'insertText') {
+            confirmed = true;
+        } else {
+            // Plain character typing (insertText) — do not validate/insert yet
+            return;
+        }
+    } else {
+        // Other events (compositionupdate, etc.) — don't proceed
+        return;
+    }
+
+    // If confirmed, correct casing to the canonical SPDX license ID when
+    // possible. This will allow user to type in any casing and hit Enter once
+    // to insert the license immediately.    
+    if (confirmed) {
         const match = SPDX_LICENSE_IDS.find(id =>
             id.toLowerCase() === license.toLowerCase());
         if (match) {
             license = match;
             licenseField.value = match;
         }
-    }
-    // Avoid premature validation/insertion
-    // (e.g., immediately insert "MIT" when user in between typing "MIT-0")
-    else if (e.key || (e.inputType && e.inputType.startsWith("insertText"))) {
-        return;
     }
 
     if (SPDX_LICENSE_IDS.indexOf(license) == -1) {
@@ -83,12 +98,16 @@ function validateLicense(e) {
             insertLicenseElement(license);
             generateCodemeta();
         }
-        // Chrome: Detaching and reattaching the datalist of license field,
-        // to hide the datalist popup after insertion.
-        licenseField.removeAttribute('list');
-        setTimeout(() => {
-            licenseField.setAttribute('list', 'licenses');
-        }, 0);
+
+        // Chrome: Detach/re-attach the datalist to hide the popup after insertion.
+        var ua = (navigator.userAgent || '');
+        var isChrome = /Chrome/.test(ua) && !/Edg|OPR|Brave|CriOS/.test(ua);
+        if (isChrome) {
+            licenseField.removeAttribute('list');
+            setTimeout(() => {
+               licenseField.setAttribute('list', 'licenses');
+            }, 0);
+        }
     }
 }
 
