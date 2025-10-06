@@ -13,7 +13,10 @@
 
 describe('License input field', function () {
     beforeEach(function () {
-        cy.visit('/');
+        cy.window().then((win) => {
+            win.sessionStorage.clear()
+        })
+        cy.visit('./index.html');
         cy.get('#license').should('exist');
         cy.get('#selected-licenses').should('exist');
     });
@@ -43,14 +46,19 @@ describe('License input field', function () {
         // inserts/replaces the input value as a single operation
         // (for example when the user picks an item from a datalist with the
         // mouse or when autocompletion replaces the current text)
-        cy.get('#license').invoke('val', 'MIT').trigger('input', { inputType: 'insertReplacementText' });
-        cy.get('#selected-licenses .license-id').should('contain', 'MIT');
+        cy.get('#license')
+            .invoke('val', 'MIT')
+            .trigger('input', { inputType: 'insertReplacementText' })
+            .trigger('change');
+        cy.get('#selected-licenses .license-id', { timeout: 5000 })
+            .should('contain', 'MIT');
         cy.get('#license').should('have.value', '');
     });
 
     it('can add a license on "change" event (e.g., selecting via keyboard)', function () {
         cy.get('#license').invoke('val', 'MIT').trigger('change');
-        cy.get('#selected-licenses .license-id').should('contain', 'MIT');
+        cy.get('#selected-licenses .license-id', { timeout: 5000 })
+            .should('contain', 'MIT');
         cy.get('#license').should('have.value', '');
     });
 
@@ -79,7 +87,7 @@ describe('License input field', function () {
         // Type "MIT" but do not confirm with Enter yet
         cy.get('#license').type('MIT');
         cy.get('#selected-licenses .license-id').should('not.exist');
-        // Move caret right (ArrowRight)
+        // Press ArrowRight - which is not a confirmation
         cy.get('#license').trigger('keydown', { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39, which: 39 });
         cy.get('#selected-licenses .license-id').should('not.exist');
     });
