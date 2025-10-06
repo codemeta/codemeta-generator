@@ -28,4 +28,4 @@ jobs:
 
       - name: Run Cypress
         run: |
-          npx cypress@15.3.0 run --spec "cypress/integration/**/*.js"
+          npx cypress@15.3.0 run

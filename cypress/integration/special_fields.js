@@ -6,7 +6,8 @@
  */
 
 /*
- * Tests special fields
+ * Tests fields that need special treatment.
+ * For example, URLs and newlines handling.
  */
 
 "use strict";
