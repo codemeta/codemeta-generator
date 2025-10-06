@@ -53,20 +53,18 @@ function validateLicense(e) {
     // Only perform insertion/validation when the user explicitly confirms
     // their choice (change event, or keydown Enter/Tab).
     // Some browsers/selection actions can trigger an 'input' event that is
-    // not a simple text insertion (e.g. a datalist selection via mouse); we
-    // treat those as confirmation too (inputType !== 'insertText').
-    var confirmed = false;
+    // not a simple text insertion (e.g. a datalist selection via mouse can
+    // trigger input of type 'insertReplacementText');
+    // we treat those as confirmation too.
     if (e.type === "change") {
-        confirmed = true;
+        // proceed
     } else if (e.type === "keydown" && (e.key === "Enter" || e.key === "Tab")) {
-        confirmed = true;
+        // proceed
     } else if (e.type === "input") {
         const CONFIRM_INPUT_TYPES = new Set([
             'insertReplacementText', // from datalist selection
         ]);
-        if (e.inputType && CONFIRM_INPUT_TYPES.has(e.inputType)) {
-            confirmed = true;
-        } else {
+        if (!(e.inputType && CONFIRM_INPUT_TYPES.has(e.inputType))) {
             // Typing characters, pasting, deletions - don't proceed 
             return;
         }
@@ -75,16 +73,14 @@ function validateLicense(e) {
         return;
     }
 
-    // If confirmed, correct casing to the canonical SPDX license ID when
-    // possible. This will allow user to type in any casing and hit Enter once
+    // Correct casing to the canonical SPDX license ID when possible.
+    // This will allow user to type in any casing and hit Enter once
     // to insert the license immediately.    
-    if (confirmed) {
-        const match = SPDX_LICENSE_IDS.find(id =>
-            id.toLowerCase() === license.toLowerCase());
-        if (match) {
-            license = match;
-            licenseField.value = match;
-        }
+    const match = SPDX_LICENSE_IDS.find(id =>
+        id.toLowerCase() === license.toLowerCase());
+    if (match) {
+        license = match;
+        licenseField.value = match;
     }
 
     if (SPDX_LICENSE_IDS.indexOf(license) == -1) {
