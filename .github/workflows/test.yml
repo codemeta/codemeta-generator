@@ -31,8 +31,8 @@ jobs:
 
       - name: Install Cypress
         run: |
-          npx cypress@15.3.0 install
+          npm run cypress:install
 
       - name: Run Cypress
         run: |
-          npx cypress@15.3.0 run
+          npm test
