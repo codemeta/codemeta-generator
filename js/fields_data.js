@@ -96,15 +96,14 @@ function validateLicense(e) {
             generateCodemeta();
         }
 
-        // In Chrome, if the license is added by typing and pressing Enter,
-        // the datalist popup may remain visible.
-        // To hide it, we detach and re-attach the datalist.
-        // We will not do this in other browsers as it may have side effects.
-        // For example, in Safari, the reattachment will cause the datalist
-        // to remain visible (reappearing immediately after disappearing).
+        // In Chromium-based browsers the datalist popup may remain visible
+        // after adding a license by typing + Enter.
+        // To hide it we detach and re-attach the datalist.
+        // We avoid doing this in non-Chromium browsers (e.g. Safari) where
+        // detaching/reattaching can cause the popup to immediately reappear.
         var ua = (navigator.userAgent || '');
-        var isChrome = /Chrome/.test(ua) && !/Edg|OPR|Brave|CriOS/.test(ua);
-        if (isChrome) {
+        var isChromium = /(Chrome|Chromium|CriOS|Edg|OPR|Brave|Vivaldi|SamsungBrowser)/.test(ua);
+        if (isChromium) {
             licenseField.removeAttribute('list');
             setTimeout(() => {
                 licenseField.setAttribute('list', 'licenses');
