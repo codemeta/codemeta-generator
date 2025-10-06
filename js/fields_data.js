@@ -96,7 +96,12 @@ function validateLicense(e) {
             generateCodemeta();
         }
 
-        // Chrome: Detach/re-attach the datalist to hide the popup after insertion.
+        // In Chrome, if the license is added by typing and pressing Enter,
+        // the datalist popup may remain visible.
+        // To hide it, we detach and re-attach the datalist.
+        // We will not do this in other browsers as it may have side effects.
+        // For example, in Safari, the reattachment will cause the datalist
+        // to remain visible (reappearing immediately after disappearing).
         var ua = (navigator.userAgent || '');
         var isChrome = /Chrome/.test(ua) && !/Edg|OPR|Brave|CriOS/.test(ua);
         if (isChrome) {
