@@ -37,7 +37,7 @@ Software Heritage (SWH) archive, which will improve findability in searches.
 
 ### Functionalities
 
-- helpers while completing the form, for example a reference list of SDPX
+- helpers while completing the form, for example a reference list of SPDX
   licenses
 - a validation mechanism after submission
 - the possibility to use all the CodeMeta terms and Schema.org terms
@@ -89,16 +89,16 @@ To run them, first make sure you have npm and Cypress installed on your system.
 From the project root:
 
 ```shell
-npm ci
-npm run cypress:install
+sudo apt install npm  # or the equivalent on your system
+npx cypress@15.3.0 install
 ```
 
 Then, run the tests:
 
 ```shell
-npm test
+npx cypress@15.3.0 run
 ```
 
 ## Contributed by
 
-![Image description](https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg)
+![Software Heritage](https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg)
