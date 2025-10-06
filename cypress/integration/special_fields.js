@@ -6,7 +6,7 @@
  */
 
 /*
- * Tests special fields.
+ * Tests the author/contributor dynamic fieldsets
  */
 
 "use strict";
