@@ -39,7 +39,6 @@ describe('Document validation', function() {
         );
         cy.get('#validateCodemeta').click();
 
-
         cy.get('#name').should('have.value', '');
         cy.get('#errorMessage').should('have.text', '');
     });
@@ -104,6 +103,20 @@ describe('Document validation', function() {
         cy.get('#name').should('have.value', '');
 
         cy.get('#errorMessage').should('have.text', 'Unknown field "foobar".');
+    });
+
+    it('errors when both "type" and "@type" are present', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "@type": "SoftwareSourceCode",
+                "name": "Conflicting types example",
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', 'Document must use either "type" or "@type", not both.');
     });
 });
 
