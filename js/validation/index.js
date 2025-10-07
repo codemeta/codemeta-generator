@@ -21,10 +21,12 @@ function validateDocument(doc) {
     // TODO: validate id/@id
 
     // Ensure either "type" or "@type" is used, but not both
-    if (Object.prototype.hasOwnProperty.call(doc, 'type') && Object.prototype.hasOwnProperty.call(doc, '@type')) {
+    const typeKeys = ['type', '@type'];
+    if (typeKeys.filter(k => Object.prototype.hasOwnProperty.call(doc, k)).length > 1) {
         setError("Document must use either 'type' or '@type', not both.");
         return false;
     }
+
     var type = getDocumentType(doc);
     if (type === undefined) {
         setError("Missing type (must be SoftwareSourceCode or SoftwareApplication).")
