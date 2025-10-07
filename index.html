@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-Copyright (C) 2019-2020  The Software Heritage developers
+Copyright (C) 2019-2025  The Software Heritage developers
 See the AUTHORS file at the top-level directory of this distribution
 License: GNU Affero General Public License version 3, or any later version
 See top-level LICENSE file for more information
@@ -8,6 +8,21 @@ See top-level LICENSE file for more information
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="CodeMeta Generator — interactive tool to create CodeMeta linked data metadata for software. You can easily declare the authorship, license, and link to other research outputs (publications, data, etc.).">
+    <meta name="keywords" content="CodeMeta, software metadata, software citation, linked data, license, JSON, JSON-LD, codemeta, metadata generator">
+    <meta name="author" content="Software Heritage">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="CodeMeta Generator">
+    <meta property="og:description" content="Interactive tool to create CodeMeta linked data metadata for software.">
+    <meta property="og:url" content="https://codemeta.github.io/codemeta-generator/">
+    <meta property="og:type" content="website">
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CodeMeta Generator">
+    <meta name="twitter:description" content="Interactive tool to create CodeMeta linked data metadata for software.">
+
     <title>CodeMeta Generator</title>
     <script src="./js/utils.js"></script>
     <script src="./js/fields_data.js"></script>
@@ -16,8 +31,34 @@ See top-level LICENSE file for more information
     <script src="./js/validation/primitives.js"></script>
     <script src="./js/validation/things.js"></script>
     <script src="./js/validation/index.js"></script>
+    <link rel="canonical" href="https://codemeta.github.io/codemeta-generator/">
     <link rel="stylesheet" type="text/css" href="./main.css">
     <link rel="stylesheet" type="text/css" href="./codemeta.css">
+
+    <!-- Structured data for rich results on search engines -->
+    <!-- https://search.google.com/test/rich-results -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "CodeMeta Generator",
+        "url": "https://codemeta.github.io/codemeta-generator/",
+        "codeRepository": "https://github.com/codemeta/codemeta-generator",
+        "description": "Interactive tool to create CodeMeta linked data metadata for software.",
+        "applicationCategory": "DeveloperTool",
+        "operatingSystem": "Any",
+        "runtimePlatform": "Web browser",
+        "programmingLanguage": "JavaScript",
+        "author": {
+            "@type": "Organization",
+            "name": "Software Heritage",
+            "url": "https://www.softwareheritage.org/"
+        },
+        "license": "https://spdx.org/licenses/AGPL-3.0-only",
+        "dateCreated": "2019-10-02",
+        "softwareVersion": "3.0"
+    }
+    </script>
 </head>
 <body>
   <header>
