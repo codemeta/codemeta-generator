@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020-2021  The Software Heritage developers
+ * Copyright (C) 2020-2025  The Software Heritage developers
  * See the AUTHORS file at the top-level directory of this distribution
  * License: GNU Affero General Public License version 3, or any later version
  * See top-level LICENSE file for more information
@@ -67,8 +67,19 @@ function validateThingOrId(parentFieldName, typeFieldValidators, doc) {
 //
 // typeFieldValidators is a map: {type => {fieldName => fieldValidator}}
 function validateThing(parentFieldName, typeFieldValidators, doc) {
-    // TODO: check there is either id or @id but not both
-    // TODO: check there is either type or @type but not both
+    // Ensure either "id" or "@id" is used, but not both
+    const idKeys = ["id", "@id"];
+    if (idKeys.filter(k => Object.prototype.hasOwnProperty.call(doc, k)).length > 1) {
+        setError(`"${parentFieldName}" must use either "id" or "@id", not both.`);
+        return false;
+    }
+
+    // Ensure either "type" or "@type" is used, but not both
+    const typeKeys = ["type", "@type"];
+    if (typeKeys.filter(k => Object.prototype.hasOwnProperty.call(doc, k)).length > 1) {
+        setError(`"${parentFieldName}" must use either "type" or "@type", not both.`);
+        return false;
+    }
 
     var acceptedTypesString = Object.keys(typeFieldValidators).join('/');
 
@@ -196,6 +207,7 @@ function validateReview(fieldName, doc) {
     return validateThingOrId(fieldName, {"Review": reviewFieldValidators}, doc);
 }
 
+// Define validators for each field of each type of Thing
 
 var softwareFieldValidators = {
     "@id": validateUrl,
@@ -322,7 +334,6 @@ var personFieldValidators = {
     "name": validateText,  // TODO: this is technically valid, but should be allowed here?
     "url": validateUrls,
 };
-
 
 var organizationFieldValidators = {
     "@id": validateUrl,
