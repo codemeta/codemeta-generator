@@ -105,7 +105,7 @@ describe('Document validation', function() {
         cy.get('#errorMessage').should('have.text', 'Unknown field "foobar".');
     });
 
-    it('errors when both "type" and "@type" are present', function() {
+    it('errors on having both "type" and "@type"', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
                 "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -315,6 +315,42 @@ describe('Things or URLs validation', function() {
         cy.get('#validateCodemeta').click();
 
         cy.get('#errorMessage').should('have.text', '"license" must be an URL or a CreativeWork/SoftwareSourceCode/SoftwareApplication object, not: "Copyright 2021 Myself"');
+    });
+
+    it('errors on having both "id" and "@id"', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": {
+                    "id": "http://example.org/~jdoe",
+                    "@id": "http://example.org/~jdoe",
+                    "@type": "Person",
+                    "name": "Jane Doe",
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"author" must use either "id" or "@id", not both.');
+    });
+
+    it('errors on having both "type" and "@type"', function () {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "author": {
+                    "id": "http://example.org/~jdoe",
+                    "type": "Person",
+                    "@type": "Person",
+                    "name": "Jane Doe",
+                },
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '"author" must use either "type" or "@type", not both.');
     });
 
     it('errors on wrong type', function() {

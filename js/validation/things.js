@@ -10,7 +10,6 @@
  */
 
 function getDocumentType(doc) {
-    // TODO: check there is at most one.
     // FIXME: is the last variant allowed?
     return doc["type"] || doc["@type"] || doc["codemeta:type"]
 }
@@ -68,8 +67,19 @@ function validateThingOrId(parentFieldName, typeFieldValidators, doc) {
 //
 // typeFieldValidators is a map: {type => {fieldName => fieldValidator}}
 function validateThing(parentFieldName, typeFieldValidators, doc) {
-    // TODO: check there is either id or @id but not both
-    // TODO: check there is either type or @type but not both
+    // Ensure either "id" or "@id" is used, but not both
+    const idKeys = ["id", "@id"];
+    if (idKeys.filter(k => Object.prototype.hasOwnProperty.call(doc, k)).length > 1) {
+        setError(`"${parentFieldName}" must use either "id" or "@id", not both.`);
+        return false;
+    }
+
+    // Ensure either "type" or "@type" is used, but not both
+    const typeKeys = ["type", "@type"];
+    if (typeKeys.filter(k => Object.prototype.hasOwnProperty.call(doc, k)).length > 1) {
+        setError(`"${parentFieldName}" must use either "type" or "@type", not both.`);
+        return false;
+    }
 
     var acceptedTypesString = Object.keys(typeFieldValidators).join('/');
 
@@ -185,16 +195,16 @@ function validateActor(fieldName, doc) {
 
 // Validates a single Person object
 function validatePerson(fieldName, doc) {
-    return validateThingOrId(fieldName, {"Person": personFieldValidators}, doc);
+    return validateThingOrId(fieldName, { "Person": personFieldValidators }, doc);
 }
 
 // Validates a single Organization object
 function validateOrganization(fieldName, doc) {
-    return validateThingOrId(fieldName, {"Organization": organizationFieldValidators}, doc);
+    return validateThingOrId(fieldName, { "Organization": organizationFieldValidators }, doc);
 }
 
 function validateReview(fieldName, doc) {
-    return validateThingOrId(fieldName, {"Review": reviewFieldValidators}, doc);
+    return validateThingOrId(fieldName, { "Review": reviewFieldValidators }, doc);
 }
 
 
