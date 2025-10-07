@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2019  The Software Heritage developers
+ * Copyright (C) 2019-2025  The Software Heritage developers
  * See the AUTHORS file at the top-level directory of this distribution
  * License: GNU Affero General Public License version 3, or any later version
  * See top-level LICENSE file for more information
@@ -42,25 +42,73 @@ function insertLicenseElement(licenseId) {
 }
 
 function validateLicense(e) {
-    // continue only if Enter/Tab key is pressed
-    if (e.keyCode && e.keyCode !== 13 && e.keyCode !== 9) {
+    var licenseField = document.getElementById('license');
+    licenseField.setCustomValidity(''); // Reset previous message
+
+    var license = licenseField.value.trim();
+    if (!license || !SPDX_LICENSE_IDS) {
         return;
     }
-    // Note: For some reason e.keyCode is undefined when Enter/Tab key is pressed.
-    // Maybe it's because of the datalist. But the above condition should
-    // work in either case.
 
-    var licenseField = document.getElementById('license');
-    var license = licenseField.value;
-    if (SPDX_LICENSE_IDS !== null && SPDX_LICENSE_IDS.indexOf(license) == -1) {
+    // Only perform validation/insertion when the user explicitly confirms
+    // their choice (change event, or keydown Enter/Tab).
+    // Some browsers/selection actions can trigger an 'input' event that is
+    // not a simple text insertion (e.g. a datalist selection via mouse can
+    // trigger input of type 'insertReplacementText');
+    // we treat those as confirmation too.
+    if (e.type === "change") {
+        // proceed
+    } else if (e.type === "keydown" && (e.key === "Enter" || e.key === "Tab")) {
+        // proceed
+    } else if (e.type === "input") {
+        const CONFIRM_INPUT_TYPES = new Set([
+            'insertReplacementText', // from datalist selection
+        ]);
+        if (!(e.inputType && CONFIRM_INPUT_TYPES.has(e.inputType))) {
+            // Typing characters, pasting, deletions - don't proceed 
+            return;
+        }
+    } else {
+        // Other events (compositionupdate, etc.) — don't proceed
+        return;
+    }
+
+    // Correct casing to the canonical SPDX license ID when possible.
+    // This will allow user to type in any casing and hit Enter once
+    // to insert the license immediately.    
+    const match = SPDX_LICENSE_IDS.find(id =>
+        id.toLowerCase() === license.toLowerCase());
+    if (match) {
+        license = match;
+        licenseField.value = match;
+    }
+
+    if (SPDX_LICENSE_IDS.indexOf(license) == -1) {
         licenseField.setCustomValidity('Unknown license id');
     }
     else {
-        insertLicenseElement(license);
-
         licenseField.value = "";
-        licenseField.setCustomValidity('');
-        generateCodemeta();
+        const selectedLicenses = document.getElementById("selected-licenses");
+        const duplicated = Array.from(selectedLicenses.getElementsByClassName("license-id"))
+            .some(el => el.textContent === license);
+        if (!duplicated) {
+            insertLicenseElement(license);
+            generateCodemeta();
+        }
+
+        // In Chromium-based browsers the datalist popup may remain visible
+        // after inserting a license by typing + Enter.
+        // To hide it we detach and re-attach the datalist.
+        // We avoid doing this in non-Chromium browsers (e.g. Safari) where
+        // reattaching can cause the popup to reappear.
+        var ua = (navigator.userAgent || '');
+        var isChromium = /(Chrome|Chromium|CriOS|Edg|OPR|Brave|Vivaldi|SamsungBrowser)/.test(ua);
+        if (isChromium) {
+            licenseField.removeAttribute('list');
+            setTimeout(() => {
+                licenseField.setAttribute('list', 'licenses');
+            }, 0);
+        }
     }
 }
 

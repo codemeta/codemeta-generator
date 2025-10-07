@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2019  The Software Heritage developers
+ * Copyright (C) 2019-2025  The Software Heritage developers
  * See the AUTHORS file at the top-level directory of this distribution
  * License: GNU Affero General Public License version 3, or any later version
  * See top-level LICENSE file for more information
@@ -199,8 +199,21 @@ function fieldToLower(event) {
 }
 
 function initCallbacks() {
+    // To make sure the selection of a license from the datalist
+    // works more predictably across browsers, we listen to
+    // 'input', 'change', and 'keydown' events for the license field.
+    // This should work with Firefox, Safari, and Chrome-based browsers.
+
+    // In Firefox datalist selection without Enter press does not trigger
+    // 'change' event, so we need to listen to 'input' event to catch
+    // a selection with mouse click.
+    document.querySelector('#license')
+        .addEventListener('input', validateLicense);
     document.querySelector('#license')
         .addEventListener('change', validateLicense);
+    // Safari needs 'keydown' to catch Enter press when datalist is shown
+    document.querySelector('#license')
+        .addEventListener('keydown', validateLicense);
 
     document.querySelector('#generateCodemetaV2').disabled = false;
     document.querySelector('#generateCodemetaV2')
