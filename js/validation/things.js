@@ -195,18 +195,19 @@ function validateActor(fieldName, doc) {
 
 // Validates a single Person object
 function validatePerson(fieldName, doc) {
-    return validateThingOrId(fieldName, { "Person": personFieldValidators }, doc);
+    return validateThingOrId(fieldName, {"Person": personFieldValidators}, doc);
 }
 
 // Validates a single Organization object
 function validateOrganization(fieldName, doc) {
-    return validateThingOrId(fieldName, { "Organization": organizationFieldValidators }, doc);
+    return validateThingOrId(fieldName, {"Organization": organizationFieldValidators}, doc);
 }
 
 function validateReview(fieldName, doc) {
-    return validateThingOrId(fieldName, { "Review": reviewFieldValidators }, doc);
+    return validateThingOrId(fieldName, {"Review": reviewFieldValidators}, doc);
 }
 
+// Define validators for each field of each type of Thing
 
 var softwareFieldValidators = {
     "@id": validateUrl,
@@ -333,7 +334,6 @@ var personFieldValidators = {
     "name": validateText,  // TODO: this is technically valid, but should be allowed here?
     "url": validateUrls,
 };
-
 
 var organizationFieldValidators = {
     "@id": validateUrl,
