@@ -12,7 +12,7 @@
 function getDocumentType(doc) {
     // TODO: check there is at most one.
     // FIXME: is the last variant allowed?
-    return doc["type"] || doc["@type"] || doc["codemeta:type"]
+    return doc["type"] || doc["@type"];
 }
 
 function getDocumentId(doc) {
