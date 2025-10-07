@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2019  The Software Heritage developers
+ * Copyright (C) 2019-2025  The Software Heritage developers
  * See the AUTHORS file at the top-level directory of this distribution
  * License: GNU Affero General Public License version 3, or any later version
  * See top-level LICENSE file for more information
@@ -50,7 +50,7 @@ function validateLicense(e) {
         return;
     }
 
-    // Only perform insertion/validation when the user explicitly confirms
+    // Only perform validation/insertion when the user explicitly confirms
     // their choice (change event, or keydown Enter/Tab).
     // Some browsers/selection actions can trigger an 'input' event that is
     // not a simple text insertion (e.g. a datalist selection via mouse can
@@ -97,10 +97,10 @@ function validateLicense(e) {
         }
 
         // In Chromium-based browsers the datalist popup may remain visible
-        // after adding a license by typing + Enter.
+        // after inserting a license by typing + Enter.
         // To hide it we detach and re-attach the datalist.
         // We avoid doing this in non-Chromium browsers (e.g. Safari) where
-        // detaching/reattaching can cause the popup to immediately reappear.
+        // reattaching can cause the popup to reappear.
         var ua = (navigator.userAgent || '');
         var isChromium = /(Chrome|Chromium|CriOS|Edg|OPR|Brave|Vivaldi|SamsungBrowser)/.test(ua);
         if (isChromium) {
