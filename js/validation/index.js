@@ -23,7 +23,7 @@ function validateDocument(doc) {
     // Ensure either "type" or "@type" is used, but not both
     const typeKeys = ['type', '@type'];
     if (typeKeys.filter(k => Object.prototype.hasOwnProperty.call(doc, k)).length > 1) {
-        setError("Document must use either 'type' or '@type', not both.");
+        setError(`Document must use either "type" or "@type", not both.`);
         return false;
     }
 
