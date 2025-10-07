@@ -11,7 +11,6 @@
 
 function getDocumentType(doc) {
     // TODO: check there is at most one.
-    // FIXME: is the last variant allowed?
     return doc["type"] || doc["@type"];
 }
 
