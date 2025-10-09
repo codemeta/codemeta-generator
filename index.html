@@ -114,14 +114,15 @@ See top-level LICENSE file for more information
             <p title="License(s) under which the software is published">
                 <label for="license">License(s)</label>
                 <input list="licenses" name="license" id="license"
-                    aria-describedby="licenses_descr"> <!-- TODO: insert placeholder -->
+                    aria-describedby="licenses_descr"
+                    placeholder="BSD-2-Clause" >
 
                 <datalist id="licenses">
                 </datalist>
                 <!-- This datalist is to be filled automatically -->
 
                 <br />
-                <span class="field-description" id="licenses_descr">from <a href="https://spdx.org/licenses/">SPDX License List</a>; select from the list, one by one</span>
+                <span class="field-description" id="licenses_descr">from <a href="https://spdx.org/licenses/">SPDX License List</a>; type or select from the list, one by one</span>
                 <div id="selected-licenses">
                     <!-- This div is to be filled as the user selects licenses -->
                 </div>
