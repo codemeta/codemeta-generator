@@ -18,8 +18,7 @@ const personFields = [
 
 function createPersonFieldset(personPrefix, legend) {
     // Creates a fieldset containing inputs for informations about a person
-    var fieldset = document.createElement("fieldset")
-    var moveButtons;
+    const fieldset = document.createElement("fieldset")
     fieldset.classList.add("person");
     fieldset.classList.add("leafFieldset");
     fieldset.id = personPrefix;
@@ -29,6 +28,8 @@ function createPersonFieldset(personPrefix, legend) {
         <div class="moveButtons">
             <input type="button" id="${personPrefix}_moveToLeft" value="<" class="moveToLeft"
                 title="Moves this person to the left." />
+            <input type="button" id="${personPrefix}_remove" value="X" class="removePerson"
+                title="Removes this person." />
             <input type="button" id="${personPrefix}_moveToRight" value=">" class="moveToRight"
                 title="Moves this person to the right." />
         </div>
@@ -65,85 +66,150 @@ function createPersonFieldset(personPrefix, legend) {
 }
 
 function addPersonWithId(container, prefix, legend, id) {
-    var personPrefix = `${prefix}_${id}`;
-    var fieldset = createPersonFieldset(personPrefix, `${legend} #${id}`);
+    const personPrefix = `${prefix}_${id}`;
+    const fieldset = createPersonFieldset(personPrefix, legend);
 
     container.appendChild(fieldset);
 
-    document.querySelector(`#${personPrefix}_moveToLeft`)
-        .addEventListener('click', () => movePerson(prefix, id, "left"));
-    document.querySelector(`#${personPrefix}_moveToRight`)
-        .addEventListener('click', () => movePerson(prefix, id, "right"));
-    document.querySelector(`#${personPrefix}_role_add`)
-        .addEventListener('click', () => addRole(personPrefix));
+    // Use ID selector to attach handlers that compute the current fieldset
+    // ID at click time, so renaming the IDs (when renumbering persons)
+    // won't break the handlers.
+    fieldset.querySelector('[id$="_moveToLeft"]')
+        .addEventListener('click', () => movePerson(prefix, fieldset.id, 'left'));
+    fieldset.querySelector('[id$="_moveToRight"]')
+        .addEventListener('click', () => movePerson(prefix, fieldset.id, 'right'));
+    fieldset.querySelector('[id$="_remove"]')
+        .addEventListener('click', () => removePerson(prefix, fieldset.id));
+    fieldset.querySelector('[id$="_role_add"]')
+        .addEventListener('click', () => addRole(fieldset.id));
 }
 
-function movePerson(prefix, id1, direction) {
-    var nbPersons = getNbPersons(prefix);
-    var id2;
+function movePerson(prefix, personPrefix, direction) {
+    const container = document.querySelector(`#${prefix}_container`);
+    if (!container) return;
 
-    // Computer id2, the id of the person to flip id1 with (wraps around the
-    // end of the list of persons)
-    if (direction == "left") {
-        id2 = id1 - 1;
-        if (id2 <= 0) {
-            id2 = nbPersons;
-        }
-    }
-    else {
-        id2 = id1 + 1;
-        if (id2 > nbPersons) {
-            id2 = 1;
-        }
-    }
+    const persons = Array.from(container.querySelectorAll('.person'));
+    const len = persons.length;
+    const currentIndex = persons.findIndex(function (p) { return p.id === personPrefix; });
+    if (currentIndex === -1 || len <= 1) return;
 
-    // Flip the field values, one by one
-    personFields.forEach((fieldName) => {
-        var field1 = document.querySelector(`#${prefix}_${id1}_${fieldName}`);
-        var field2 = document.querySelector(`#${prefix}_${id2}_${fieldName}`);
-        var value1 = field1.value;
-        var value2 = field2.value;
-        field2.value = value1;
-        field1.value = value2;
-    });
+    const targetIndex = (direction === 'left') ? ((currentIndex - 1 + len) % len) : ((currentIndex + 1) % len);
+    if (targetIndex === currentIndex) return;
 
-    // Form was changed; regenerate
+    const swapped = persons.slice();
+    const tmp = swapped[targetIndex];
+    swapped[targetIndex] = swapped[currentIndex];
+    swapped[currentIndex] = tmp;
+
+    // Re-append nodes in new order
+    const frag = document.createDocumentFragment();
+    swapped.forEach(function (p) { frag.appendChild(p); });
+    container.appendChild(frag);
+
+    renumberPersons(prefix);
     generateCodemeta();
 }
 
 function addPerson(prefix, legend) {
-    var container = document.querySelector(`#${prefix}_container`);
-    var personId = getNbPersons(prefix) + 1;
+    const container = document.querySelector(`#${prefix}_container`);
+    const personId = getNbPersons(prefix) + 1;
 
     addPersonWithId(container, prefix, legend, personId);
-
-    setNbPersons(prefix, personId);
-
+    renumberPersons(prefix);
     return personId;
 }
 
-function removePerson(prefix) {
-    var personId = getNbPersons(prefix);
+function removePerson(prefix, personPrefix) {
+    const container = document.querySelector(`#${prefix}_container`);
+    if (!container) return;
 
-    document.querySelector(`#${prefix}_${personId}`).remove();
+    if (personPrefix) {
+        const fs = document.querySelector(`#${personPrefix}`);
+        if (!fs) return;
+        fs.remove();
+    } else {
+        // If no personPrefix is provided, remove the last person
+        const persons = Array.from(container.querySelectorAll('.person'));
+        if (persons.length === 0) return;
+        const last = persons[persons.length - 1];
+        last.remove();
+    }
 
-    setNbPersons(prefix, personId - 1);
+    renumberPersons(prefix);
+    generateCodemeta();
+}
+
+function renumberPersons(prefix) {
+    // Assume id pattern of "prefix_index_suffix"
+    function idSuffix(id) {
+        if (!id) return '';
+        const parts = id.split('_');
+        if (parts.length <= 1) return id;
+        return parts.slice(2).join('_');
+    }
+
+    const container = document.querySelector(`#${prefix}_container`);
+    if (!container) return;
+
+    const persons = Array.from(container.querySelectorAll('.person'));
+    for (let i = 0; i < persons.length; i++) {
+        const fs = persons[i];
+        const n = i + 1;
+        const newPersonPrefix = `${prefix}_${n}`;
+
+        fs.id = newPersonPrefix;
+
+        const legend = fs.querySelector('legend');
+        if (legend) {
+            let base = legend.textContent.split('#')[0].trim();
+            if (base === '') base = legend.textContent;
+            legend.textContent = base + ' #' + n;
+        }
+
+        // Update descendant ids and names
+        Array.from(fs.querySelectorAll('[id]')).forEach(function (el) {
+            const oldId = el.id;
+            const suffix = idSuffix(oldId);
+
+            el.id = `${newPersonPrefix}_${suffix}`;
+
+            if (el.name) {
+                const nameSuffix = idSuffix(el.name);
+                el.name = `${newPersonPrefix}_${nameSuffix}`;
+            }
+        });
+
+        // Update label 'for' attributes
+        Array.from(fs.querySelectorAll('label[for]')).forEach(function (label) {
+            if (!label.htmlFor) return;
+            const forSuffix = idSuffix(label.htmlFor);
+            label.htmlFor = `${newPersonPrefix}_${forSuffix}`;
+        });
+    }
+
+    setNbPersons(prefix, persons.length);
 }
 
 // Initialize a group of persons (authors, contributors) on page load.
 // Useful if the page is reloaded.
 function initPersons(prefix, legend) {
-    var nbPersons = getNbPersons(prefix);
-    var personContainer = document.querySelector(`#${prefix}_container`)
+    const container = document.querySelector(`#${prefix}_container`);
+    if (!container) return;
 
-    for (let personId = 1; personId <= nbPersons; personId++) {
-        addPersonWithId(personContainer, prefix, legend, personId);
+    const existing = Array.from(container.querySelectorAll('.person'));
+    if (existing.length > 0) {
+        renumberPersons(prefix);
+        return;
+    }
+
+    const nbPersons = getNbPersons(prefix);
+    for (let i = 0; i < nbPersons; i++) {
+        addPerson(prefix, legend);
     }
 }
 
 function removePersons(prefix) {
-    var nbPersons = getNbPersons(prefix);
-    var personContainer = document.querySelector(`#${prefix}_container`)
+    const nbPersons = getNbPersons(prefix);
 
     for (let personId = 1; personId <= nbPersons; personId++) {
         removePerson(prefix)
@@ -171,8 +237,11 @@ function addRole(personPrefix) {
     `;
     roleButtonGroup.after(ul);
 
-    document.querySelector(`#${personPrefix}_role_remove_${roleIndex}`)
-        .addEventListener('click', () => removeRole(personPrefix, roleIndex));
+    ul.querySelector(`[id$="_role_remove_${roleIndex}"]`)
+        .addEventListener('click', (e) => {
+            const pid = e.currentTarget.closest?.('.person')?.id;
+            removeRole(pid, roleIndex);
+        });
 
     roleIndexNode.value = roleIndex + 1;
 
