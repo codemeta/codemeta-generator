@@ -426,25 +426,31 @@ describe('Author order change', function() {
         cy.get('#author_add').click();
         cy.get('#author_add').click();
         cy.get('#author_add').click();
-        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('One');
         cy.get('#author_1_affiliation').type('Example Org');
-        cy.get('#author_2_givenName').type('John');
-        cy.get('#author_2_familyName').type('Doe');
-        cy.get('#author_3_givenName').type('Alex');
+        cy.get('#author_2_givenName').type('Two');
+        cy.get('#author_2_familyName').type('Too');
+        cy.get('#author_3_givenName').type('Three');
+        cy.get('#author_4_givenName').type('Four');
 
         cy.get('#author_1_moveToLeft').click()
 
-        cy.get('#author_1_givenName').should('have.value', 'Alex');
-        cy.get('#author_1_familyName').should('have.value', '');
+        cy.get('#author_1_givenName').should('have.value', 'Two');
+        cy.get('#author_1_familyName').should('have.value', 'Too');
         cy.get('#author_1_affiliation').should('have.value', '');
 
-        cy.get('#author_2_givenName').should('have.value', 'John');
-        cy.get('#author_2_familyName').should('have.value', 'Doe');
+        cy.get('#author_2_givenName').should('have.value', 'Three');
+        cy.get('#author_2_familyName').should('have.value', '');
         cy.get('#author_2_affiliation').should('have.value', '');
 
-        cy.get('#author_3_givenName').should('have.value', 'Jane');
+        cy.get('#author_3_givenName').should('have.value', 'Four');
         cy.get('#author_3_familyName').should('have.value', '');
-        cy.get('#author_3_affiliation').should('have.value', 'Example Org');
+        cy.get('#author_3_affiliation').should('have.value', '');
+
+        cy.get('#author_4_givenName').should('have.value', 'One');
+        cy.get('#author_4_familyName').should('have.value', '');
+        cy.get('#author_4_affiliation').should('have.value', 'Example Org');
     });
 
     it('wraps around to the left', function() {
@@ -453,25 +459,31 @@ describe('Author order change', function() {
         cy.get('#author_add').click();
         cy.get('#author_add').click();
         cy.get('#author_add').click();
-        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('One');
         cy.get('#author_1_affiliation').type('Example Org');
-        cy.get('#author_2_givenName').type('John');
-        cy.get('#author_2_familyName').type('Doe');
-        cy.get('#author_3_givenName').type('Alex');
+        cy.get('#author_2_givenName').type('Two');
+        cy.get('#author_2_familyName').type('Too');
+        cy.get('#author_3_givenName').type('Three');
+        cy.get('#author_4_givenName').type('Four');
 
-        cy.get('#author_3_moveToRight').click()
+        cy.get('#author_4_moveToRight').click()
 
-        cy.get('#author_1_givenName').should('have.value', 'Alex');
+        cy.get('#author_1_givenName').should('have.value', 'Four');
         cy.get('#author_1_familyName').should('have.value', '');
         cy.get('#author_1_affiliation').should('have.value', '');
 
-        cy.get('#author_2_givenName').should('have.value', 'John');
-        cy.get('#author_2_familyName').should('have.value', 'Doe');
-        cy.get('#author_2_affiliation').should('have.value', '');
+        cy.get('#author_2_givenName').should('have.value', 'One');
+        cy.get('#author_2_familyName').should('have.value', '');
+        cy.get('#author_2_affiliation').should('have.value', 'Example Org');
 
-        cy.get('#author_3_givenName').should('have.value', 'Jane');
-        cy.get('#author_3_familyName').should('have.value', '');
-        cy.get('#author_3_affiliation').should('have.value', 'Example Org');
+        cy.get('#author_3_givenName').should('have.value', 'Two');
+        cy.get('#author_3_familyName').should('have.value', 'Too');
+        cy.get('#author_3_affiliation').should('have.value', '');
+
+        cy.get('#author_4_givenName').should('have.value', 'Three');
+        cy.get('#author_4_familyName').should('have.value', '');
+        cy.get('#author_4_affiliation').should('have.value', '');
     });
 });
 
