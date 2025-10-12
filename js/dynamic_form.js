@@ -85,7 +85,7 @@ function addPersonWithId(container, prefix, legend, id) {
 }
 
 function movePerson(prefix, personPrefix, direction) {
-    const container = document.querySelector(`#${prefix}_container`);
+    const container = document.getElementById(`${prefix}_list`);
     if (!container) return;
 
     const persons = Array.from(container.querySelectorAll('.person'));
@@ -93,25 +93,46 @@ function movePerson(prefix, personPrefix, direction) {
     const currentIndex = persons.findIndex(function (p) { return p.id === personPrefix; });
     if (currentIndex === -1 || len <= 1) return;
 
-    const targetIndex = (direction === 'left') ? ((currentIndex - 1 + len) % len) : ((currentIndex + 1) % len);
-    if (targetIndex === currentIndex) return;
+    const currentElement = document.getElementById(personPrefix);
 
-    const swapped = persons.slice();
-    const tmp = swapped[targetIndex];
-    swapped[targetIndex] = swapped[currentIndex];
-    swapped[currentIndex] = tmp;
+    function swapAdjacent(a, b) {
+        const parent = a && a.parentNode;
+        if (!parent) return;
+        if (a.nextElementSibling === b) {
+            parent.insertBefore(b, a);
+        } else if (b.nextElementSibling === a) {
+            parent.insertBefore(a, b);
+        }
+    }
 
-    // Re-append nodes in new order
-    const frag = document.createDocumentFragment();
-    swapped.forEach(function (p) { frag.appendChild(p); });
-    container.appendChild(frag);
+    const prev = currentElement.previousElementSibling;
+    const next = currentElement.nextElementSibling;
+
+    if (direction === 'left') {
+        if (!prev) {
+            // Current is first element -> move to end (wrap-around)
+            container.appendChild(currentElement);
+        } else {
+            // Swap with previous element
+            swapAdjacent(prev, currentElement);
+        }
+    } else {
+        if (!next) {
+            // Current is last element -> move to beginning (wrap-around)
+            const firstEl = container.firstElementChild;
+            if (firstEl) container.insertBefore(currentElement, firstEl);
+        } else {
+            // Swap with next element
+            swapAdjacent(currentElement, next);
+        }
+    }
 
     renumberPersons(prefix);
     generateCodemeta();
 }
 
 function addPerson(prefix, legend) {
-    const container = document.querySelector(`#${prefix}_container`);
+    const container = document.getElementById(`${prefix}_list`);
     const personId = getNbPersons(prefix) + 1;
 
     addPersonWithId(container, prefix, legend, personId);
@@ -120,18 +141,17 @@ function addPerson(prefix, legend) {
 }
 
 function removePerson(prefix, personPrefix) {
-    const container = document.querySelector(`#${prefix}_container`);
+    const container = document.getElementById(`${prefix}_list`);
     if (!container) return;
 
     if (personPrefix) {
-        const fs = document.querySelector(`#${personPrefix}`);
+        const fs = document.getElementById(personPrefix);
         if (!fs) return;
         fs.remove();
     } else {
         // If no personPrefix is provided, remove the last person
-        const persons = Array.from(container.querySelectorAll('.person'));
-        if (persons.length === 0) return;
-        const last = persons[persons.length - 1];
+        const last = container.lastElementChild;
+        if (!last) return;
         last.remove();
     }
 
@@ -144,11 +164,11 @@ function renumberPersons(prefix) {
     function idSuffix(id) {
         if (!id) return '';
         const parts = id.split('_');
-        if (parts.length <= 1) return id;
+        if (parts.length <= 2) return '';
         return parts.slice(2).join('_');
     }
 
-    const container = document.querySelector(`#${prefix}_container`);
+    const container = document.getElementById(`${prefix}_list`);
     if (!container) return;
 
     const persons = Array.from(container.querySelectorAll('.person'));
@@ -193,7 +213,7 @@ function renumberPersons(prefix) {
 // Initialize a group of persons (authors, contributors) on page load.
 // Useful if the page is reloaded.
 function initPersons(prefix, legend) {
-    const container = document.querySelector(`#${prefix}_container`);
+    const container = document.getElementById(`${prefix}_list`);
     if (!container) return;
 
     const existing = Array.from(container.querySelectorAll('.person'));
@@ -209,16 +229,19 @@ function initPersons(prefix, legend) {
 }
 
 function removePersons(prefix) {
-    const nbPersons = getNbPersons(prefix);
+    const container = document.getElementById(`${prefix}_list`);
+    if (!container) return;
 
-    for (let personId = 1; personId <= nbPersons; personId++) {
-        removePerson(prefix)
-    }
+    const persons = Array.from(container.querySelectorAll('.person'));
+    persons.forEach(p => p.remove());
+
+    renumberPersons(prefix);
+    generateCodemeta();
 }
 
 function addRole(personPrefix) {
-    const roleButtonGroup = document.querySelector(`#${personPrefix}_role_add`);
-    const roleIndexNode = document.querySelector(`#${personPrefix}_role_index`);
+    const roleButtonGroup = document.getElementById(`${personPrefix}_role_add`);
+    const roleIndexNode = document.getElementById(`${personPrefix}_role_index`);
     const roleIndex = parseInt(roleIndexNode.value, 10);
 
     const ul = document.createElement("ul")
@@ -237,7 +260,7 @@ function addRole(personPrefix) {
     `;
     roleButtonGroup.after(ul);
 
-    ul.querySelector(`[id$="_role_remove_${roleIndex}"]`)
+    document.getElementById(`${personPrefix}_role_remove_${roleIndex}`)
         .addEventListener('click', (e) => {
             const pid = e.currentTarget.closest?.('.person')?.id;
             removeRole(pid, roleIndex);
@@ -249,7 +272,7 @@ function addRole(personPrefix) {
 }
 
 function removeRole(personPrefix, roleIndex) {
-    document.querySelector(`#${personPrefix}_role_${roleIndex}`).remove();
+    document.getElementById(`${personPrefix}_role_${roleIndex}`).remove();
 }
 
 function resetForm() {
@@ -260,7 +283,7 @@ function resetForm() {
 
     // Reset the form after deleting elements, so nbPersons doesn't get
     // reset before it's read.
-    document.querySelector('#inputForm').reset();
+    document.getElementById('inputForm').reset();
 }
 
 function fieldToLower(event) {
@@ -276,41 +299,41 @@ function initCallbacks() {
     // In Firefox datalist selection without Enter press does not trigger
     // 'change' event, so we need to listen to 'input' event to catch
     // a selection with mouse click.
-    document.querySelector('#license')
+    document.getElementById('license')
         .addEventListener('input', validateLicense);
-    document.querySelector('#license')
+    document.getElementById('license')
         .addEventListener('change', validateLicense);
     // Safari needs 'keydown' to catch Enter press when datalist is shown
-    document.querySelector('#license')
+    document.getElementById('license')
         .addEventListener('keydown', validateLicense);
 
-    document.querySelector('#generateCodemetaV2').disabled = false;
-    document.querySelector('#generateCodemetaV2')
+    document.getElementById('generateCodemetaV2').disabled = false;
+    document.getElementById('generateCodemetaV2')
         .addEventListener('click', () => generateCodemeta("2.0"));
 
-    document.querySelector('#generateCodemetaV3').disabled = false;
-    document.querySelector('#generateCodemetaV3')
+    document.getElementById('generateCodemetaV3').disabled = false;
+    document.getElementById('generateCodemetaV3')
         .addEventListener('click', () => generateCodemeta("3.0"));
 
-    document.querySelector('#resetForm')
+    document.getElementById('resetForm')
         .addEventListener('click', resetForm);
 
-    document.querySelector('#validateCodemeta').disabled = false;
-    document.querySelector('#validateCodemeta')
+    document.getElementById('validateCodemeta').disabled = false;
+    document.getElementById('validateCodemeta')
         .addEventListener('click', () => parseAndValidateCodemeta(true));
 
-    document.querySelector('#importCodemeta').disabled = false;
-    document.querySelector('#importCodemeta')
+    document.getElementById('importCodemeta').disabled = false;
+    document.getElementById('importCodemeta')
         .addEventListener('click', importCodemeta);
 
     document.querySelector('#downloadCodemeta input').disabled = false;
     document.querySelector('#downloadCodemeta input')
         .addEventListener('click', downloadCodemeta);
 
-    document.querySelector('#inputForm')
+    document.getElementById('inputForm')
         .addEventListener('change', () => generateCodemeta());
 
-    document.querySelector('#developmentStatus')
+    document.getElementById('developmentStatus')
         .addEventListener('change', fieldToLower);
 
     initPersons('author', 'Author');

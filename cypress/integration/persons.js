@@ -399,14 +399,15 @@ describe('Author order change', function() {
         cy.get('#name').type('My Test Software');
 
         cy.get('#author_add').click();
-        cy.get('#author_add').click();
         cy.get('#author_1_givenName').type('Jane');
+
+        cy.get('#author_add').click();
+        cy.get('#author_2_givenName').type('John');
 
         cy.get('#author_1_role_add').click();
         cy.get('#author_1_roleName_0').type('Developer');
-
-        cy.get('#author_2_givenName').type('John');
-
+        cy.get('#author_1_roleName_0').should('have.value', 'Developer');
+  
         // Move author 1 to the right (swap with author 2)
         cy.get('#author_1_moveToRight').click();
 
