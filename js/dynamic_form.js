@@ -216,12 +216,15 @@ function initPersons(prefix, legend) {
     const container = document.getElementById(`${prefix}_list`);
     if (!container) return;
 
+    // If there are already persons, do not add new ones,
+    // renumber them if needed.
     const existing = Array.from(container.querySelectorAll('.person'));
     if (existing.length > 0) {
         renumberPersons(prefix);
         return;
     }
 
+    // If no persons, add empty ones
     const nbPersons = getNbPersons(prefix);
     for (let i = 0; i < nbPersons; i++) {
         addPerson(prefix, legend);
