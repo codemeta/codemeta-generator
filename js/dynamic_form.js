@@ -232,10 +232,8 @@ function removePersons(prefix) {
     const container = document.getElementById(`${prefix}_list`);
     if (!container) return;
 
-    const persons = Array.from(container.querySelectorAll('.person'));
-    persons.forEach(p => p.remove());
-
-    renumberPersons(prefix);
+    container.innerHTML = '';
+    setNbPersons(prefix, 0);
     generateCodemeta();
 }
 
@@ -273,6 +271,7 @@ function addRole(personPrefix) {
 
 function removeRole(personPrefix, roleIndex) {
     document.getElementById(`${personPrefix}_role_${roleIndex}`).remove();
+    generateCodemeta();
 }
 
 function resetForm() {

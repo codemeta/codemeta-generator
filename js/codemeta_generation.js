@@ -429,12 +429,17 @@ async function recompactDocWithAllContexts(doc) {
 async function importCodemeta() {
     var inputForm = document.querySelector('#inputForm');
     var doc = parseAndValidateCodemeta(false);
+    // parseAndValidateCodemeta() may set an error message.
+    // resetForm() below runs generateCodemeta() which would clear the error message;
+    // preserve the error message so it is there after import.
+    const validationError = (document.getElementById('errorMessage') || {}).textContent || '';
 
     // Re-compact document with all contexts
     // to allow importing property from any context
     doc = await recompactDocWithAllContexts(doc);
 
     resetForm();
+    if (validationError) setError(validationError);
 
     if (doc['license'] !== undefined) {
         if (typeof doc['license'] === 'string') {
