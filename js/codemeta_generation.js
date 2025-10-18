@@ -427,12 +427,12 @@ async function recompactDocWithAllContexts(doc) {
 }
 
 async function importCodemeta() {
-    resetForm();
-
     var doc = parseAndValidateCodemeta(false);
     // Re-compact document with all contexts
     // to allow importing property from any context
     doc = await recompactDocWithAllContexts(doc);
+
+    resetForm();
 
     if (doc['license'] !== undefined) {
         if (typeof doc['license'] === 'string') {
