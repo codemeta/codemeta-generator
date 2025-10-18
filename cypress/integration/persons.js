@@ -407,7 +407,7 @@ describe('Author order change', function() {
         cy.get('#author_1_role_add').click();
         cy.get('#author_1_roleName_0').type('Developer');
         cy.get('#author_1_roleName_0').should('have.value', 'Developer');
-  
+
         // Move author 1 to the right (swap with author 2)
         cy.get('#author_1_moveToRight').click();
 

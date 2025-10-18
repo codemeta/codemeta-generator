@@ -8,7 +8,7 @@
 /*
  * Reads a CodeMeta file and shows human-friendly errors on it.
  *
- * This validator intentionaly does not use a schema, in order to show errors
+ * This validator intentionally does not use a schema, in order to show errors
  * that are easy to understand for users with no understanding of JSON-LD.
  */
 
