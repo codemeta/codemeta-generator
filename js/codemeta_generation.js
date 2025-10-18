@@ -427,19 +427,12 @@ async function recompactDocWithAllContexts(doc) {
 }
 
 async function importCodemeta() {
-    var inputForm = document.querySelector('#inputForm');
-    var doc = parseAndValidateCodemeta(false);
-    // parseAndValidateCodemeta() may set an error message.
-    // resetForm() below runs generateCodemeta() which would clear the error message;
-    // preserve the error message so it is there after import.
-    const validationError = (document.getElementById('errorMessage') || {}).textContent || '';
+    resetForm();
 
+    var doc = parseAndValidateCodemeta(false);
     // Re-compact document with all contexts
     // to allow importing property from any context
     doc = await recompactDocWithAllContexts(doc);
-
-    resetForm();
-    if (validationError) setError(validationError);
 
     if (doc['license'] !== undefined) {
         if (typeof doc['license'] === 'string') {
@@ -463,7 +456,6 @@ async function importCodemeta() {
     splittedCodemetaFields.forEach(function (item, index) {
         const id = item[0];
         const separator = item[1];
-        const serializer = item[2];
         const deserializer = item[3];
         let value = doc[id];
         if (value !== undefined) {
