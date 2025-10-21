@@ -1,11 +1,13 @@
 /**
- * Copyright (C) 2019-2020  The Software Heritage developers
+ * Copyright (C) 2019-2025  The Software Heritage developers
  * See the AUTHORS file at the top-level directory of this distribution
  * License: GNU Affero General Public License version 3, or any later version
  * See top-level LICENSE file for more information
  */
 
 "use strict";
+
+let codemetaGenerationEnabled = true;
 
 const CODEMETA_CONTEXTS = {
     "2.0": {
@@ -291,6 +293,12 @@ async function buildExpandedDocWithAllContexts() {
 
 // v2.0 is still default version for generation, for now
 async function generateCodemeta(codemetaVersion = "2.0") {
+    if (!codemetaGenerationEnabled) {
+        // Avoid regenerating a document while we are importing it.
+        // This avoid resetting the input in case there is an error in it.
+        return false;
+    }
+
     var inputForm = document.querySelector('#inputForm');
     var codemetaText, errorHTML;
 
@@ -427,74 +435,73 @@ async function recompactDocWithAllContexts(doc) {
 }
 
 async function importCodemeta() {
-    var doc = parseAndValidateCodemeta(false);
+    // Don't wipe the codemeta text (if any) in case of error
+    codemetaGenerationEnabled = false;
 
-    // parseAndValidateCodemeta() may set an error message.
-    // resetForm() below runs generateCodemeta() which would clear the error message;
-    // preserve the error message so it is there after import.
-    const validationError = (document.getElementById('errorMessage') || {}).textContent || '';
+    try {
+        var doc = parseAndValidateCodemeta(false);
+        // Re-compact document with all contexts
+        // to allow importing property from any context
+        doc = await recompactDocWithAllContexts(doc);
 
-    // Re-compact document with all contexts
-    // to allow importing property from any context
-    doc = await recompactDocWithAllContexts(doc);
+        resetForm();
 
-    resetForm();
-
-    // Restore error message if any
-    if (validationError) setError(validationError);
-
-    if (doc['license'] !== undefined) {
-        if (typeof doc['license'] === 'string') {
-            doc['license'] = [doc['license']];
-        }
-
-        doc['license'].forEach(l => {
-            if (l.indexOf(SPDX_PREFIX) !== 0) { return; }
-            let licenseId = l.substring(SPDX_PREFIX.length);
-            insertLicenseElement(licenseId);
-        });
-    }
-
-    directCodemetaFields.forEach(function (item, index) {
-        setIfDefined('#' + item, doc[item]);
-    });
-    importShortOrg('#funder', doc["funder"]);
-    importReview(doc["review"]);
-
-    // Import simple fields by joining on their separator
-    splittedCodemetaFields.forEach(function (item, index) {
-        const id = item[0];
-        const separator = item[1];
-        const deserializer = item[3];
-        let value = doc[id];
-        if (value !== undefined) {
-            if (Array.isArray(value)) {
-                if (deserializer !== undefined) {
-                    value = value.map((item) => deserializer(id, item));
-                }
-                value = value.join(separator);
-            } else {
-                if (deserializer !== undefined) {
-                    value = deserializer(id, value);
-                }
+        if (doc['license'] !== undefined) {
+            if (typeof doc['license'] === 'string') {
+                doc['license'] = [doc['license']];
             }
-            setIfDefined('#' + id, value);
+
+            doc['license'].forEach(l => {
+                if (l.indexOf(SPDX_PREFIX) !== 0) { return; }
+                let licenseId = l.substring(SPDX_PREFIX.length);
+                insertLicenseElement(licenseId);
+            });
         }
-    });
 
-    for (const [key, items] of Object.entries(crossCodemetaFields)) {
-        let value = "";
-        items.forEach(item => {
-           value = doc[item] || value;
+        directCodemetaFields.forEach(function (item, index) {
+            setIfDefined('#' + item, doc[item]);
         });
-        setIfDefined(`#${key}`, value);
-    }
+        importShortOrg('#funder', doc["funder"]);
+        importReview(doc["review"]);
 
-    importPersons('author', 'Author', doc['author']);
-    if (doc['contributor']) {
-        // If only one contributor, it is compacted to an object
-        const contributors = Array.isArray(doc['contributor'])? doc['contributor'] : [doc['contributor']];
-        importPersons('contributor', 'Contributor', contributors);
+        // Import simple fields by joining on their separator
+        splittedCodemetaFields.forEach(function (item, index) {
+            const id = item[0];
+            const separator = item[1];
+            const deserializer = item[3];
+            let value = doc[id];
+            if (value !== undefined) {
+                if (Array.isArray(value)) {
+                    if (deserializer !== undefined) {
+                        value = value.map((item) => deserializer(id, item));
+                    }
+                    value = value.join(separator);
+                } else {
+                    if (deserializer !== undefined) {
+                        value = deserializer(id, value);
+                    }
+                }
+                setIfDefined('#' + id, value);
+            }
+        });
+
+        for (const [key, items] of Object.entries(crossCodemetaFields)) {
+            let value = "";
+            items.forEach(item => {
+                value = doc[item] || value;
+            });
+            setIfDefined(`#${key}`, value);
+        }
+
+        importPersons('author', 'Author', doc['author']);
+        if (doc['contributor']) {
+            // If only one contributor, it is compacted to an object
+            const contributors = Array.isArray(doc['contributor']) ? doc['contributor'] : [doc['contributor']];
+            importPersons('contributor', 'Contributor', contributors);
+        }
+    } finally {
+        // Re-enable codemeta generation
+        codemetaGenerationEnabled = true;
     }
 }
 
