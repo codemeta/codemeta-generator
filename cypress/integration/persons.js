@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2020  The Software Heritage developers
+ * Copyright (C) 2020-2025  The Software Heritage developers
  * See the AUTHORS file at the top-level directory of this distribution
  * License: GNU Affero General Public License version 3, or any later version
  * See top-level LICENSE file for more information
@@ -395,31 +395,62 @@ describe('Author order change', function() {
         });
     });
 
+    it('moves roles with person', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('Jane');
+
+        cy.get('#author_add').click();
+        cy.get('#author_2_givenName').type('John');
+
+        cy.get('#author_1_role_add').click();
+        cy.get('#author_1_roleName_0').type('Developer');
+        cy.get('#author_1_roleName_0').should('have.value', 'Developer');
+
+        // Move author 1 to the right (swap with author 2)
+        cy.get('#author_1_moveToRight').click();
+
+        // After the swap, Jane (and her role) should be at author_2
+        cy.get('#author_2_givenName').should('have.value', 'Jane');
+        cy.get('#author_2_roleName_0').should('have.value', 'Developer');
+
+        // John should now be at author_1 and should not have the role
+        cy.get('#author_1_givenName').should('have.value', 'John');
+        cy.get('#author_1_roleName_0').should('not.exist');
+    });
+
     it('wraps around to the right', function() {
         cy.get('#name').type('My Test Software');
 
         cy.get('#author_add').click();
         cy.get('#author_add').click();
         cy.get('#author_add').click();
-        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('One');
         cy.get('#author_1_affiliation').type('Example Org');
-        cy.get('#author_2_givenName').type('John');
-        cy.get('#author_2_familyName').type('Doe');
-        cy.get('#author_3_givenName').type('Alex');
+        cy.get('#author_2_givenName').type('Two');
+        cy.get('#author_2_familyName').type('Too');
+        cy.get('#author_3_givenName').type('Three');
+        cy.get('#author_4_givenName').type('Four');
 
         cy.get('#author_1_moveToLeft').click()
 
-        cy.get('#author_1_givenName').should('have.value', 'Alex');
-        cy.get('#author_1_familyName').should('have.value', '');
+        cy.get('#author_1_givenName').should('have.value', 'Two');
+        cy.get('#author_1_familyName').should('have.value', 'Too');
         cy.get('#author_1_affiliation').should('have.value', '');
 
-        cy.get('#author_2_givenName').should('have.value', 'John');
-        cy.get('#author_2_familyName').should('have.value', 'Doe');
+        cy.get('#author_2_givenName').should('have.value', 'Three');
+        cy.get('#author_2_familyName').should('have.value', '');
         cy.get('#author_2_affiliation').should('have.value', '');
 
-        cy.get('#author_3_givenName').should('have.value', 'Jane');
+        cy.get('#author_3_givenName').should('have.value', 'Four');
         cy.get('#author_3_familyName').should('have.value', '');
-        cy.get('#author_3_affiliation').should('have.value', 'Example Org');
+        cy.get('#author_3_affiliation').should('have.value', '');
+
+        cy.get('#author_4_givenName').should('have.value', 'One');
+        cy.get('#author_4_familyName').should('have.value', '');
+        cy.get('#author_4_affiliation').should('have.value', 'Example Org');
     });
 
     it('wraps around to the left', function() {
@@ -428,25 +459,31 @@ describe('Author order change', function() {
         cy.get('#author_add').click();
         cy.get('#author_add').click();
         cy.get('#author_add').click();
-        cy.get('#author_1_givenName').type('Jane');
+        cy.get('#author_add').click();
+        cy.get('#author_1_givenName').type('One');
         cy.get('#author_1_affiliation').type('Example Org');
-        cy.get('#author_2_givenName').type('John');
-        cy.get('#author_2_familyName').type('Doe');
-        cy.get('#author_3_givenName').type('Alex');
+        cy.get('#author_2_givenName').type('Two');
+        cy.get('#author_2_familyName').type('Too');
+        cy.get('#author_3_givenName').type('Three');
+        cy.get('#author_4_givenName').type('Four');
 
-        cy.get('#author_3_moveToRight').click()
+        cy.get('#author_4_moveToRight').click()
 
-        cy.get('#author_1_givenName').should('have.value', 'Alex');
+        cy.get('#author_1_givenName').should('have.value', 'Four');
         cy.get('#author_1_familyName').should('have.value', '');
         cy.get('#author_1_affiliation').should('have.value', '');
 
-        cy.get('#author_2_givenName').should('have.value', 'John');
-        cy.get('#author_2_familyName').should('have.value', 'Doe');
-        cy.get('#author_2_affiliation').should('have.value', '');
+        cy.get('#author_2_givenName').should('have.value', 'One');
+        cy.get('#author_2_familyName').should('have.value', '');
+        cy.get('#author_2_affiliation').should('have.value', 'Example Org');
 
-        cy.get('#author_3_givenName').should('have.value', 'Jane');
-        cy.get('#author_3_familyName').should('have.value', '');
-        cy.get('#author_3_affiliation').should('have.value', 'Example Org');
+        cy.get('#author_3_givenName').should('have.value', 'Two');
+        cy.get('#author_3_familyName').should('have.value', 'Too');
+        cy.get('#author_3_affiliation').should('have.value', '');
+
+        cy.get('#author_4_givenName').should('have.value', 'Three');
+        cy.get('#author_4_familyName').should('have.value', '');
+        cy.get('#author_4_affiliation').should('have.value', '');
     });
 });
 
@@ -889,6 +926,78 @@ describe('Multiple authors', function () {
         cy.get('#author_1_endDate_0').should('have.value', '2024-04-03');
         cy.get('#author_2_givenName').should('have.value', 'Joe');
     });
+
+    it('can remove the first one and reindexes remaining ones', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_nb').should('have.value', '2');
+
+        cy.get('#author_1_givenName').type('Alice');
+        cy.get('#author_2_givenName').type('Bob');
+
+        cy.get('#author_1_remove').click();
+
+        cy.get('#author_nb').should('have.value', '1');
+        cy.get('#author_1_givenName').should('have.value', 'Bob');
+
+        cy.get('#generateCodemetaV2').click();
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "id": "_:author_1",
+                        "type": "Person",
+                        "givenName": "Bob"
+                    }
+                ],
+            });
+    });
+
+    it('can remove a middle one and reindexes remaining ones', function() {
+        cy.get('#name').type('My Test Software');
+
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_add').click();
+        cy.get('#author_nb').should('have.value', '3');
+
+        cy.get('#author_1_givenName').type('Alice');
+        cy.get('#author_2_givenName').type('Bob');
+        cy.get('#author_3_givenName').type('Carol');
+
+        cy.get('#author_2_remove').click();
+
+        cy.get('#author_nb').should('have.value', '2');
+        cy.get('#author_1_givenName').should('have.value', 'Alice');
+        cy.get('#author_2_givenName').should('have.value', 'Carol');
+
+        cy.get('#generateCodemetaV2').click();
+        cy.get('#codemetaText').then((elem) => JSON.parse(elem.text()))
+            .should('deep.equal', {
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "type": "SoftwareSourceCode",
+                "name": "My Test Software",
+                "author": [
+                    {
+                        "id": "_:author_1",
+                        "type": "Person",
+                        "givenName": "Alice"
+                    },
+                    {
+                        "id": "_:author_2",
+                        "type": "Person",
+                        "givenName": "Carol"
+                    }
+                ],
+            });
+    });
+
+
 });
 
 describe('Contributors', function () {

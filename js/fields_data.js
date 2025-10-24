@@ -65,7 +65,7 @@ function validateLicense(e) {
             'insertReplacementText', // from datalist selection
         ]);
         if (!(e.inputType && CONFIRM_INPUT_TYPES.has(e.inputType))) {
-            // Typing characters, pasting, deletions - don't proceed 
+            // Typing characters, pasting, deletions - don't proceed
             return;
         }
     } else {
@@ -75,7 +75,7 @@ function validateLicense(e) {
 
     // Correct casing to the canonical SPDX license ID when possible.
     // This will allow user to type in any casing and hit Enter once
-    // to insert the license immediately.    
+    // to insert the license immediately.
     const match = SPDX_LICENSE_IDS.find(id =>
         id.toLowerCase() === license.toLowerCase());
     if (match) {
