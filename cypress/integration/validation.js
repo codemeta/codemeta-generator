@@ -160,6 +160,19 @@ describe('URLs validation', function() {
         cy.get('#errorMessage').should('have.text', '');
     });
 
+    it('accepts git+https:// URLs', function() {
+        cy.get('#codemetaText').then((elem) =>
+            elem.text(JSON.stringify({
+                "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+                "@type": "SoftwareSourceCode",
+                "codeRepository": ["git+http://example.org/", "git+http://example.com/"],
+            }))
+        );
+        cy.get('#validateCodemeta').click();
+
+        cy.get('#errorMessage').should('have.text', '');
+    });
+
     it('errors on invalid URL', function() {
         cy.get('#codemetaText').then((elem) =>
             elem.text(JSON.stringify({
