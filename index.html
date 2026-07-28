@@ -5,7 +5,7 @@ See the AUTHORS file at the top-level directory of this distribution
 License: GNU Affero General Public License version 3, or any later version
 See top-level LICENSE file for more information
 -->
-<html lang="en">
+<html lang="en" data-bs-theme="auto">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,6 +32,15 @@ See top-level LICENSE file for more information
     <script src="./js/validation/things.js"></script>
     <script src="./js/validation/index.js"></script>
     <link rel="canonical" href="https://codemeta.github.io/codemeta-generator/">
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css"
+        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Parent styles -->
+    <link rel="stylesheet" type="text/css" href="https://codemeta.github.io/css/core/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://codemeta.github.io/css/material-kit.css">
+    <!-- Local styles -->
     <link rel="stylesheet" type="text/css" href="./main.css">
     <link rel="stylesheet" type="text/css" href="./codemeta.css">
 
@@ -60,9 +69,71 @@ See top-level LICENSE file for more information
     }
     </script>
 </head>
-<body>
+<body class="profile-page sidebar-collapse">
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-transparent" id="sectionsNav" aria-label="Main navigation">
+    <div class="container">
+      <a class="navbar-brand" href="/">The CodeMeta Project </a>
+      <div class="navbar-translate">
+        <a class="p-1" id="skip-to-content" href="#jump-to-content" aria-label="Skip to content"><i role="presentation" class="bi bi-arrow-down-circle p-1"></i>Skip to content</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse show">
+        <ul class="navbar-nav ml-auto">
+
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html" title="Home"> Home</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../crosswalk/" title="Crosswalk"> Crosswalk</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../create/" title="Create"> Create</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../terms/" title="Terms"> Terms</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../user-guide" title="User Guide"> User Guide</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../developer-guide" title="Developer Guide"> Developer Guide</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../jsonld" title="JSON-LD"> JSON-LD</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../tools" title="Tools"> Tools</a>
+          </li>
+
+          <li>
+			<div class="form-check dark-light-toggler">
+				<input class="form-check-input" type="checkbox" id="darkModeSwitch" role="switch" aria-label="Switch between light and dark mode">
+				<label class="form-check-label" for="darkModeSwitch" role="placeholder" aria-label="Select to change mode" aria-hidden="true">
+					<i role="presentation" class="bi bi-sun-fill" id="light-mode-bi" title="Light mode"></i>
+					<i role="presentation" class="bi bi-moon-stars-fill d-none" id="dark-mode-bi" title="Dark mode"></i>
+				</label>
+			</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+
   <header>
-    <h1>CodeMeta Generator v3.0</h1>
+    <h1 id="jump-to-content">CodeMeta Generator v3.0</h1>
   </header>
 
   <main>
@@ -415,7 +486,8 @@ Bugfixes: that and this." ></textarea>
     <pre contentEditable="true" id="codemetaText"></pre>
   </main>
 
-  <footer>
+  <footer class="footer">
+    <div class="container">
     <p style="text-align:center;">
         Do you want to improve this tool ?
         Check out the
@@ -439,9 +511,15 @@ Bugfixes: that and this." ></textarea>
                 width="300">
         </a>
     </p>
+    </div>
   </footer>
 
   <script src="./js/libs/jsonld/jsonld.min.js"></script>
+  <script src="https://codemeta.github.io/js/core/jquery.min.js"></script>
+  <script src="https://codemeta.github.io/js/core/bootstrap.bundle.min.js"></script>
+  <script src="https://codemeta.github.io/js/material-kit.js"></script>
+  <script src="https://codemeta.github.io/js/codemeta.js"></script>
+
   <script>
     Promise.all([loadSpdxData(), loadContextData()]).then(results => {
       const [licenses, contexts] = results;
