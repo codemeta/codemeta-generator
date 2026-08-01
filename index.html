@@ -35,7 +35,6 @@ See top-level LICENSE file for more information
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Parent styles -->
     <link rel="stylesheet" type="text/css" href="https://codemeta.github.io/css/core/bootstrap.css">
@@ -69,8 +68,12 @@ See top-level LICENSE file for more information
     }
     </script>
 </head>
-<body class="profile-page sidebar-collapse">
-
+<!--
+Navigation borrowed from the Codemeta-Pyramids theme used on the
+https://codemeta.github.io website.
+This is not necessary if you are not trying to integrate with the
+CodeMeta website.
+-->
 <nav class="navbar fixed-top navbar-expand-lg navbar-transparent" id="sectionsNav" aria-label="Main navigation">
     <div class="container">
       <a class="navbar-brand" href="/">The CodeMeta Project </a>
@@ -131,8 +134,10 @@ See top-level LICENSE file for more information
       </div>
     </div>
 </nav>
+<!-- End reused navigation -->
 
   <header>
+    <!-- id only required for menu-skipping accessibility shortcut in navigation -->
     <h1 id="jump-to-content">CodeMeta Generator v3.0</h1>
   </header>
 
@@ -486,7 +491,7 @@ Bugfixes: that and this." ></textarea>
     <pre contentEditable="true" id="codemetaText"></pre>
   </main>
 
-  <footer class="footer">
+  <footer>
     <div class="container">
     <p style="text-align:center;">
         Do you want to improve this tool ?
@@ -515,11 +520,13 @@ Bugfixes: that and this." ></textarea>
   </footer>
 
   <script src="./js/libs/jsonld/jsonld.min.js"></script>
+  <!-- linked js below required for navigation functions and theming -->
   <script src="https://codemeta.github.io/js/core/jquery.min.js"></script>
   <script src="https://codemeta.github.io/js/core/bootstrap.bundle.min.js"></script>
   <script src="https://codemeta.github.io/js/material-kit.js"></script>
   <script src="https://codemeta.github.io/js/codemeta.js"></script>
-
+  <!-- end linked js for nav/theming -->
+  
   <script>
     Promise.all([loadSpdxData(), loadContextData()]).then(results => {
       const [licenses, contexts] = results;
